@@ -106,7 +106,7 @@
       return upcoming.concat(recent);
     }
     function byTourist(left, right) {
-      return (RANK[left.category] - RANK[right.category]) || (left.startsMs - right.startsMs);
+      return (left.startsMs - right.startsMs) || (RANK[left.category] - RANK[right.category]);
     }
     function eventsForThumb(thumb) {
       const windowed = EVENTS.filter(inWindow);

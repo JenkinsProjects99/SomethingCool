@@ -59,12 +59,13 @@ export function isSportsEvent(event: {
   return event.category === "sports";
 }
 
+/** Date first. Category rank is only a same-timestamp tiebreaker. */
 export function sortForTourist<T extends { category: EventCategory; startsAtDate: Date }>(
   events: T[],
 ): T[] {
   return [...events].sort((left, right) => {
-    const rank = rankCategory(left.category) - rankCategory(right.category);
-    if (rank !== 0) return rank;
-    return left.startsAtDate.getTime() - right.startsAtDate.getTime();
+    const byDate = left.startsAtDate.getTime() - right.startsAtDate.getTime();
+    if (byDate !== 0) return byDate;
+    return rankCategory(left.category) - rankCategory(right.category);
   });
 }

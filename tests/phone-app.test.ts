@@ -35,5 +35,7 @@ describe("Dana weekend preview", () => {
     expect(dana).not.toMatch(/first-friday-august|first-friday-september|First Friday August|First Friday September/);
     expect(dana).not.toMatch(/localhost/);
     expect(dana).not.toContain("disabled>");
+    expect(dana).toContain("(left.startsMs - right.startsMs)");
+    expect(dana).not.toContain("(RANK[left.category] - RANK[right.category]) || (left.startsMs - right.startsMs)");
   });
 });

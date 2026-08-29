@@ -36,13 +36,22 @@ describe("stored category", () => {
     expect(seed.events.find((event) => event.id === "deana-carter")?.category).toBe("music");
   });
 
-  it("sorts music and family ahead of sports", () => {
+  it("sorts by date first so sports today beat later music", () => {
     const ranked = sortForTourist([
-      { category: "sports", startsAtDate: new Date("2026-09-04T19:30:00-04:00") },
-      { category: "family", startsAtDate: new Date("2026-09-04T17:00:00-04:00") },
       { category: "music", startsAtDate: new Date("2026-09-04T20:00:00-04:00") },
+      { category: "sports", startsAtDate: new Date("2026-08-29T11:00:00-04:00") },
+      { category: "family", startsAtDate: new Date("2026-09-04T17:00:00-04:00") },
     ]);
-    expect(ranked.map((event) => event.category)).toEqual(["music", "family", "sports"]);
+    expect(ranked.map((event) => event.category)).toEqual(["sports", "family", "music"]);
+  });
+
+  it("uses category rank only when start times match", () => {
+    const sameTime = new Date("2026-09-04T19:30:00-04:00");
+    const ranked = sortForTourist([
+      { category: "sports", startsAtDate: sameTime },
+      { category: "music", startsAtDate: sameTime },
+    ]);
+    expect(ranked.map((event) => event.category)).toEqual(["music", "sports"]);
   });
 
   it("never treats First Friday as a sports event", () => {

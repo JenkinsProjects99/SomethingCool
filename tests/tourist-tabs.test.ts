@@ -30,6 +30,28 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(phone).toContain('useState<TouristThumb>("upcoming")');
   });
 
+  it("sorts upcoming by date so this weekend beats later music", () => {
+    const upcoming = eventsForThumb(events, "upcoming", NOW);
+    const volleyball = upcoming.findIndex(
+      (event) => event.id === "ashland-tomcats-volleyball-johnson-central-2026-08-29",
+    );
+    const deana = upcoming.findIndex((event) => event.id === "deana-carter");
+    expect(volleyball).toBe(0);
+    expect(deana).toBeGreaterThan(volleyball);
+    expect(upcoming.slice(0, 7).map((event) => event.id)).toEqual([
+      "ashland-tomcats-volleyball-johnson-central-2026-08-29",
+      "fairview-eagles-volleyball-rose-hill-2026-08-29",
+      "ashland-tomcats-volleyball-wolfe-county-2026-08-29",
+      "sandys-exacta-giveaway-bronco-sport-2026-08-29",
+      "boyd-library-midland-novel-tea-book-club-2026-08-31",
+      "boyd-lions-girls-soccer-greenup-2026-08-31",
+      "boyd-lions-boys-soccer-greenup-2026-08-31",
+    ]);
+    expect(upcoming[7]?.startsAtDate.getTime()).toBeGreaterThan(
+      new Date("2026-08-31T23:59:59-04:00").getTime(),
+    );
+  });
+
   it("filters music, sports, and family tabs from upcoming rows", () => {
     const music = eventsForThumb(events, "music", NOW);
     const sports = eventsForThumb(events, "sports", NOW);
