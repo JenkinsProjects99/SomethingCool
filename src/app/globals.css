@@ -190,6 +190,14 @@ img {
   margin-bottom: 28px;
 }
 
+.phone-app .brand {
+  margin-bottom: 10px;
+}
+
+.phone-app .brand img {
+  width: min(140px, 46vw);
+}
+
 .brand img {
   width: min(240px, 70vw);
   height: auto;
@@ -369,7 +377,7 @@ img {
 .phone-app {
   width: min(430px, 100%);
   margin: 0 auto;
-  padding: 20px 16px 48px;
+  padding: 12px 16px 48px;
   min-height: 100vh;
 }
 
@@ -385,7 +393,11 @@ img {
 }
 
 .phone-app .st-d-title {
-  font-size: clamp(32px, 9vw, 40px);
+  font-size: clamp(26px, 8vw, 34px);
+  margin-top: 4px;
+}
+
+.phone-app .st-d-paragraph {
   margin-top: 8px;
 }
 
@@ -395,8 +407,8 @@ img {
 .phone-views {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 20px 0 16px;
+  gap: 6px;
+  margin: 12px 0 10px;
 }
 
 .phone-cats,
@@ -525,21 +537,21 @@ img {
 
 .photo-stack {
   display: grid;
-  gap: 14px;
+  gap: 8px;
 }
 
 .photo-card {
   position: relative;
   display: block;
   overflow: hidden;
-  min-height: 220px;
+  min-height: 148px;
   text-decoration: none;
   color: var(--st-primary-label);
   background: linear-gradient(160deg, #326dcd, #7b5bbb);
 }
 
 .photo-card--featured {
-  min-height: 320px;
+  min-height: 168px;
 }
 
 .photo-card__image {
@@ -553,7 +565,7 @@ img {
 
 .photo-card__image--logo {
   object-fit: contain;
-  padding: 36px 28px 72px;
+  padding: 16px 20px 56px;
   background: linear-gradient(160deg, #326dcd, #7b5bbb);
 }
 
@@ -562,8 +574,8 @@ img {
   inset: auto 0 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 56px 16px 18px;
+  gap: 4px;
+  padding: 28px 14px 12px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.78));
 }
 
@@ -574,7 +586,7 @@ img {
 .photo-card__title {
   font-family: var(--font-open-sans);
   font-weight: 800;
-  font-size: clamp(22px, 6vw, 28px);
+  font-size: clamp(16px, 4.4vw, 20px);
   letter-spacing: 0.025em;
   text-transform: uppercase;
   line-height: 1.05;

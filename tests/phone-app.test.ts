@@ -41,6 +41,9 @@ describe("Dana weekend preview", () => {
     expect(dana).toContain("photo-card__image--logo");
     expect(dana).toContain("linear-gradient(160deg, #326dcd, #7b5bbb)");
     expect(dana).not.toMatch(/background:\s*#000/);
+    expect(dana).toContain("min-height: 148px");
+    expect(dana).not.toContain("min-height: 320px");
+    expect(dana).toContain("ashland-tomcats-volleyball-wolfe-county-2026-08-29");
     expect(dana).toMatch(/first\[\\s-\]\?friday/i);
     expect(dana).not.toMatch(/first-friday-august|first-friday-september|First Friday August|First Friday September/);
     expect(dana).not.toMatch(/localhost/);

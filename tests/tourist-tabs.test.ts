@@ -44,6 +44,7 @@ describe("tourist upcoming bar and calendar tab", () => {
       "ashland-tomcats-volleyball-wolfe-county-2026-08-29",
       "sandys-exacta-giveaway-bronco-sport-2026-08-29",
     ]);
+    expect(week[2]?.title).toMatch(/Wolfe County/);
   });
 
   it("sorts upcoming by date so this weekend beats later music", () => {
