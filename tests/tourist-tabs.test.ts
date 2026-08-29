@@ -37,6 +37,12 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(music.map((event) => event.id)).toContain("deana-carter");
     expect(music.every((event) => event.category === "music")).toBe(true);
     expect(sports.every((event) => event.category === "sports")).toBe(true);
+    expect(
+      sports.every(
+        (event) => !/first[\s-]?friday/i.test(`${event.id} ${event.title}`),
+      ),
+    ).toBe(true);
+    expect(sports.some((event) => event.id.includes("first-friday"))).toBe(false);
     expect(family.every((event) => event.category === "family")).toBe(true);
   });
 

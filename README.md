@@ -8,7 +8,7 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 
 - PostgreSQL schema with tenant-scoped events
 - Installable PWA at `/` (full-bleed photo cards, Upcoming / Music / Sports / Family, Calendar tab)
-- Shareable Dana preview at [`/dana.html`](https://cdn.jsdelivr.net/gh/JenkinsProjects99/SomethingCool@cursor/pwa-photo-cards-b62f/public/dana.html) (this weekend’s official rows, Visit AKY logo fallback, no localhost)
+- Dana-only phone preview (photo cards, logo fallback, Sports without First Friday, Calendar): `/dana.html` on this branch. Do not send localhost.
 - Secondary iframe at `/embed`
 - Reloadable official seed (Sean’s 225, Poage main-stage times, Thanksgiving Eve and NYE at 10am ET). At most 14 rows have official Paramount/Visit AKY image URLs; others stay `image: null` in JSON. Photo cards show the Visit AKY logo when `image` is null (client-only; the logo URL is not in the seed). Never drop a row for a missing photo. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source. Kids Paramount shows are family.
 - `GET /v1/ashland-ky/events` with Bearer auth

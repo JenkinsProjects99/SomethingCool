@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { EVENT_CATEGORIES, sortForTourist } from "@/lib/categories";
+import { EVENT_CATEGORIES, isFirstFridayEvent, isSportsEvent, sortForTourist } from "@/lib/categories";
 
 const seed = JSON.parse(
   readFileSync(path.join(process.cwd(), "data/seed/ashland-ky-events.v0.json"), "utf8"),
@@ -43,5 +43,24 @@ describe("stored category", () => {
       { category: "music", startsAtDate: new Date("2026-09-04T20:00:00-04:00") },
     ]);
     expect(ranked.map((event) => event.category)).toEqual(["music", "family", "sports"]);
+  });
+
+  it("never treats First Friday as a sports event", () => {
+    expect(
+      seed.events.some((event) => /first[\s-]?friday/i.test(`${event.id} ${event.title}`)),
+    ).toBe(false);
+    expect(
+      isSportsEvent({
+        category: "sports",
+        id: "first-friday-september",
+        title: "First Friday September",
+      }),
+    ).toBe(false);
+    expect(isFirstFridayEvent({ id: "first-friday-august", title: "First Friday August" })).toBe(
+      true,
+    );
+    expect(isSportsEvent({ category: "sports", id: "tomcats-football-2026-08-28", title: "Ashland Tomcats Football" })).toBe(
+      true,
+    );
   });
 });

@@ -38,6 +38,9 @@ describe("seed source rules", () => {
       /pub night|jerk riley|kel'?s/i.test(`${event.id} ${event.title}`),
     );
     expect(pubNights).toHaveLength(0);
+    expect(
+      seed.events.some((event) => /first[\s-]?friday/i.test(`${event.id} ${event.title}`)),
+    ).toBe(false);
   });
 
   it("keeps at most 14 official Paramount/Visit AKY image URLs and nulls the rest", () => {

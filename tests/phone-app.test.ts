@@ -28,7 +28,12 @@ describe("Dana weekend preview", () => {
     expect(dana).toContain("boyd-lions-boys-soccer-greenup-2026-08-31");
     expect(dana).toContain("./brand/visit-aky-logo.png");
     expect(dana).toContain("Calendar");
-    expect(dana).toContain('data-category="sports"');
+    expect(dana).toContain("filterSports");
+    expect(dana).toContain('data-thumb="sports"');
+    expect(dana).toContain("photo-card__image--logo");
+    expect(dana).toMatch(/first\[\\s-\]\?friday/i);
+    expect(dana).not.toMatch(/first-friday-august|first-friday-september|First Friday August|First Friday September/);
     expect(dana).not.toMatch(/localhost/);
+    expect(dana).not.toContain("disabled>");
   });
 });
