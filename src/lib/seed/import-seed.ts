@@ -15,8 +15,9 @@ export const SEED_PATH = path.join(
 
 /** Original editorial set. Library rows append on this same file when payloads arrive. */
 export const ORIGINAL_SEED_ROWS = 27;
-/** Target after 144 boyd-library rows from thebookplace.org. Do not invent them. */
-export const TARGET_SEED_ROWS = 171;
+export const MAXPREPS_FOOTBALL_ROWS = 2;
+/** Target after 144 boyd-library rows from thebookplace.org plus two specified football games. */
+export const TARGET_SEED_ROWS = 173;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };

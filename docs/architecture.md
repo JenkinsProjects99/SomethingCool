@@ -32,7 +32,7 @@ The public event contract is frozen. Adding or renaming a field requires a new A
 
 `GET /v1/ashland-ky/events` returns every published row for the authenticated tenant and range. There is no 27-row cap.
 
-Target seed composition (same file, append-only): 12 paramount, 2 visit-aky, 8 sandys, 2 sandyridge, 2 other-official, 1 parks-rec, 144 boyd-library from [thebookplace.org](https://www.thebookplace.org/) only. Do not use ashland.librarycalendar.com (Ohio). Do not invent library rows. Sports append later on this file.
+Target seed composition (same file, append-only): 173 rows = original 27 + 144 boyd-library from [thebookplace.org](https://www.thebookplace.org/) + 2 specified maxpreps football games. Do not use ashland.librarycalendar.com (Ohio). Do not invent library rows or further sports.
 
 `source` is a `.st-d-subheading` string. It is not a chip, pill, or colored badge. Purple `#7B5BBB` and mint `#7AD68D` are hover / outline tokens only.
 
