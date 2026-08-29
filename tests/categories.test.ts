@@ -1,7 +1,13 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { EVENT_CATEGORIES, isFirstFridayEvent, isSportsEvent, sortForTourist } from "@/lib/categories";
+import {
+  EVENT_CATEGORIES,
+  isCommunityEvent,
+  isFirstFridayEvent,
+  isSportsEvent,
+  sortForTourist,
+} from "@/lib/categories";
 
 const seed = JSON.parse(
   readFileSync(path.join(process.cwd(), "data/seed/ashland-ky-events.v0.json"), "utf8"),
@@ -52,6 +58,16 @@ describe("stored category", () => {
       { category: "music", startsAtDate: sameTime },
     ]);
     expect(ranked.map((event) => event.category)).toEqual(["music", "sports"]);
+  });
+
+  it("puts stored family rows in the Community bucket without reading the title", () => {
+    expect(isCommunityEvent({ category: "family" })).toBe(true);
+    expect(isCommunityEvent({ category: "community" })).toBe(true);
+    expect(isCommunityEvent({ category: "music" })).toBe(false);
+    expect(isCommunityEvent({ category: "sports" })).toBe(false);
+    const sesame = seed.events.find((event) => event.id === "sesame-street-live");
+    expect(sesame?.category).toBe("family");
+    expect(isCommunityEvent({ category: sesame!.category as "family" })).toBe(true);
   });
 
   it("never treats First Friday as a sports event", () => {

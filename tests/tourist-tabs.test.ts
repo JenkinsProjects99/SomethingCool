@@ -29,7 +29,9 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(phone).toContain('useState<TimeTab>("week")');
     expect(phone).toContain("This Week");
     expect(phone).toContain("Community");
-    expect(phone).toContain("Family");
+    expect(phone).not.toContain('label: "Family"');
+    expect(phone).toContain("{event.venue}");
+    expect(phone).toContain("Event details");
   });
 
   it("defaults This Week to date-first weekend rows before later music", () => {
@@ -69,10 +71,10 @@ describe("tourist upcoming bar and calendar tab", () => {
     );
   });
 
-  it("filters music, sports, and family tabs from upcoming rows", () => {
+  it("filters music, sports, and community (family bucket) from upcoming rows", () => {
     const music = eventsForThumb(events, "music", NOW);
     const sports = eventsForThumb(events, "sports", NOW);
-    const family = eventsForThumb(events, "family", NOW);
+    const communityUpcoming = eventsForThumb(events, "community", NOW);
     expect(music.map((event) => event.id)).toContain("deana-carter");
     expect(music.every((event) => event.category === "music")).toBe(true);
     expect(sports.every((event) => event.category === "sports")).toBe(true);
@@ -82,10 +84,21 @@ describe("tourist upcoming bar and calendar tab", () => {
       ),
     ).toBe(true);
     expect(sports.some((event) => event.id.includes("first-friday"))).toBe(false);
-    expect(family.every((event) => event.category === "family")).toBe(true);
+    expect(
+      communityUpcoming.every(
+        (event) => event.category === "community" || event.category === "family",
+      ),
+    ).toBe(true);
+    expect(communityUpcoming.some((event) => event.category === "family")).toBe(true);
     const community = eventsForTouristView(events, "week", "community", NOW);
     expect(community.length).toBeGreaterThan(0);
-    expect(community.every((event) => event.category === "community")).toBe(true);
+    expect(
+      community.every((event) => event.category === "community" || event.category === "family"),
+    ).toBe(true);
+    expect(community.some((event) => event.category === "family")).toBe(true);
+    expect(community.some((event) => event.id === "boyd-library-storytime-midland-ages-3-5-12469")).toBe(
+      true,
+    );
   });
 
   it("renders a month grid a tourist can read", () => {

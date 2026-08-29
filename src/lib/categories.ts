@@ -46,8 +46,9 @@ export function isMusicEvent(event: { category: EventCategory }): boolean {
   return event.category === "music";
 }
 
+/** Community tab is the family bucket. Stored `family` only — never infer from title. */
 export function isCommunityEvent(event: { category: EventCategory }): boolean {
-  return event.category === "community";
+  return event.category === "community" || event.category === "family";
 }
 
 export function isFirstFridayEvent(event: { id?: string; title?: string }): boolean {

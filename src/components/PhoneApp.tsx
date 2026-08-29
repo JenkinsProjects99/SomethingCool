@@ -28,16 +28,12 @@ const CATEGORIES: { id: TouristCategory; label: string }[] = [
   { id: "music", label: "Music" },
   { id: "sports", label: "Sports" },
   { id: "community", label: "Community" },
-  { id: "family", label: "Family" },
 ];
 
 function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolean }) {
   return (
-    <a
+    <article
       className={`photo-card photo-card--${event.category} ${featured ? "photo-card--featured" : ""}`}
-      href={event.url}
-      target="_blank"
-      rel="noreferrer"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -54,9 +50,13 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
             {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
           </time>
         </p>
+        <p className="photo-card__venue">{event.venue}</p>
         <p className="st-d-subheading">{sourceLabel(event.source)}</p>
+        <a className="st-primary" href={event.url} target="_blank" rel="noreferrer">
+          Event details
+        </a>
       </div>
-    </a>
+    </article>
   );
 }
 

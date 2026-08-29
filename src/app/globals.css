@@ -429,7 +429,7 @@ img {
 .phone-cats .st-secondary,
 .phone-thumbs .st-primary,
 .phone-thumbs .st-secondary {
-  flex: 1 1 calc(33% - 8px);
+  flex: 1 1 calc(25% - 8px);
   min-width: 0;
   padding: 10px 8px;
 }
@@ -545,7 +545,6 @@ img {
   display: block;
   overflow: hidden;
   min-height: 148px;
-  text-decoration: none;
   color: var(--st-primary-label);
   background: linear-gradient(160deg, #326dcd, #7b5bbb);
 }
@@ -594,15 +593,30 @@ img {
   color: #ffffff;
 }
 
-.photo-card__when {
+.photo-card__when,
+.photo-card__venue {
   font-family: var(--font-glacial);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   letter-spacing: 0.04em;
   margin: 0;
   color: #ffffff;
 }
 
+.photo-card__venue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .photo-card .st-d-subheading {
   color: #f5f5f5;
+}
+
+.photo-card .st-primary {
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 6px 10px;
+  font-size: 11px;
+  margin-top: 2px;
 }

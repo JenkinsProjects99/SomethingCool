@@ -11,7 +11,9 @@ describe("tourist phone preview", () => {
     expect(phone).toContain("This Week");
     expect(phone).toContain("Calendar");
     expect(phone).toContain("Community");
-    expect(phone).toContain("Family");
+    expect(phone).not.toContain('label: "Family"');
+    expect(phone).toContain("{event.venue}");
+    expect(phone).toContain("Event details");
     expect(phone).toContain("MonthCalendar");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(phone).not.toMatch(/chip|pill|badge/i);
@@ -33,7 +35,13 @@ describe("Dana weekend preview", () => {
     expect(dana).toContain("Calendar");
     expect(dana).toContain("This Week");
     expect(dana).toContain("Community");
-    expect(dana).toContain("Family");
+    expect(dana).not.toContain(">Family</button>");
+    expect(dana).toContain("Event details");
+    expect(dana).toContain("photo-card__venue");
+    expect(dana).toContain("Blazer High School");
+    expect(dana).toContain("Fairview High School");
+    expect(dana).toContain("Sandy's Racing & Gaming");
+    expect(dana).toContain('event.category === "family"');
     expect(dana).toContain("filterSports");
     expect(dana).toContain('data-time="week"');
     expect(dana).toContain('data-cat="sports"');

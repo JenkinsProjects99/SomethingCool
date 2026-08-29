@@ -1,6 +1,5 @@
 import {
   isCommunityEvent,
-  isFamilyEvent,
   isMusicEvent,
   isSportsEvent,
   sortForTourist,
@@ -9,8 +8,8 @@ import type { CalendarEvent } from "./events";
 import { eventInWindow, startOfLookback, startOfToday, thisWeekFromToday } from "./filters";
 
 export type TouristTime = "upcoming" | "week";
-export type TouristCategory = "all" | "music" | "sports" | "community" | "family";
-export type TouristThumb = "upcoming" | "music" | "sports" | "family";
+export type TouristCategory = "all" | "music" | "sports" | "community";
+export type TouristThumb = "upcoming" | "music" | "sports" | "community";
 
 /** Upcoming first, then the last seven ET days. Never the full history. */
 export function touristWindowEvents(
@@ -45,8 +44,7 @@ export function filterTouristCategory(
   if (category === "all") return events;
   if (category === "music") return events.filter(isMusicEvent);
   if (category === "sports") return events.filter(isSportsEvent);
-  if (category === "community") return events.filter(isCommunityEvent);
-  return events.filter(isFamilyEvent);
+  return events.filter(isCommunityEvent);
 }
 
 export function eventsForTouristView(

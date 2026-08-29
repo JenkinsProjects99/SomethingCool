@@ -49,7 +49,7 @@ Library rows come from published [thebookplace.org](https://www.thebookplace.org
 
 ## PWA
 
-`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title/time overlay; official image or Visit AKY logo fallback), a centered logo, Design 96 tokens, and a Calendar tab. Default thumb is **Upcoming**. Public UI is upcoming first, then a **7-day ET lookback** — not the full seed history. Music and family sort ahead of sports. Times are America/New_York.
+`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title, time, venue, and an Event details control; official image or Visit AKY logo fallback), a centered logo, Design 96 tokens, and a Calendar tab. Default view is **This Week**. Category row is All / Music / Sports / Community. Community includes stored `family` rows and does not infer from title. Public UI is upcoming first, then a **7-day ET lookback** — not the full seed history. Times are America/New_York.
 
 ## Tenancy
 

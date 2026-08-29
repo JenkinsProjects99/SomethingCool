@@ -122,8 +122,9 @@ export function MonthCalendar({
                 <span>
                   {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
                   {" · "}
-                  {sourceLabel(event.source)}
+                  {event.venue}
                 </span>
+                <span className="st-d-subheading">{sourceLabel(event.source)}</span>
               </a>
             </li>
           ))
