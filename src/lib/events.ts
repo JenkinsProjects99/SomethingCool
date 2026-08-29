@@ -1,8 +1,18 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { pickFrozenNine, type FrozenEvent } from "./fields";
-import { filterEventsByRange, startOfToday, type EventRange } from "./filters";
+import {
+  filterEventsByRange,
+  filterEventsByWindow,
+  startOfToday,
+  type EventRange,
+  type EventWindow,
+} from "./filters";
 import { serializeInstant } from "./instants";
 import { scopedEventWhere } from "./tenant";
+
+export type EventListQuery =
+  | EventRange
+  | (EventWindow & { range?: EventRange; now?: Date });
 
 export interface CalendarEvent extends FrozenEvent {
   slug: string;
@@ -43,18 +53,47 @@ function toCalendarEvent(row: {
   };
 }
 
+function normalizeListQuery(
+  query: EventListQuery = "month",
+  fallbackNow = new Date(),
+): { range?: EventRange; from?: Date; to?: Date; now: Date } {
+  if (typeof query === "string") {
+    return { range: query, now: fallbackNow };
+  }
+  return {
+    range: query.range,
+    from: query.from,
+    to: query.to,
+    now: query.now ?? fallbackNow,
+  };
+}
+
 export async function listPublishedEvents(
   db: PrismaClient,
   tenantId: string,
-  range: EventRange,
+  query: EventListQuery = "month",
   now = new Date(),
 ): Promise<CalendarEvent[]> {
+  const parsed = normalizeListQuery(query, now);
   const where: Prisma.EventWhereInput = scopedEventWhere(tenantId);
+  if (parsed.from || parsed.to) {
+    where.startsAt = {
+      ...(parsed.from ? { gte: parsed.from } : {}),
+      ...(parsed.to ? { lt: parsed.to } : {}),
+    };
+  }
   const rows = await db.event.findMany({
     where,
     orderBy: { startsAt: "asc" },
   });
-  return filterEventsByRange(rows, range, now).map(toCalendarEvent);
+  if (parsed.from || parsed.to) {
+    return filterEventsByWindow(rows, { from: parsed.from, to: parsed.to }).map(
+      toCalendarEvent,
+    );
+  }
+  return filterEventsByRange(rows, parsed.range ?? "month", parsed.now).map(
+    toCalendarEvent,
+  );
 }
 
 export async function getPublishedEventBySlug(

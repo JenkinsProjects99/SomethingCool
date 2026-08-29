@@ -45,6 +45,22 @@ export function rankEvent(source: string): number {
   return CATEGORY_RANK[categoryForSource(source)];
 }
 
+const FAMILY_TITLE =
+  /sesame|blippi|ballet|makers|holiday|first friday|walking|mural|nutcracker|storytime|scavenger|kids|family|youth/i;
+
+export function isFamilyEvent(event: { source: string; title: string }): boolean {
+  if (event.source === "visit-aky" || event.source === "boyd-library") return true;
+  return FAMILY_TITLE.test(event.title);
+}
+
+export function isMusicEvent(event: { source: string }): boolean {
+  return categoryForSource(event.source) === "music";
+}
+
+export function isSportsEvent(event: { source: string }): boolean {
+  return categoryForSource(event.source) === "sports";
+}
+
 export function sortForTourist<T extends { source: string; startsAtDate: Date }>(
   events: T[],
 ): T[] {

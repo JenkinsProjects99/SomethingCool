@@ -13,6 +13,8 @@ The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Publi
 | Specified Sandy’s facebook nights | +2 |
 | Target | 225 = 27 + 161 `boyd-library` + 27 maxpreps + specified school/facebook rows |
 
+Sean’s complete seed is 225 rows / ~108KB on this same reloadable path. This workspace does not have that file yet. The committed file is official rows only (original 27, specified sports, Poage Landing Days date-only, specified Sandy’s nights). Do not invent the missing library or kickoff rows to fake 108KB.
+
 The 161 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. Remaining MaxPreps kickoffs wait for official payloads. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
 
 `image` is `null` on every row until Sean has photos. Poage Landing Days is date-only (`2026-09-18`–`2026-09-20`), no invented clock times.

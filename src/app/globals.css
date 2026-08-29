@@ -373,98 +373,118 @@ img {
   min-height: 100vh;
 }
 
+.phone-app__eyebrow {
+  font-family: var(--font-open-sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--st-ink);
+  margin: 0 0 8px;
+  text-align: center;
+}
+
 .phone-app .st-d-title {
   font-size: clamp(32px, 9vw, 40px);
   margin-top: 8px;
 }
 
-.phone-filters {
-  display: grid;
-  gap: 16px;
+.phone-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin: 20px 0 24px;
 }
 
-.phone-date {
-  display: grid;
-  gap: 6px;
-}
-
-.phone-date input {
-  min-height: 44px;
-  border: 2px solid var(--st-primary);
-  padding: 10px 14px;
-  font-family: var(--font-glacial);
-  font-size: 16px;
+.phone-thumbs .st-primary,
+.phone-thumbs .st-secondary {
+  flex: 1 1 calc(50% - 8px);
+  min-width: 0;
+  padding: 10px 8px;
 }
 
 .photo-stack {
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .photo-card {
-  border: 1px solid var(--st-rule);
-  background: var(--st-paper);
+  position: relative;
+  display: block;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  min-height: 220px;
+  text-decoration: none;
+  color: var(--st-primary-label);
+}
+
+.photo-card--featured {
+  min-height: 320px;
 }
 
 .photo-card__placeholder,
 .photo-card__image {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
 }
 
 .photo-card__placeholder {
   background:
-    linear-gradient(160deg, rgba(50, 109, 205, 0.92), rgba(123, 91, 187, 0.78)),
-    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+    linear-gradient(160deg, rgba(50, 109, 205, 0.88), rgba(123, 91, 187, 0.72)),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
 .photo-card--music .photo-card__placeholder {
   background:
-    linear-gradient(160deg, rgba(50, 109, 205, 0.95), rgba(0, 0, 0, 0.35)),
-    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
-}
-
-.photo-card--festivals .photo-card__placeholder {
-  background:
-    linear-gradient(160deg, rgba(123, 91, 187, 0.9), rgba(50, 109, 205, 0.7)),
-    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+    linear-gradient(160deg, rgba(50, 109, 205, 0.92), rgba(0, 0, 0, 0.4)),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
 .photo-card--sports .photo-card__placeholder {
   background:
-    linear-gradient(160deg, #326dcd, #1d3f7a),
-    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+    linear-gradient(160deg, #1d3f7a, #326dcd),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
-.photo-card--library .photo-card__placeholder {
+.photo-card--family .photo-card__placeholder {
   background:
-    linear-gradient(160deg, #5b7aa8, #326dcd),
-    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+    linear-gradient(160deg, rgba(123, 91, 187, 0.88), rgba(50, 109, 205, 0.7)),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
-.photo-card__body {
+.photo-card__overlay {
+  position: absolute;
+  inset: auto 0 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px 16px 20px;
+  gap: 6px;
+  padding: 56px 16px 18px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.78));
 }
 
 .photo-card__title {
   font-family: var(--font-open-sans);
   font-weight: 800;
-  font-size: 26px;
+  font-size: clamp(22px, 6vw, 28px);
   letter-spacing: 0.025em;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1.05;
   margin: 0;
+  color: #ffffff;
 }
 
-.photo-card .st-primary {
-  width: 100%;
+.photo-card__when {
+  font-family: var(--font-glacial);
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  margin: 0;
+  color: #ffffff;
+}
+
+.photo-card .st-d-subheading {
+  color: #f5f5f5;
 }

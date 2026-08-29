@@ -7,7 +7,7 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Installable PWA at `/` (photo cards, client date/category/upcoming filters)
+- Installable PWA at `/` (full-bleed photo cards, This weekend / Music / Sports / Family)
 - Secondary iframe at `/embed`
 - Reloadable seed: official rows now (including Poage Landing Days and specified Sandy’s nights); target 225. `image` is null until Sean has photos. Library rows and remaining kickoffs are not invented.
 - Installable phone PWA at `/`
@@ -37,12 +37,12 @@ Open the phone app at [http://localhost:3000](http://localhost:3000). Secondary 
 
 ```bash
 curl -s -H "Authorization: Bearer dev-ashland-ky-local-token" \
-  "http://localhost:3000/v1/ashland-ky/events?range=upcoming"
+  "http://localhost:3000/v1/ashland-ky/events?from=2026-09-01&to=2026-10-01"
 ```
 
-The example token is a local placeholder. Rotate it before any shared host. A token for another tenant receives `403` even if the URL says `ashland-ky`.
+`from` and `to` are the frozen window (`from` inclusive, `to` exclusive; `YYYY-MM-DD` or an offset datetime). Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when `from`/`to` are omitted. Drafts never appear.
 
-Query `range`: `month` | `week` | `upcoming` | `all`. Drafts never appear.
+The example token is a local placeholder. Rotate it before any shared host. A token for another tenant receives `403` even if the URL says `ashland-ky`.
 
 ## Iframe
 

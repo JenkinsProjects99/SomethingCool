@@ -18,6 +18,8 @@ describe("no hardcoded 27-row feed cap", () => {
     expect(events).not.toMatch(/take\(\s*27\s*\)/);
     expect(events).not.toMatch(/slice\(\s*0\s*,\s*27\s*\)/);
     expect(route).toContain("events.map(publicEventPayload)");
+    expect(route).toContain('url.searchParams.get("from")');
+    expect(route).toContain('url.searchParams.get("to")');
     expect(route).not.toMatch(/slice\(\s*0\s*,\s*27/);
     expect(calendar).toContain("const { featured, rest } = splitFeatured(events);");
     expect(calendar).not.toMatch(/slice\(\s*0\s*,\s*27/);

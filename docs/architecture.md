@@ -9,12 +9,14 @@ v0 is a single Next.js App Router service with PostgreSQL. Primary surface is an
 | `/` | Tourist phone PWA (installable, photo cards, client filters) |
 | `/embed` | Secondary 360px iframe widget |
 | `/embed/{slug}` | Single published event embed |
-| `GET /v1/ashland-ky/events` | Partner feed, Bearer token |
+| `GET /v1/ashland-ky/events` | Partner feed, Bearer token. Frozen `from`/`to` window; additive `range` |
 | `GET /api/health` | Liveness + request id |
 
 There is no React Native app and no second repo. Playlist script stays with the logo file on visitaky.com.
 
 The PWA loads published events on the server with the same tenant-scoped query as the partner feed. The Bearer token never goes to the browser.
+
+`GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive, `to` exclusive). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
 
 ## Public event contract
 
@@ -44,7 +46,7 @@ Target **225** = 27 original + 161 `boyd-library` (thebookplace.org only) + 27 m
 
 ## PWA
 
-`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY photo cards, a centered logo, and Design 96 tokens. Rank and filter in the client: date, category, upcoming vs all. Festivals and music sort ahead of library storytimes.
+`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title/time overlay; branded placeholder when `image` is null), a centered logo, and Design 96 tokens. Default thumb is **This weekend** (rolls forward if empty). Other thumbs: Music, Sports, Family. Festivals and music sort ahead of library storytimes — the default is never a storytime dump.
 
 ## Tenancy
 

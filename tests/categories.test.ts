@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { categoryForSource, sortForTourist } from "@/lib/categories";
+import { categoryForSource, isFamilyEvent, sortForTourist } from "@/lib/categories";
 
 describe("client ranking", () => {
   it("keeps festivals and music ahead of library storytimes", () => {
@@ -25,5 +25,11 @@ describe("client ranking", () => {
       "paramount",
       "boyd-library",
     ]);
+  });
+
+  it("treats downtown and kid shows as family without defaulting to library", () => {
+    expect(isFamilyEvent({ source: "visit-aky", title: "First Friday September" })).toBe(true);
+    expect(isFamilyEvent({ source: "paramount", title: "Sesame Street Live" })).toBe(true);
+    expect(isFamilyEvent({ source: "paramount", title: "Deana Carter" })).toBe(false);
   });
 });

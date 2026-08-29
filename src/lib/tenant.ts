@@ -16,6 +16,14 @@ export class UnauthorizedError extends Error {
   }
 }
 
+export class InvalidQueryError extends Error {
+  readonly status = 400;
+  constructor(message = "Invalid query") {
+    super(message);
+    this.name = "InvalidQueryError";
+  }
+}
+
 export interface AuthTenant {
   tenantId: string;
   tenantSlug: string;

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { eventInRange, filterEventsByRange, parseEmbedRange, parsePublicRange } from "@/lib/filters";
+import {
+  eventInRange,
+  eventInWindow,
+  filterEventsByRange,
+  parseEmbedRange,
+  parsePublicRange,
+  thisWeekendWindow,
+} from "@/lib/filters";
 
 describe("calendar ranges", () => {
   const now = new Date("2026-08-29T15:00:00-04:00");
@@ -29,5 +36,12 @@ describe("calendar ranges", () => {
     const nextFriday = new Date("2026-09-04T12:00:00-04:00");
     expect(eventInRange(friday, "week", now)).toBe(true);
     expect(eventInRange(nextFriday, "week", now)).toBe(false);
+  });
+
+  it("rolls this weekend forward when the current Fri–Sun is empty", () => {
+    const deana = { startsAt: new Date("2026-09-04T20:00:00-04:00") };
+    const window = thisWeekendWindow(now, [deana]);
+    expect(eventInWindow(deana.startsAt, window)).toBe(true);
+    expect(eventInWindow(new Date("2026-08-29T12:00:00-04:00"), window)).toBe(false);
   });
 });

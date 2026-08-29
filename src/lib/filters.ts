@@ -1,6 +1,15 @@
+import { InstantSchema } from "./fields";
+import { parseInstant, serializeInstant } from "./instants";
+import { InvalidQueryError } from "./tenant";
+
 export type PublicRange = "month" | "week" | "all";
 export type EmbedRange = "upcoming" | "all";
 export type EventRange = PublicRange | EmbedRange;
+
+export interface EventWindow {
+  from?: Date;
+  to?: Date;
+}
 
 export const PUBLIC_RANGES: PublicRange[] = ["month", "week", "all"];
 export const EMBED_RANGES: EmbedRange[] = ["upcoming", "all"];
@@ -72,6 +81,46 @@ export function startOfToday(now = new Date()): Date {
   return startOfZonedDay(now);
 }
 
+function addZonedDays(start: Date, days: number): Date {
+  const parts = zonedParts(start);
+  const utc = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days));
+  return wallTimeToUtc(utc.getUTCFullYear(), utc.getUTCMonth() + 1, utc.getUTCDate(), 0, 0);
+}
+
+/** Friday 00:00 ET of the weekend that contains `now`, or the coming Friday. */
+export function startOfThisWeekend(now = new Date()): Date {
+  const today = startOfZonedDay(now);
+  const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
+    zonedParts(now).weekday,
+  );
+  if (weekdayIndex === 0) return addZonedDays(today, -2);
+  if (weekdayIndex >= 5) return addZonedDays(today, 5 - weekdayIndex);
+  return addZonedDays(today, 5 - weekdayIndex);
+}
+
+/**
+ * Friday–Sunday in ET (`to` is Monday exclusive).
+ * If the current weekend has no remaining events, roll to the next weekend that does.
+ */
+export function thisWeekendWindow<T extends { startsAt: Date }>(
+  now = new Date(),
+  events: T[] = [],
+): EventWindow {
+  const today = startOfZonedDay(now);
+  let friday = startOfThisWeekend(now);
+  for (let week = 0; week < 12; week += 1) {
+    const from = friday;
+    const to = addZonedDays(friday, 3);
+    const hits = events.filter((event) => event.startsAt >= from && event.startsAt < to);
+    const remaining = week === 0 ? hits.filter((event) => event.startsAt >= today) : hits;
+    if (events.length === 0 || remaining.length > 0) {
+      return { from, to };
+    }
+    friday = addZonedDays(friday, 7);
+  }
+  return { from: friday, to: addZonedDays(friday, 3) };
+}
+
 export function rangeBounds(
   range: EventRange,
   now = new Date(),
@@ -121,6 +170,48 @@ export function eventInRange(
   if (start && startsAt < start) return false;
   if (end && startsAt >= end) return false;
   return true;
+}
+
+/** Frozen partner window. `from` inclusive, `to` exclusive. Date-only is midnight ET. */
+export function parseWindowBound(value: string | null | undefined): Date | undefined {
+  if (value == null || value === "") return undefined;
+  const parsed = InstantSchema.safeParse(value);
+  if (!parsed.success) {
+    throw new InvalidQueryError("from/to must be YYYY-MM-DD or an offset datetime");
+  }
+  return parseInstant(parsed.data, TIME_ZONE);
+}
+
+export function eventInWindow(startsAt: Date, window: EventWindow): boolean {
+  if (window.from && startsAt < window.from) return false;
+  if (window.to && startsAt >= window.to) return false;
+  return true;
+}
+
+export function filterEventsByWindow<T extends { startsAt: Date }>(
+  events: T[],
+  window: EventWindow,
+): T[] {
+  return events.filter((event) => eventInWindow(event.startsAt, window));
+}
+
+export function serializeWindowBound(date: Date | undefined): string | null {
+  if (!date) return null;
+  const asDateOnly = serializeInstant(date, true, TIME_ZONE);
+  const midnight = parseInstant(asDateOnly, TIME_ZONE);
+  if (midnight.getTime() === date.getTime()) {
+    return asDateOnly;
+  }
+  return serializeInstant(date, false, TIME_ZONE);
+}
+
+export function resolvedWindow(
+  range: EventRange | undefined,
+  now = new Date(),
+): EventWindow {
+  if (!range) return {};
+  const bounds = rangeBounds(range, now);
+  return { from: bounds.start, to: bounds.end };
 }
 
 export function filterEventsByRange<T extends { startsAt: Date }>(

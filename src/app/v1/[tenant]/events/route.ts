@@ -2,9 +2,16 @@ import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/api-auth";
 import { getPrisma } from "@/lib/db";
 import { listPublishedEvents, publicEventPayload } from "@/lib/events";
-import { parseEmbedRange, parsePublicRange, type EventRange } from "@/lib/filters";
+import {
+  parseEmbedRange,
+  parsePublicRange,
+  parseWindowBound,
+  rangeBounds,
+  serializeWindowBound,
+  type EventRange,
+} from "@/lib/filters";
 import { log, readRequestId } from "@/lib/logger";
-import { TenantScopeError, UnauthorizedError } from "@/lib/tenant";
+import { InvalidQueryError, TenantScopeError, UnauthorizedError } from "@/lib/tenant";
 
 function parseRange(raw: string | null): EventRange {
   if (raw === "upcoming") return parseEmbedRange(raw);
@@ -19,21 +26,42 @@ export async function GET(
   const requestId = readRequestId(new Headers(request.headers));
   const { tenant: tenantSlug } = await context.params;
   const url = new URL(request.url);
-  const range = parseRange(url.searchParams.get("range"));
+  const fromRaw = url.searchParams.get("from");
+  const toRaw = url.searchParams.get("to");
+  const rangeRaw = url.searchParams.get("range");
+  const hasWindow = fromRaw !== null || toRaw !== null;
 
   try {
+    const from = parseWindowBound(fromRaw);
+    const to = parseWindowBound(toRaw);
+    const range = hasWindow
+      ? rangeRaw
+        ? parseRange(rangeRaw)
+        : undefined
+      : parseRange(rangeRaw);
+
     const db = getPrisma();
     const auth = await authenticateRequest(
       db,
       request.headers.get("authorization"),
       tenantSlug,
     );
-    const events = await listPublishedEvents(db, auth.tenantId, range);
+    const events = await listPublishedEvents(db, auth.tenantId, {
+      range,
+      from,
+      to,
+    });
+
+    const bounds = range ? rangeBounds(range) : {};
+    const fromOut = fromRaw !== null ? fromRaw : serializeWindowBound(bounds.start);
+    const toOut = toRaw !== null ? toRaw : serializeWindowBound(bounds.end);
 
     log.info("events.list", {
       requestId,
       tenant: auth.tenantSlug,
-      range,
+      from: fromOut,
+      to: toOut,
+      range: range ?? null,
       count: events.length,
       status: 200,
       ms: Date.now() - started,
@@ -43,7 +71,9 @@ export async function GET(
       {
         requestId,
         tenant: auth.tenantSlug,
-        range,
+        from: fromOut,
+        to: toOut,
+        range: range ?? null,
         count: events.length,
         events: events.map(publicEventPayload),
       },
@@ -54,7 +84,9 @@ export async function GET(
     );
   } catch (error) {
     const status =
-      error instanceof UnauthorizedError || error instanceof TenantScopeError
+      error instanceof UnauthorizedError ||
+      error instanceof TenantScopeError ||
+      error instanceof InvalidQueryError
         ? error.status
         : 500;
     log.error("events.list.failed", {
