@@ -13,11 +13,13 @@ export const SEED_PATH = path.join(
   "data/seed/ashland-ky-events.v0.json",
 );
 
-/** Original editorial set. Library rows append on this same file when payloads arrive. */
+/** Original editorial set. Library and remaining MaxPreps rows append when official payloads arrive. */
 export const ORIGINAL_SEED_ROWS = 27;
-export const MAXPREPS_FOOTBALL_ROWS = 2;
-/** Target after 144 boyd-library rows from thebookplace.org plus two specified football games. */
-export const TARGET_SEED_ROWS = 173;
+export const SPECIFIED_MAXPREPS_ROWS = 2;
+export const TARGET_BOYD_LIBRARY_ROWS = 161;
+export const TARGET_MAXPREPS_ROWS = 15;
+/** 27 original + 161 boyd-library (thebookplace.org) + 15 maxpreps home games. */
+export const TARGET_SEED_ROWS = 203;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };

@@ -1,7 +1,12 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { MAXPREPS_FOOTBALL_ROWS, TARGET_SEED_ROWS } from "@/lib/seed/import-seed";
+import {
+  SPECIFIED_MAXPREPS_ROWS,
+  TARGET_BOYD_LIBRARY_ROWS,
+  TARGET_MAXPREPS_ROWS,
+  TARGET_SEED_ROWS,
+} from "@/lib/seed/import-seed";
 import { assertAllowedEventUrl } from "@/lib/sources";
 
 const seed = JSON.parse(
@@ -9,15 +14,20 @@ const seed = JSON.parse(
 ) as { events: Array<{ id: string; source: string; url: string; startsAt: string; title: string }> };
 
 describe("seed source rules", () => {
-  it("documents 173 as the current target and does not invent boyd-library rows", () => {
-    expect(TARGET_SEED_ROWS).toBe(173);
+  it("documents 203 as the target and does not invent boyd-library or extra sports", () => {
+    expect(TARGET_SEED_ROWS).toBe(27 + TARGET_BOYD_LIBRARY_ROWS + TARGET_MAXPREPS_ROWS);
+    expect(TARGET_SEED_ROWS).toBe(203);
     const library = seed.events.filter((event) => event.source === "boyd-library");
     expect(library).toHaveLength(0);
+    const pubNights = seed.events.filter((event) =>
+      /pub night|jerk riley|kel'?s/i.test(`${event.id} ${event.title}`),
+    );
+    expect(pubNights).toHaveLength(0);
   });
 
-  it("includes only the two specified maxpreps football games", () => {
+  it("includes only the specified maxpreps football games until more kickoffs are provided", () => {
     const football = seed.events.filter((event) => event.source === "maxpreps");
-    expect(football).toHaveLength(MAXPREPS_FOOTBALL_ROWS);
+    expect(football).toHaveLength(SPECIFIED_MAXPREPS_ROWS);
     expect(football.map((event) => event.id).sort()).toEqual([
       "ashland-tomcats-football-2026-09-04",
       "boyd-lions-football-2026-09-11",

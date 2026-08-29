@@ -8,11 +8,11 @@ The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Froze
 | --- | --- |
 | Original editorial set | 27 |
 | Specified maxpreps football | +2 (in the file now) |
-| After Boyd Library append | 173 = 27 + 144 `boyd-library` + 2 maxpreps |
+| Target | 203 = 27 + 161 `boyd-library` + 15 maxpreps |
 
-The 144 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. Until that JSON lands, the file keeps the original 27 plus the two specified football games. Do not invent further sports or pub nights.
+The 161 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. Thirteen additional MaxPreps home kickoffs are not in this file until their payloads arrive. Do not invent pub nights. Facebook dated nights may append later on this same file.
 
-Intended source mix for 173: 12 paramount, 2 visit-aky, 8 sandys, 2 sandyridge, 2 other-official, 1 parks-rec, 144 boyd-library, 2 maxpreps.
+Intended source mix for 203: 27 original + 161 boyd-library + 15 maxpreps.
 
 ## Prerequisites
 

@@ -3,7 +3,7 @@
     "slug": "ashland-ky",
     "name": "Visit AKY"
   },
-  "notes": "Reloadable seed. Original 27 kept. Two maxpreps football rows appended. 144 boyd-library from https://www.thebookplace.org/ only when official JSON arrives. Target 173. Do not invent library or further sports. Upsert on id.",
+  "notes": "Reloadable seed. Original 27 + 2 specified maxpreps football rows. Target 203 = 27 + 161 boyd-library (thebookplace.org only) + 15 maxpreps home games. Do not invent library rows, remaining kickoffs, or pub nights. Upsert on id.",
   "events": [
     {
       "id": "sammy-kershaw",

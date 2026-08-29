@@ -7,7 +7,7 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Reloadable seed (`data/seed/ashland-ky-events.v0.json`): original 27 + 2 specified maxpreps football games now; 173 after official Boyd Library rows (thebookplace.org only, not invented)
+- Reloadable seed (`data/seed/ashland-ky-events.v0.json`): original 27 + 2 specified maxpreps games now; target 203 = 27 + 161 boyd-library (thebookplace.org only) + 15 maxpreps. Library rows and remaining kickoffs are not invented.
 - Public calendar at `/`
 - Iframe calendar at `/embed`
 - Single-event embed at `/embed/{slug}`
