@@ -38,7 +38,12 @@ function firstWeekday(year: number, month: number) {
 }
 
 export function MonthCalendar({ events }: { events: CalendarEvent[] }) {
-  const first = events[0]?.startsAtDate ?? new Date("2026-09-01T12:00:00-04:00");
+  const today = zonedYmd(new Date());
+  const inThisMonth = events.find((event) => {
+    const parts = zonedYmd(event.startsAtDate);
+    return parts.year === today.year && parts.month === today.month;
+  });
+  const first = inThisMonth?.startsAtDate ?? events[0]?.startsAtDate ?? new Date();
   const seed = zonedYmd(first);
   const [cursor, setCursor] = useState({ year: seed.year, month: seed.month });
   const [selected, setSelected] = useState(keyFor(seed.year, seed.month, seed.day));

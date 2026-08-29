@@ -21,7 +21,7 @@ export function eventsForThumb(
       upcoming.map((event) => ({ event, startsAt: event.startsAtDate })),
       now,
     ).map((row) => row.event);
-    return sortForTourist(rows);
+    return [...rows].sort((left, right) => left.startsAtDate.getTime() - right.startsAtDate.getTime());
   }
   return sortForTourist(
     upcoming.filter((event) => {
