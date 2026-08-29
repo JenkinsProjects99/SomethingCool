@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import type { CalendarEvent } from "@/lib/events";
@@ -66,6 +66,13 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
   const [time, setTime] = useState<TimeTab>("week");
   const [category, setCategory] = useState<TouristCategory>("all");
   const now = useMemo(() => new Date(), []);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash === "upcoming" || hash === "week" || hash === "calendar") setTime(hash);
+    if (hash === "family") setCategory("community");
+    if (hash === "music" || hash === "sports" || hash === "community") setCategory(hash);
+  }, []);
 
   const visible = useMemo(
     () => eventsForTouristView(events, time === "calendar" ? "week" : time, category, now),

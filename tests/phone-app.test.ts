@@ -8,6 +8,7 @@ describe("tourist phone preview", () => {
 
   it("defaults to This Week with Joanna's two-row IA and logo fallback", () => {
     expect(phone).toContain('useState<TimeTab>("week")');
+    expect(phone).toContain("location.hash");
     expect(phone).toContain("Upcoming");
     expect(phone).toContain("This Week");
     expect(phone).toContain("Calendar");
