@@ -13,11 +13,15 @@ describe("no hardcoded 27-row feed cap", () => {
       path.join(process.cwd(), "src/components/CalendarView.tsx"),
       "utf8",
     );
+    const publicPage = readFileSync(path.join(process.cwd(), "src/app/page.tsx"), "utf8");
+    const embedPage = readFileSync(path.join(process.cwd(), "src/app/embed/page.tsx"), "utf8");
     expect(events).not.toMatch(/take\(\s*27\s*\)/);
     expect(events).not.toMatch(/slice\(\s*0\s*,\s*27\s*\)/);
     expect(route).toContain("events.map(publicEventPayload)");
     expect(route).not.toMatch(/slice\(\s*0\s*,\s*27/);
-    expect(calendar).toContain("events={events}");
+    expect(calendar).toContain("const { featured, rest } = splitFeatured(events);");
     expect(calendar).not.toMatch(/slice\(\s*0\s*,\s*27/);
+    expect(publicPage).toContain("events={events}");
+    expect(embedPage).toContain("events={events}");
   });
 });
