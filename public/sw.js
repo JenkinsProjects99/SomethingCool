@@ -2,7 +2,14 @@ const CACHE = "visit-aky-v0";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(["/", "/manifest.webmanifest"])),
+    caches.open(CACHE).then((cache) =>
+      cache.addAll([
+        "/",
+        "/manifest.webmanifest",
+        "/brand/visit-aky-logo.png",
+        "/brand/visit-aky-photocard.jpg",
+      ]),
+    ),
   );
   self.skipWaiting();
 });

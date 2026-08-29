@@ -7,18 +7,16 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Installable PWA at `/` (full-bleed photo cards, This weekend / Music / Sports / Family)
+- Installable PWA at `/` (full-bleed photo cards, this weekend / date / category / upcoming vs all)
 - Secondary iframe at `/embed`
-- Reloadable seed: official rows now (including Poage Landing Days and specified Sandy’s nights); target 225. `image` is null until Sean has photos. Library rows and remaining kickoffs are not invented.
-- Installable phone PWA at `/`
-- Secondary iframe calendar at `/embed`
-- Single-event embed at `/embed/{slug}`
+- Reloadable 225-row official seed. 14 rows have official Paramount/Visit AKY image URLs; others are `image: null` and use the Visit AKY photo-card fallback. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source. Kids Paramount shows are family.
 - `GET /v1/ashland-ky/events` with Bearer auth
-- Public nine fields plus additive `image`
+- Public nine fields plus additive `image` and `category`
 - Never auto-publish
 - Structured JSON logs and `x-request-id`
 - WCAG 2.2 AA token pairing
 - CI: lint, typecheck, tests (including tenant isolation)
+- `public/manifest.webmanifest` + `public/sw.js`
 
 ## Quick start
 
@@ -32,6 +30,8 @@ npm run dev
 ```
 
 Open the phone app at [http://localhost:3000](http://localhost:3000). Secondary widget: [http://localhost:3000/embed](http://localhost:3000/embed).
+
+The tourist page also renders from the seed file if Postgres is not up, so a preview host can show this weekend with photos in one load.
 
 ## Partner API
 
@@ -89,4 +89,5 @@ Single listing:
 - Source is a subheading, not a pill. Purple and mint are hover / themed outlines only.
 - Playlist script stays in the logo file, not as a widget type.
 - Events do not auto-publish.
-- **This month** rolls forward when the current month has no remaining upcoming events, so a late-August visit still shows September.
+- Do not invent events or fake photos as content.
+- **This weekend** is the default tourist view. If the current Fri–Sun has no official events, it rolls to the next weekend that does.

@@ -19,6 +19,7 @@ export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
 export const TARGET_MAXPREPS_ROWS = 27;
 export const TARGET_SEED_ROWS = 225;
+export const OFFICIAL_IMAGE_ROWS = 14;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };
@@ -46,8 +47,24 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   if (ids.size !== raw.events.length) {
     throw new Error("Seed ids must be unique");
   }
-  if (raw.events.some((event) => event.image !== null)) {
-    throw new Error("image stays null until Sean has photos");
+  const withImages = raw.events.filter((event) => event.image !== null);
+  if (withImages.length !== OFFICIAL_IMAGE_ROWS) {
+    throw new Error(
+      `Exactly ${OFFICIAL_IMAGE_ROWS} rows may carry official Paramount/Visit AKY image URLs`,
+    );
+  }
+  for (const event of withImages) {
+    const host = new URL(event.image as string).hostname;
+    const official =
+      host === "cdn.saffire.com" ||
+      host === "static.showit.co" ||
+      host.endsWith(".showit.co");
+    if (!official) {
+      throw new Error(`${event.id} image must be an official Paramount or Visit AKY URL`);
+    }
+  }
+  if (raw.events.length !== TARGET_SEED_ROWS) {
+    throw new Error(`Seed must be ${TARGET_SEED_ROWS} official rows`);
   }
   for (const event of raw.events) {
     assertAllowedEventUrl(event.source, event.url);
@@ -124,6 +141,7 @@ export async function importSeed(
       source: event.source,
       url: event.url,
       image: event.image,
+      category: event.category,
       summary: event.summary ?? event.title,
       dateOnly,
       status: decision.status,
@@ -144,6 +162,7 @@ export async function importSeed(
         source: data.source,
         url: data.url,
         image: data.image,
+        category: data.category,
         summary: data.summary,
         dateOnly: data.dateOnly,
         tenantId: data.tenantId,

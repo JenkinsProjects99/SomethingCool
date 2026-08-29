@@ -4,27 +4,40 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import {
-  isFamilyEvent,
-  isMusicEvent,
-  isSportsEvent,
+  CATEGORY_LABELS,
+  EVENT_CATEGORIES,
   sortForTourist,
+  type EventCategory,
 } from "@/lib/categories";
 import type { CalendarEvent } from "@/lib/events";
-import { eventInWindow, startOfToday, thisWeekendWindow } from "@/lib/filters";
+import {
+  eventInRange,
+  eventInWindow,
+  startOfToday,
+  thisWeekendWindow,
+} from "@/lib/filters";
 import { formatCardWhen } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
 
-type Thumb = "weekend" | "music" | "sports" | "family";
+type DateThumb = "weekend" | "week" | "month";
+type ScopeThumb = "upcoming" | "all";
+type CategoryThumb = "all" | EventCategory;
 
-const THUMBS: { id: Thumb; label: string }[] = [
+const DATE_THUMBS: { id: DateThumb; label: string }[] = [
   { id: "weekend", label: "This weekend" },
-  { id: "music", label: "Music" },
-  { id: "sports", label: "Sports" },
-  { id: "family", label: "Family" },
+  { id: "week", label: "This week" },
+  { id: "month", label: "This month" },
+];
+
+const SCOPE_THUMBS: { id: ScopeThumb; label: string }[] = [
+  { id: "upcoming", label: "Upcoming" },
+  { id: "all", label: "All" },
 ];
 
 export function PhoneApp({ events }: { events: CalendarEvent[] }) {
-  const [thumb, setThumb] = useState<Thumb>("weekend");
+  const [dateThumb, setDateThumb] = useState<DateThumb>("weekend");
+  const [scope, setScope] = useState<ScopeThumb>("upcoming");
+  const [category, setCategory] = useState<CategoryThumb>("all");
 
   const weekend = useMemo(
     () => thisWeekendWindow(new Date(), events.map((event) => ({ startsAt: event.startsAtDate }))),
@@ -35,14 +48,22 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
     const today = startOfToday();
     return sortForTourist(
       events.filter((event) => {
-        if (event.startsAtDate < today) return false;
-        if (thumb === "weekend") return eventInWindow(event.startsAtDate, weekend);
-        if (thumb === "music") return isMusicEvent(event);
-        if (thumb === "sports") return isSportsEvent(event);
-        return isFamilyEvent(event);
+        if (category !== "all" && event.category !== category) return false;
+
+        if (dateThumb === "weekend") {
+          return eventInWindow(event.startsAtDate, weekend);
+        }
+
+        const inDate =
+          dateThumb === "week"
+            ? eventInRange(event.startsAtDate, "week")
+            : eventInRange(event.startsAtDate, "month");
+        if (!inDate) return false;
+        if (scope === "upcoming" && event.startsAtDate < today) return false;
+        return true;
       }),
     );
-  }, [events, thumb, weekend]);
+  }, [events, dateThumb, scope, category, weekend]);
 
   return (
     <div className="phone-app">
@@ -53,19 +74,58 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
         <p className="st-d-paragraph">This weekend in Ashland. Confirm times before you go.</p>
       </header>
 
-      <div className="phone-thumbs" role="tablist" aria-label="Quick filters">
-        {THUMBS.map((item) => (
+      <div className="phone-filters">
+        <div className="phone-thumbs" role="tablist" aria-label="Date">
+          {DATE_THUMBS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              className={dateThumb === item.id ? "st-primary" : "st-secondary"}
+              aria-selected={dateThumb === item.id}
+              onClick={() => setDateThumb(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <div className="phone-thumbs phone-thumbs--scope" role="tablist" aria-label="Upcoming or all">
+          {SCOPE_THUMBS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              className={scope === item.id ? "st-primary" : "st-secondary"}
+              aria-selected={scope === item.id}
+              onClick={() => setScope(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <div className="phone-thumbs phone-thumbs--category" role="tablist" aria-label="Category">
           <button
-            key={item.id}
             type="button"
             role="tab"
-            className={thumb === item.id ? "st-primary" : "st-secondary"}
-            aria-selected={thumb === item.id}
-            onClick={() => setThumb(item.id)}
+            className={category === "all" ? "st-primary" : "st-secondary"}
+            aria-selected={category === "all"}
+            onClick={() => setCategory("all")}
           >
-            {item.label}
+            All
           </button>
-        ))}
+          {EVENT_CATEGORIES.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              className={category === id ? "st-primary" : "st-secondary"}
+              aria-selected={category === id}
+              onClick={() => setCategory(id)}
+            >
+              {CATEGORY_LABELS[id]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <main id="main" className="photo-stack">
@@ -75,7 +135,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
           visible.map((event, index) => (
             <a
               key={event.id}
-              className={`photo-card photo-card--${thumb} ${index === 0 ? "photo-card--featured" : ""}`}
+              className={`photo-card photo-card--${event.category} ${index === 0 ? "photo-card--featured" : ""}`}
               href={event.url}
               target="_blank"
               rel="noreferrer"
@@ -84,7 +144,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img className="photo-card__image" src={event.image} alt="" />
               ) : (
-                <div className="photo-card__placeholder" aria-hidden="true" />
+                <div className="photo-card__fallback" aria-hidden="true" />
               )}
               <div className="photo-card__overlay">
                 <h2 className="photo-card__title">{event.title}</h2>

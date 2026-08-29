@@ -6,8 +6,9 @@ Mapped from the Ashland look board and the live Showit site (visitaky.com). Play
 
 Centered Visit AKY wordmark.
 
-- Production asset: `https://static.showit.co/1200/lFmCSzFnLr0jvxt4w-SqjQ/327307/visit.png`
+- Production asset: `https://static.showit.co/1200/IFmCSzFnLr0jvxt4w-SqjQ/327307/visit.png`
 - Vendored copy: `public/brand/visit-aky-logo.png`
+- Photo-card fallback (official Visit AKY photo, not event content): `public/brand/visit-aky-photocard.jpg`
 
 ## Typography
 
@@ -53,6 +54,6 @@ Focus uses a 3px `#326DCD` ring. Controls are at least 24×24 CSS pixels (2.5.8)
 
 ## Layouts
 
-- Phone PWA (`/`): centered logo, “What's happening”, thumb filters This weekend / Music / Sports / Family, full-bleed photo cards with title/time overlay (Visit AKY placeholder while `image` is null). Source is a subheading, not a chip.
+- Phone PWA (`/`): centered logo, “What's happening”, thumb filters for date / category / upcoming vs all, full-bleed photo cards with title overlay (official image or Visit AKY photocard fallback). Source is a subheading, not a chip.
 - Embed (360px, secondary): centered logo, Upcoming / All, stacked cards (first solid, second outline), compact rows with Go.
 - Embed event: `/embed/{slug}` repeats the card for a partner iframe.

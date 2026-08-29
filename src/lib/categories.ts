@@ -1,71 +1,48 @@
-export type EventCategory =
-  | "festivals"
-  | "music"
-  | "downtown"
-  | "sports"
-  | "library"
-  | "food";
+export const EVENT_CATEGORIES = [
+  "music",
+  "sports",
+  "family",
+  "arts",
+  "community",
+  "food",
+  "outdoor",
+] as const;
+
+export type EventCategory = (typeof EVENT_CATEGORIES)[number];
 
 export const CATEGORY_LABELS: Record<EventCategory, string> = {
-  festivals: "Festivals",
   music: "Music",
-  downtown: "Downtown",
   sports: "Sports",
-  library: "Library",
+  family: "Family",
+  arts: "Arts",
+  community: "Community",
   food: "Food",
-};
-
-const SOURCE_CATEGORY: Record<string, EventCategory> = {
-  facebook: "festivals",
-  paramount: "music",
-  "visit-aky": "downtown",
-  school: "sports",
-  maxpreps: "sports",
-  "parks-rec": "downtown",
-  "other-official": "downtown",
-  "boyd-library": "library",
-  sandys: "food",
-  sandyridge: "food",
+  outdoor: "Outdoor",
 };
 
 const CATEGORY_RANK: Record<EventCategory, number> = {
-  festivals: 10,
-  music: 20,
-  downtown: 30,
-  food: 40,
-  sports: 50,
-  library: 90,
+  music: 10,
+  family: 20,
+  community: 30,
+  arts: 40,
+  food: 50,
+  outdoor: 60,
+  sports: 70,
 };
 
-export function categoryForSource(source: string): EventCategory {
-  return SOURCE_CATEGORY[source] ?? "downtown";
+export function isEventCategory(value: string): value is EventCategory {
+  return (EVENT_CATEGORIES as readonly string[]).includes(value);
 }
 
-export function rankEvent(source: string): number {
-  return CATEGORY_RANK[categoryForSource(source)];
+export function rankCategory(category: EventCategory): number {
+  return CATEGORY_RANK[category];
 }
 
-const FAMILY_TITLE =
-  /sesame|blippi|ballet|makers|holiday|first friday|walking|mural|nutcracker|storytime|scavenger|kids|family|youth/i;
-
-export function isFamilyEvent(event: { source: string; title: string }): boolean {
-  if (event.source === "visit-aky" || event.source === "boyd-library") return true;
-  return FAMILY_TITLE.test(event.title);
-}
-
-export function isMusicEvent(event: { source: string }): boolean {
-  return categoryForSource(event.source) === "music";
-}
-
-export function isSportsEvent(event: { source: string }): boolean {
-  return categoryForSource(event.source) === "sports";
-}
-
-export function sortForTourist<T extends { source: string; startsAtDate: Date }>(
+export function sortForTourist<T extends { category: EventCategory; startsAtDate: Date }>(
   events: T[],
 ): T[] {
   return [...events].sort((left, right) => {
-    const rank = rankEvent(left.source) - rankEvent(right.source);
+    const rank = rankCategory(left.category) - rankCategory(right.category);
     if (rank !== 0) return rank;
     return left.startsAtDate.getTime() - right.startsAtDate.getTime();
   });

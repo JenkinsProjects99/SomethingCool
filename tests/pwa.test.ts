@@ -13,6 +13,7 @@ describe("installable PWA", () => {
     const sw = readFileSync(path.join(process.cwd(), "public/sw.js"), "utf8");
     expect(sw).toContain('addEventListener("install"');
     expect(sw).toContain("caches.open");
+    expect(sw).toContain("/brand/visit-aky-photocard.jpg");
     const layout = readFileSync(path.join(process.cwd(), "src/app/layout.tsx"), "utf8");
     expect(layout).toContain('manifest: "/manifest.webmanifest"');
     expect(layout).toContain("RegisterServiceWorker");

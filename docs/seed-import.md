@@ -1,25 +1,22 @@
 # Seed import how-to
 
-The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Public nine fields plus additive `image`. Seed-only: `slug`, `summary`, `status`.
+The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Public nine fields plus additive `image` and `category`. Seed-only: `slug`, `summary`, `status`.
 
 ## Count
 
 | Stage | Rows |
 | --- | --- |
-| Original editorial set | 27 |
-| Specified maxpreps football | +2 (in the file now) |
-| Specified school rows | +4 (published times only) |
-| Poage Landing Days | +1 date-only facebook row |
-| Specified Sandy’s facebook nights | +2 |
-| Target | 225 = 27 + 161 `boyd-library` + 27 maxpreps + specified school/facebook rows |
+| Official published rows | **225** |
+| Official Paramount / Visit AKY images | **14** |
+| Remaining images | `null` (Visit AKY photo-card fallback in the PWA) |
 
-Sean’s complete seed is 225 rows / ~108KB on this same reloadable path. This workspace does not have that file yet. The committed file is official rows only (original 27, specified sports, Poage Landing Days date-only, specified Sandy’s nights). Do not invent the missing library or kickoff rows to fake 108KB.
+The file keeps the original editorial 27, specified school/facebook rows, official Paramount extras (Shrek, Festival of Trees & Trains), official MaxPreps Ashland home games, and published [thebookplace.org](https://www.thebookplace.org/) programs (161+). Closings and meeting-room reservations were not copied. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
 
-The 161 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. Remaining MaxPreps kickoffs wait for official payloads. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
+`category` is stored per row (`music` | `sports` | `family` | `arts` | `community` | `food` | `outdoor`). Do not infer it from `source`. Kids Paramount shows are `family`.
 
-`image` is `null` on every row until Sean has photos. Poage Landing Days is date-only (`2026-09-18`–`2026-09-20`), no invented clock times.
+Poage Landing Days is date-only (`2026-09-18`–`2026-09-20`), no invented clock times.
 
-`GET /v1/ashland-ky/events` returns every **published** row for the range. It does not cap at 27 and it does not invent unpublished library/sports rows to force 225.
+`GET /v1/ashland-ky/events` returns every **published** row for the range. It does not cap at 27.
 
 ## Prerequisites
 
@@ -52,7 +49,7 @@ npm run seed:reload
 Reload is upsert-by-`id`:
 
 - Inserts any new ids
-- Updates title, slug, times, timezone, venue, address, source, url, image, summary, and date-only flag
+- Updates title, slug, times, timezone, venue, address, source, url, image, category, summary, and date-only flag
 - **Leaves `status` alone** unless you pass `--update-status`
 
 ```bash
@@ -67,12 +64,12 @@ npx tsx scripts/import-seed.ts --reload --update-status
 npm test
 ```
 
-`tests/frozen-fields.test.ts` validates every row against the public nine plus `image`. `tests/seed-sources.test.ts` blocks Ohio library URLs and invented Boyd Library rows.
+`tests/frozen-fields.test.ts` validates every row against the public nine plus `image` and `category`. `tests/seed-sources.test.ts` blocks Ohio library URLs and invented pub nights.
 
 ## Do not
 
-- Do not scrape thebookplace.org or ashland.librarycalendar.com.
-- Do not invent `boyd-library` payloads.
-- Do not invent remaining MaxPreps kickoffs or pub nights.
+- Do not invent events or fake photos as content.
+- Do not infer `category` from `source`.
+- Do not put unofficial stock photos on rows. Null images use the Visit AKY photo-card fallback.
 - Do not treat a complete row as published.
 - Do not put real API tokens in the seed file.

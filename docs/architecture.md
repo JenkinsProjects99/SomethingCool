@@ -14,7 +14,7 @@ v0 is a single Next.js App Router service with PostgreSQL. Primary surface is an
 
 There is no React Native app and no second repo. Playlist script stays with the logo file on visitaky.com.
 
-The PWA loads published events on the server with the same tenant-scoped query as the partner feed. The Bearer token never goes to the browser.
+The PWA loads published events on the server with the same tenant-scoped query as the partner feed. If Postgres is not provisioned, `/` falls back to published rows in the seed file so the phone preview still renders. The Bearer token never goes to the browser.
 
 `GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive, `to` exclusive). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
 
@@ -32,7 +32,7 @@ Nine frozen fields (do not rename):
 8. `url`
 9. `source`
 
-Additive field only: `image` (URL or `null`). `image` is `null` on every seed row until Sean has photos.
+Additive fields: `image` (official URL or `null`) and `category` (`music` | `sports` | `family` | `arts` | `community` | `food` | `outdoor`). Category is stored on the row. Do not infer it from `source`. Kids Paramount shows are `family`.
 
 `startsAt` / `endsAt` may be `YYYY-MM-DD` (date-only, no invented clock time) or an offset datetime. `status`, `slug`, and `summary` stay internal. Never auto-publish.
 
@@ -40,13 +40,15 @@ Additive field only: `image` (URL or `null`). `image` is `null` on every seed ro
 
 ## Seed
 
-One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`.
+One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`. **225 official rows.**
 
-Target **225** = 27 original + 161 `boyd-library` (thebookplace.org only) + 27 maxpreps home games + specified school/facebook rows. This file holds official rows only. Do not invent library rows, remaining kickoffs, or pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows: Poage Landing Days (date-only) and the two Sandy’s nights.
+14 rows carry official Paramount (`cdn.saffire.com`) or Visit AKY (`static.showit.co`) image URLs. Every other row is `image: null`. The PWA uses a Visit AKY photo-card fallback for null images. Do not invent events or fake photos as content.
+
+Library rows come from published [thebookplace.org](https://www.thebookplace.org/) programs. MaxPreps rows are official Ashland home games. Do not invent pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows: Poage Landing Days (date-only) and the two Sandy’s nights.
 
 ## PWA
 
-`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title/time overlay; branded placeholder when `image` is null), a centered logo, and Design 96 tokens. Default thumb is **This weekend** (rolls forward if empty). Other thumbs: Music, Sports, Family. Festivals and music sort ahead of library storytimes — the default is never a storytime dump.
+`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title/time overlay; official image or branded photocard fallback), a centered logo, and Design 96 tokens. Default thumb is **This weekend**. Other thumbs: date (this weekend / this week / this month), category, and upcoming vs all. Music and family sort ahead of sports.
 
 ## Tenancy
 

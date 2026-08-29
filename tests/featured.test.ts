@@ -14,6 +14,7 @@ function event(id: string, startsAt: string): CalendarEvent {
     source: "paramount",
     url: "https://example.com",
     image: null,
+    category: "music",
     startsAtDate: new Date(startsAt),
     endsAtDate: null,
     dateOnly: false,

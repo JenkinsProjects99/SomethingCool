@@ -1,35 +1,47 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { categoryForSource, isFamilyEvent, sortForTourist } from "@/lib/categories";
+import { EVENT_CATEGORIES, sortForTourist } from "@/lib/categories";
 
-describe("client ranking", () => {
-  it("keeps festivals and music ahead of library storytimes", () => {
-    expect(categoryForSource("facebook")).toBe("festivals");
-    expect(categoryForSource("paramount")).toBe("music");
-    expect(categoryForSource("boyd-library")).toBe("library");
-    const ranked = sortForTourist([
-      {
-        source: "boyd-library",
-        startsAtDate: new Date("2026-09-04T10:00:00-04:00"),
-      },
-      {
-        source: "facebook",
-        startsAtDate: new Date("2026-09-18T00:00:00-04:00"),
-      },
-      {
-        source: "paramount",
-        startsAtDate: new Date("2026-09-04T20:00:00-04:00"),
-      },
+const seed = JSON.parse(
+  readFileSync(path.join(process.cwd(), "data/seed/ashland-ky-events.v0.json"), "utf8"),
+) as {
+  events: Array<{ id: string; source: string; title: string; category: string }>;
+};
+
+describe("stored category", () => {
+  it("uses the frozen additive set and does not infer category from source", () => {
+    expect(EVENT_CATEGORIES).toEqual([
+      "music",
+      "sports",
+      "family",
+      "arts",
+      "community",
+      "food",
+      "outdoor",
     ]);
-    expect(ranked.map((event) => event.source)).toEqual([
-      "facebook",
-      "paramount",
-      "boyd-library",
-    ]);
+    const paramount = seed.events.filter((event) => event.source === "paramount");
+    expect(paramount.some((event) => event.category === "music")).toBe(true);
+    expect(paramount.some((event) => event.category === "family")).toBe(true);
+    expect(new Set(paramount.map((event) => event.category)).size).toBeGreaterThan(1);
   });
 
-  it("treats downtown and kid shows as family without defaulting to library", () => {
-    expect(isFamilyEvent({ source: "visit-aky", title: "First Friday September" })).toBe(true);
-    expect(isFamilyEvent({ source: "paramount", title: "Sesame Street Live" })).toBe(true);
-    expect(isFamilyEvent({ source: "paramount", title: "Deana Carter" })).toBe(false);
+  it("marks kids Paramount shows as family", () => {
+    const kids = ["beetlejuice-jr", "sesame-street-live", "blippi", "ashland-youth-ballet-nutcracker"];
+    for (const id of kids) {
+      const row = seed.events.find((event) => event.id === id);
+      expect(row?.source).toBe("paramount");
+      expect(row?.category).toBe("family");
+    }
+    expect(seed.events.find((event) => event.id === "deana-carter")?.category).toBe("music");
+  });
+
+  it("sorts music and family ahead of sports", () => {
+    const ranked = sortForTourist([
+      { category: "sports", startsAtDate: new Date("2026-09-04T19:30:00-04:00") },
+      { category: "family", startsAtDate: new Date("2026-09-04T17:00:00-04:00") },
+      { category: "music", startsAtDate: new Date("2026-09-04T20:00:00-04:00") },
+    ]);
+    expect(ranked.map((event) => event.category)).toEqual(["music", "family", "sports"]);
   });
 });

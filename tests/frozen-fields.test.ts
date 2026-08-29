@@ -29,18 +29,17 @@ describe("frozen nine fields", () => {
     ]);
   });
 
-  it("validates every seed row and keeps image null", () => {
+  it("validates every seed row against the public nine plus image and category", () => {
     expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
     const ids = new Set<string>();
     for (const row of seed.events) {
       const parsed = SeedEventSchema.parse(row);
       ids.add(parsed.id);
       expect(extraSeedKeys(row)).toEqual([]);
-      expect(parsed.image).toBeNull();
       const publicRow = pickFrozenNine(parsed);
-      expect(FrozenEventSchema.parse(publicRow).image).toBeNull();
+      FrozenEventSchema.parse(publicRow);
       expect(Object.keys(publicRow).sort()).toEqual(
-        [...FROZEN_NINE_FIELDS, "image"].sort(),
+        [...FROZEN_NINE_FIELDS, "image", "category"].sort(),
       );
       expect(Object.keys(publicRow)).not.toContain("status");
       expect(Object.keys(publicRow)).not.toContain("slug");
@@ -48,8 +47,8 @@ describe("frozen nine fields", () => {
     expect(ids.size).toBe(seed.events.length);
   });
 
-  it("rejects an eleventh public field on the wire shape", () => {
+  it("rejects an unknown public field on the wire shape", () => {
     const [first] = seed.events;
-    expect(extraSeedKeys({ ...first, category: "concert" })).toEqual(["category"]);
+    expect(extraSeedKeys({ ...first, mood: "concert" })).toEqual(["mood"]);
   });
 });

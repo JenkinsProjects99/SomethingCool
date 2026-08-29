@@ -38,7 +38,8 @@ model ApiToken {
 }
 
 /// Public nine: id, title, startsAt, endsAt, timezone, venue, address, url, source
-/// Additive public: image (nullable). slug/summary/status stay internal.
+/// Additive public: image (nullable URL), category (stored, not inferred from source).
+/// slug/summary/status stay internal.
 model Event {
   id        String      @id
   tenantId  String      @map("tenant_id")
@@ -53,6 +54,7 @@ model Event {
   url       String
   source    String
   image     String?
+  category  String      @default("community")
   summary   String      @default("")
   dateOnly  Boolean     @default(false) @map("date_only")
   status    EventStatus @default(draft)

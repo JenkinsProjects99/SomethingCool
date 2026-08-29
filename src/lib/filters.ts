@@ -100,20 +100,19 @@ export function startOfThisWeekend(now = new Date()): Date {
 
 /**
  * Friday–Sunday in ET (`to` is Monday exclusive).
- * If the current weekend has no remaining events, roll to the next weekend that does.
+ * Friday night games stay in the window on Saturday/Sunday.
+ * If that Fri–Sun is empty, roll to the next weekend that has events.
  */
 export function thisWeekendWindow<T extends { startsAt: Date }>(
   now = new Date(),
   events: T[] = [],
 ): EventWindow {
-  const today = startOfZonedDay(now);
   let friday = startOfThisWeekend(now);
   for (let week = 0; week < 12; week += 1) {
     const from = friday;
     const to = addZonedDays(friday, 3);
     const hits = events.filter((event) => event.startsAt >= from && event.startsAt < to);
-    const remaining = week === 0 ? hits.filter((event) => event.startsAt >= today) : hits;
-    if (events.length === 0 || remaining.length > 0) {
+    if (events.length === 0 || hits.length > 0) {
       return { from, to };
     }
     friday = addZonedDays(friday, 7);

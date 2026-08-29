@@ -3,9 +3,10 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { isDateOnly } from "@/lib/fields";
 import {
+  OFFICIAL_IMAGE_ROWS,
+  ORIGINAL_SEED_ROWS,
   SPECIFIED_MAXPREPS_ROWS,
   TARGET_BOYD_LIBRARY_ROWS,
-  TARGET_MAXPREPS_ROWS,
   TARGET_SEED_ROWS,
 } from "@/lib/seed/import-seed";
 import { assertAllowedEventUrl } from "@/lib/sources";
@@ -21,28 +22,44 @@ const seed = JSON.parse(
     endsAt: string | null;
     title: string;
     image: string | null;
+    category: string;
   }>;
 };
 
 describe("seed source rules", () => {
-  it("documents 225 as the target and does not invent boyd-library or pub nights", () => {
-    expect(TARGET_SEED_ROWS).toBe(27 + TARGET_BOYD_LIBRARY_ROWS + TARGET_MAXPREPS_ROWS + 10);
-    expect(TARGET_SEED_ROWS).toBe(225);
-    expect(seed.events.filter((event) => event.source === "boyd-library")).toHaveLength(0);
+  it("ships 225 official rows without invented pub nights", () => {
+    expect(seed.events).toHaveLength(TARGET_SEED_ROWS);
+    expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
+    expect(seed.events.filter((event) => event.source === "boyd-library").length).toBeGreaterThanOrEqual(
+      TARGET_BOYD_LIBRARY_ROWS,
+    );
     const pubNights = seed.events.filter((event) =>
       /pub night|jerk riley|kel'?s/i.test(`${event.id} ${event.title}`),
     );
     expect(pubNights).toHaveLength(0);
-    expect(seed.events.every((event) => event.image === null)).toBe(true);
   });
 
-  it("includes only the specified maxpreps football games until more kickoffs are provided", () => {
-    const football = seed.events.filter((event) => event.source === "maxpreps");
-    expect(football).toHaveLength(SPECIFIED_MAXPREPS_ROWS);
-    expect(football.map((event) => event.id).sort()).toEqual([
-      "ashland-tomcats-football-2026-09-04",
-      "boyd-lions-football-2026-09-11",
-    ]);
+  it("keeps exactly 14 official Paramount/Visit AKY image URLs and nulls the rest", () => {
+    const withImages = seed.events.filter((event) => event.image);
+    expect(withImages).toHaveLength(OFFICIAL_IMAGE_ROWS);
+    for (const event of withImages) {
+      const host = new URL(event.image as string).hostname;
+      expect(["cdn.saffire.com", "static.showit.co"]).toContain(host);
+      expect(["paramount", "visit-aky"]).toContain(event.source);
+    }
+    expect(seed.events.filter((event) => event.image === null)).toHaveLength(
+      TARGET_SEED_ROWS - OFFICIAL_IMAGE_ROWS,
+    );
+  });
+
+  it("keeps the specified maxpreps football games", () => {
+    const specified = seed.events.filter((event) =>
+      [
+        "ashland-tomcats-football-2026-09-04",
+        "boyd-lions-football-2026-09-11",
+      ].includes(event.id),
+    );
+    expect(specified).toHaveLength(SPECIFIED_MAXPREPS_ROWS);
   });
 
   it("includes specified school rows with published times and date-only Poage Landing Days", () => {

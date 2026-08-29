@@ -44,4 +44,10 @@ describe("calendar ranges", () => {
     expect(eventInWindow(deana.startsAt, window)).toBe(true);
     expect(eventInWindow(new Date("2026-08-29T12:00:00-04:00"), window)).toBe(false);
   });
+
+  it("keeps Friday night home games on Saturday of the same weekend", () => {
+    const friday = { startsAt: new Date("2026-08-28T19:30:00-04:00") };
+    const window = thisWeekendWindow(now, [friday]);
+    expect(eventInWindow(friday.startsAt, window)).toBe(true);
+  });
 });

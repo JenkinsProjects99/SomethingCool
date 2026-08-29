@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { EVENT_CATEGORIES } from "./categories";
 
-/** Public event contract. Additive `image` is allowed; do not rename these nine. */
+/** Public event contract. Additive `image` and `category` are allowed; do not rename these nine. */
 export const FROZEN_NINE_FIELDS = [
   "id",
   "title",
@@ -13,7 +14,7 @@ export const FROZEN_NINE_FIELDS = [
   "source",
 ] as const;
 
-export const ADDITIVE_PUBLIC_FIELDS = ["image"] as const;
+export const ADDITIVE_PUBLIC_FIELDS = ["image", "category"] as const;
 
 export type FrozenField = (typeof FROZEN_NINE_FIELDS)[number];
 
@@ -49,6 +50,7 @@ export const FrozenEventSchema = z.object({
   url: z.string().url(),
   source: z.string().min(1),
   image: z.string().url().nullable(),
+  category: z.enum(EVENT_CATEGORIES),
 });
 
 export type FrozenEvent = z.infer<typeof FrozenEventSchema>;
@@ -65,6 +67,7 @@ export function pickFrozenNine<T extends FrozenEvent>(event: T): FrozenEvent {
     url: event.url,
     source: event.source,
     image: event.image,
+    category: event.category,
   };
 }
 

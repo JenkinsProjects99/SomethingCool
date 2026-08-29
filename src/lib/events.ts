@@ -1,4 +1,5 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
+import { isEventCategory, type EventCategory } from "./categories";
 import { pickFrozenNine, type FrozenEvent } from "./fields";
 import {
   filterEventsByRange,
@@ -19,6 +20,7 @@ export interface CalendarEvent extends FrozenEvent {
   startsAtDate: Date;
   endsAtDate: Date | null;
   dateOnly: boolean;
+  category: EventCategory;
 }
 
 function toCalendarEvent(row: {
@@ -33,6 +35,7 @@ function toCalendarEvent(row: {
   url: string;
   source: string;
   image: string | null;
+  category: string;
   dateOnly: boolean;
 }): CalendarEvent {
   return {
@@ -46,6 +49,7 @@ function toCalendarEvent(row: {
     url: row.url,
     source: row.source,
     image: row.image,
+    category: isEventCategory(row.category) ? row.category : "community",
     slug: row.slug,
     startsAtDate: row.startsAt,
     endsAtDate: row.endsAt,
