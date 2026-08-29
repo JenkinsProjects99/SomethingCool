@@ -2,7 +2,7 @@
   "name": "ashland-calendar",
   "version": "0.1.0",
   "private": true,
-  "description": "Visit AKY Ashland calendar widget v0 — Design 96, frozen nine fields, never auto-publish.",
+  "description": "Visit AKY Ashland tourist PWA v0 — Design 96, public nine fields plus image, never auto-publish.",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

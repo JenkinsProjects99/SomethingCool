@@ -1,19 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { splitFeatured, type CalendarEvent } from "@/lib/events";
 
-function event(slug: string, startsAt: string): CalendarEvent {
+function event(id: string, startsAt: string): CalendarEvent {
   return {
-    title: slug,
-    slug,
+    id,
+    title: id,
+    slug: id,
     startsAt,
     endsAt: null,
+    timezone: "America/New_York",
     venue: "Paramount Theater Ashland",
-    source: "Paramount Theater Ashland",
+    address: "1300 Winchester Ave, Ashland, KY 41101",
+    source: "paramount",
     url: "https://example.com",
-    summary: "test",
-    status: "published",
+    image: null,
     startsAtDate: new Date(startsAt),
     endsAtDate: null,
+    dateOnly: false,
   };
 }
 
@@ -29,10 +32,10 @@ describe("featured split", () => {
       2,
       now,
     );
-    expect(featured.map((row) => row.slug)).toEqual([
+    expect(featured.map((row) => row.id)).toEqual([
       "first-friday-september",
       "deana-carter",
     ]);
-    expect(rest.map((row) => row.slug)).toEqual(["sammy-kershaw"]);
+    expect(rest.map((row) => row.id)).toEqual(["sammy-kershaw"]);
   });
 });

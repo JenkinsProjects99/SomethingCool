@@ -1,58 +1,55 @@
 # Architecture
 
-v0 is a single Next.js App Router service with PostgreSQL. One tenant ships in the seed (`ashland-ky` / Visit AKY). The public calendar, iframe embed, and partner API all read the same published rows.
+v0 is a single Next.js App Router service with PostgreSQL. Primary surface is an installable tourist phone PWA (not React Native, not a fork). The iframe widget is secondary. One tenant ships in the seed (`ashland-ky` / Visit AKY). The PWA, iframe, and partner API all read the same published rows as `GET /v1/ashland-ky/events`.
 
 ## Surfaces
 
 | Route | Role |
 | --- | --- |
-| `/` | Public calendar (wide / Design 96 desktop board) |
-| `/embed` | 360px iframe widget |
+| `/` | Tourist phone PWA (installable, photo cards, client filters) |
+| `/embed` | Secondary 360px iframe widget |
 | `/embed/{slug}` | Single published event embed |
 | `GET /v1/ashland-ky/events` | Partner feed, Bearer token |
 | `GET /api/health` | Liveness + request id |
 
-There is no playlist widget type. Showit playlist script stays with the logo file on visitaky.com.
+There is no React Native app and no second repo. Playlist script stays with the logo file on visitaky.com.
 
-## Frozen nine fields
+The PWA loads published events on the server with the same tenant-scoped query as the partner feed. The Bearer token never goes to the browser.
 
-The public event contract is frozen. Adding or renaming a field requires a new API version.
+## Public event contract
 
-1. `title`
-2. `slug`
+Nine frozen fields (do not rename):
+
+1. `id`
+2. `title`
 3. `startsAt`
 4. `endsAt`
-5. `venue`
-6. `source`
-7. `url`
-8. `summary`
-9. `status`
+5. `timezone`
+6. `venue`
+7. `address`
+8. `url`
+9. `source`
 
-`status` is `draft` or `published`. Seed `id` is the upsert key and is not part of the public nine. Internal columns (`id`, `tenantId`, timestamps) never appear on the partner payload.
+Additive field only: `image` (URL or `null`). `image` is `null` on every seed row until Sean has photos.
 
-`GET /v1/ashland-ky/events` returns every published row for the authenticated tenant and range. There is no 27-row cap.
+`startsAt` / `endsAt` may be `YYYY-MM-DD` (date-only, no invented clock time) or an offset datetime. `status`, `slug`, and `summary` stay internal. Never auto-publish.
 
-Target seed composition (same file, append-only): 215 rows = original 27 + 161 boyd-library from [thebookplace.org](https://www.thebookplace.org/) + 27 maxpreps home games with kickoffs. Do not use ashland.librarycalendar.com (Ohio). Do not invent library rows, remaining kickoffs, or pub nights. Facebook dated nights may append later on this file.
+`source` is a `.st-d-subheading` string, not a chip.
 
-`source` is a `.st-d-subheading` string. It is not a chip, pill, or colored badge. Purple `#7B5BBB` and mint `#7AD68D` are hover / outline tokens only.
+## Seed
+
+One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`.
+
+Target **225** = 27 original + 161 `boyd-library` (thebookplace.org only) + 27 maxpreps home games + specified school/facebook rows. This file holds official rows only. Do not invent library rows, remaining kickoffs, or pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows: Poage Landing Days (date-only) and the two Sandy’s nights.
+
+## PWA
+
+`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY photo cards, a centered logo, and Design 96 tokens. Rank and filter in the client: date, category, upcoming vs all. Festivals and music sort ahead of library storytimes.
 
 ## Tenancy
 
-- Every event and API token belongs to one tenant.
-- The Bearer token resolves a tenant. The URL slug must match that tenant or the request is `403`.
-- Queries always include `tenantId` from the authenticated token, never a client-supplied id.
-- Public pages only load `ashland-ky`. Featured cards prefer the next upcoming rows even when the selected range includes past events. If **This month** has no remaining upcoming events, the calendar rolls forward to the next month so late-month visits still show what is happening.
+Bearer token tenant must match the URL slug. Queries always include `tenantId` from the authenticated token.
 
-## Never auto-publish
+## Logs
 
-Imports, creates, and reloads default to `draft`. A row becomes `published` only when an editor sets `status` explicitly (seed file on first import, `--update-status` on reload, or a future publish action). Completeness, a future `startsAt`, or a trusted source never flips the flag.
-
-Reloads upsert on `id` and leave `status` unchanged unless `--update-status` is passed.
-
-## Logs and request ids
-
-Middleware assigns `x-request-id` when the client does not send one. API responses echo it. Logs are one JSON object per line (`ts`, `level`, `msg`, `requestId`, plus event fields).
-
-## Stack
-
-TypeScript, Next.js 15, React 19, Prisma, PostgreSQL 16. Design tokens live in `docs/visit-aky-tokens.md` and `src/app/globals.css`.
+JSON lines with `requestId`. Middleware sets `x-request-id`.

@@ -1,4 +1,4 @@
-import type { EventStatus, FrozenEvent } from "./fields";
+import type { EventStatus } from "./fields";
 
 export type WriteIntent = "create" | "import" | "reload" | "publish";
 
@@ -52,7 +52,10 @@ export function resolveWriteStatus(input: {
   return { status: "draft", reason: "default-never-auto-publish" };
 }
 
-export function isAutoPublishAttempt(event: Pick<FrozenEvent, "status">, intent: WriteIntent) {
+export function isAutoPublishAttempt(
+  event: { status: EventStatus },
+  intent: WriteIntent,
+) {
   return event.status === "published" && intent !== "publish" && intent !== "import" && intent !== "reload";
 }
 

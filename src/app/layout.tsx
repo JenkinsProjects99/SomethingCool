@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Open_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
-import "./globals.css";
+import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import { log, readRequestId } from "@/lib/logger";
+import "./globals.css";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -32,6 +33,23 @@ const glacial = localFont({
 export const metadata: Metadata = {
   title: "What's Happening | Visit AKY",
   description: "Live music, makers, and downtown Ashland, Kentucky. Confirm times before you go.",
+  applicationName: "Visit AKY",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Visit AKY",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#326DCD",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <a className="skip-link" href="#main">
           Skip to events
         </a>
+        <RegisterServiceWorker />
         {children}
       </body>
     </html>

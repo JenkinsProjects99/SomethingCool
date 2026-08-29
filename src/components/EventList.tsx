@@ -29,7 +29,7 @@ export function EventList({
             <div>
               <h3 className="event-row__title">{event.title}</h3>
               <p className="st-d-paragraph">
-                {formatTimeRange(event.startsAtDate, event.endsAtDate)}
+                {formatTimeRange(event.startsAtDate, event.endsAtDate, event.dateOnly)}
                 {" · "}
                 {formatCompactVenue(event.venue)}
               </p>

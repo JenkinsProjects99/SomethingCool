@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
-  extraPublicKeys,
+  extraSeedKeys,
   FROZEN_NINE_FIELDS,
+  FrozenEventSchema,
   pickFrozenNine,
   SeedEventSchema,
 } from "@/lib/fields";
@@ -11,43 +12,44 @@ import { ORIGINAL_SEED_ROWS } from "@/lib/seed/import-seed";
 
 const seed = JSON.parse(
   readFileSync(path.join(process.cwd(), "data/seed/ashland-ky-events.v0.json"), "utf8"),
-) as { events: unknown[] };
+) as { events: Array<Record<string, unknown>> };
 
 describe("frozen nine fields", () => {
-  it("locks the public contract to nine keys", () => {
+  it("locks the public contract to the tourist nine plus image", () => {
     expect(FROZEN_NINE_FIELDS).toEqual([
+      "id",
       "title",
-      "slug",
       "startsAt",
       "endsAt",
+      "timezone",
       "venue",
-      "source",
+      "address",
       "url",
-      "summary",
-      "status",
+      "source",
     ]);
   });
 
-  it("validates every seed row and keeps the original set", () => {
+  it("validates every seed row and keeps image null", () => {
     expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
     const ids = new Set<string>();
     for (const row of seed.events) {
       const parsed = SeedEventSchema.parse(row);
       ids.add(parsed.id);
-      expect(extraPublicKeys(row as Record<string, unknown>)).toEqual([]);
-      expect(Object.keys(pickFrozenNine(parsed))).toEqual([...FROZEN_NINE_FIELDS]);
-      expect(Object.keys(pickFrozenNine(parsed))).not.toContain("id");
+      expect(extraSeedKeys(row)).toEqual([]);
+      expect(parsed.image).toBeNull();
+      const publicRow = pickFrozenNine(parsed);
+      expect(FrozenEventSchema.parse(publicRow).image).toBeNull();
+      expect(Object.keys(publicRow).sort()).toEqual(
+        [...FROZEN_NINE_FIELDS, "image"].sort(),
+      );
+      expect(Object.keys(publicRow)).not.toContain("status");
+      expect(Object.keys(publicRow)).not.toContain("slug");
     }
     expect(ids.size).toBe(seed.events.length);
   });
 
   it("rejects an eleventh public field on the wire shape", () => {
-    const [first] = seed.events as Array<Record<string, unknown>>;
-    expect(
-      extraPublicKeys({
-        ...first,
-        category: "concert",
-      }),
-    ).toEqual(["category"]);
+    const [first] = seed.events;
+    expect(extraSeedKeys({ ...first, category: "concert" })).toEqual(["category"]);
   });
 });

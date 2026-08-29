@@ -1,18 +1,20 @@
 # Ashland Calendar (Visit AKY) — v0
 
-Public calendar and iframe widget for [visitaky.com](https://visitaky.com), Design 96.
+Installable Visit AKY phone PWA (Next.js, not React Native) plus a secondary iframe widget for [visitaky.com](https://visitaky.com). Design 96.
 
 Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source as a subheading (not a chip), `.st-primary` `#326DCD`, `.st-secondary` 2px.
 
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Reloadable seed (`data/seed/ashland-ky-events.v0.json`): original 27 + 2 specified maxpreps games now; target 215 = 27 + 161 boyd-library (thebookplace.org only) + 27 maxpreps. Library rows and remaining kickoffs are not invented.
-- Public calendar at `/`
-- Iframe calendar at `/embed`
+- Installable PWA at `/` (photo cards, client date/category/upcoming filters)
+- Secondary iframe at `/embed`
+- Reloadable seed: official rows now (including Poage Landing Days and specified Sandy’s nights); target 225. `image` is null until Sean has photos. Library rows and remaining kickoffs are not invented.
+- Installable phone PWA at `/`
+- Secondary iframe calendar at `/embed`
 - Single-event embed at `/embed/{slug}`
 - `GET /v1/ashland-ky/events` with Bearer auth
-- Frozen nine fields
+- Public nine fields plus additive `image`
 - Never auto-publish
 - Structured JSON logs and `x-request-id`
 - WCAG 2.2 AA token pairing
@@ -29,7 +31,7 @@ npm run seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Narrow widget: [http://localhost:3000/embed](http://localhost:3000/embed).
+Open the phone app at [http://localhost:3000](http://localhost:3000). Secondary widget: [http://localhost:3000/embed](http://localhost:3000/embed).
 
 ## Partner API
 

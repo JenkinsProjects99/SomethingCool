@@ -1,6 +1,6 @@
 # Seed import how-to
 
-The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Frozen nine public fields plus a seed-only `id`.
+The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Public nine fields plus additive `image`. Seed-only: `slug`, `summary`, `status`.
 
 ## Count
 
@@ -8,11 +8,16 @@ The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Froze
 | --- | --- |
 | Original editorial set | 27 |
 | Specified maxpreps football | +2 (in the file now) |
-| Target | 215 = 27 + 161 `boyd-library` + 27 maxpreps |
+| Specified school rows | +4 (published times only) |
+| Poage Landing Days | +1 date-only facebook row |
+| Specified Sandy’s facebook nights | +2 |
+| Target | 225 = 27 + 161 `boyd-library` + 27 maxpreps + specified school/facebook rows |
 
-The 161 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. The remaining MaxPreps home kickoffs are not in this file until their payloads arrive. Do not invent pub nights. Facebook dated nights may append later on this same file.
+The 161 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. Remaining MaxPreps kickoffs wait for official payloads. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
 
-Intended source mix for 215: 27 original + 161 boyd-library + 27 maxpreps.
+`image` is `null` on every row until Sean has photos. Poage Landing Days is date-only (`2026-09-18`–`2026-09-20`), no invented clock times.
+
+`GET /v1/ashland-ky/events` returns every **published** row for the range. It does not cap at 27 and it does not invent unpublished library/sports rows to force 225.
 
 ## Prerequisites
 
@@ -32,7 +37,7 @@ Or point `DATABASE_URL` at any Postgres 16 database and run the same migrate com
 npm run seed
 ```
 
-First insert uses the `status` written in the JSON file. That value is editorial, not inferred. Draft rows stay off the public calendar and API.
+First insert uses the `status` written in the JSON file. That value is editorial, not inferred. Draft rows stay off the public PWA, iframe, and API.
 
 The command refuses to overwrite existing ids. That keeps a first run from clobbering live edits.
 
@@ -45,7 +50,7 @@ npm run seed:reload
 Reload is upsert-by-`id`:
 
 - Inserts any new ids
-- Updates title, slug, times, venue, source, url, and summary
+- Updates title, slug, times, timezone, venue, address, source, url, image, summary, and date-only flag
 - **Leaves `status` alone** unless you pass `--update-status`
 
 ```bash
@@ -60,13 +65,12 @@ npx tsx scripts/import-seed.ts --reload --update-status
 npm test
 ```
 
-`tests/frozen-fields.test.ts` validates every row against the frozen nine. `tests/seed-sources.test.ts` blocks Ohio library URLs and invented Boyd Library rows.
-
-`GET /v1/ashland-ky/events` returns all published rows for the range. The calendar list renders the full filtered set.
+`tests/frozen-fields.test.ts` validates every row against the public nine plus `image`. `tests/seed-sources.test.ts` blocks Ohio library URLs and invented Boyd Library rows.
 
 ## Do not
 
 - Do not scrape thebookplace.org or ashland.librarycalendar.com.
 - Do not invent `boyd-library` payloads.
+- Do not invent remaining MaxPreps kickoffs or pub nights.
 - Do not treat a complete row as published.
 - Do not put real API tokens in the seed file.

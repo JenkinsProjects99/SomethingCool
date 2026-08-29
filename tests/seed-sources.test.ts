@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { isDateOnly } from "@/lib/fields";
 import {
   SPECIFIED_MAXPREPS_ROWS,
   TARGET_BOYD_LIBRARY_ROWS,
@@ -11,18 +12,28 @@ import { assertAllowedEventUrl } from "@/lib/sources";
 
 const seed = JSON.parse(
   readFileSync(path.join(process.cwd(), "data/seed/ashland-ky-events.v0.json"), "utf8"),
-) as { events: Array<{ id: string; source: string; url: string; startsAt: string; title: string }> };
+) as {
+  events: Array<{
+    id: string;
+    source: string;
+    url: string;
+    startsAt: string;
+    endsAt: string | null;
+    title: string;
+    image: string | null;
+  }>;
+};
 
 describe("seed source rules", () => {
-  it("documents 215 as the target and does not invent boyd-library or extra sports", () => {
-    expect(TARGET_SEED_ROWS).toBe(27 + TARGET_BOYD_LIBRARY_ROWS + TARGET_MAXPREPS_ROWS);
-    expect(TARGET_SEED_ROWS).toBe(215);
-    const library = seed.events.filter((event) => event.source === "boyd-library");
-    expect(library).toHaveLength(0);
+  it("documents 225 as the target and does not invent boyd-library or pub nights", () => {
+    expect(TARGET_SEED_ROWS).toBe(27 + TARGET_BOYD_LIBRARY_ROWS + TARGET_MAXPREPS_ROWS + 10);
+    expect(TARGET_SEED_ROWS).toBe(225);
+    expect(seed.events.filter((event) => event.source === "boyd-library")).toHaveLength(0);
     const pubNights = seed.events.filter((event) =>
       /pub night|jerk riley|kel'?s/i.test(`${event.id} ${event.title}`),
     );
     expect(pubNights).toHaveLength(0);
+    expect(seed.events.every((event) => event.image === null)).toBe(true);
   });
 
   it("includes only the specified maxpreps football games until more kickoffs are provided", () => {
@@ -32,17 +43,42 @@ describe("seed source rules", () => {
       "ashland-tomcats-football-2026-09-04",
       "boyd-lions-football-2026-09-11",
     ]);
-    expect(
-      football.find((event) => event.id === "ashland-tomcats-football-2026-09-04"),
-    ).toMatchObject({
-      title: "Ashland Tomcats Football vs. Lawrence County",
-      startsAt: "2026-09-04T19:30:00-04:00",
+  });
+
+  it("includes specified school rows with published times and date-only Poage Landing Days", () => {
+    expect(seed.events.some((event) => event.id === "boyd-xc-invitational-2026-09-12")).toBe(
+      true,
+    );
+    expect(seed.events.some((event) => event.id === "boyd-basketball-2026-12-01")).toBe(true);
+    expect(seed.events.some((event) => event.id === "fairview-basketball-2026-12-28")).toBe(
+      true,
+    );
+    const poage = seed.events.find((event) => event.id === "poage-landing-days-2026");
+    expect(poage).toMatchObject({
+      title: "Poage Landing Days",
+      startsAt: "2026-09-18",
+      endsAt: "2026-09-20",
+      source: "facebook",
+      image: null,
     });
-    expect(
-      football.find((event) => event.id === "boyd-lions-football-2026-09-11"),
-    ).toMatchObject({
-      title: "Boyd County Lions Football vs. Mason County",
-      startsAt: "2026-09-11T19:30:00-04:00",
+    expect(isDateOnly(poage?.startsAt ?? "")).toBe(true);
+  });
+
+  it("includes the specified Sandy's facebook nights and no invented pub nights", () => {
+    const birthday = seed.events.find((event) => event.id === "sandys-birthday-weekend-2026-10-23");
+    const halloween = seed.events.find((event) => event.id === "sandys-halloween-party-2026-10-31");
+    expect(birthday).toMatchObject({
+      title: "Sandy's 3rd Birthday Weekend Celebration",
+      startsAt: "2026-10-23T12:00:00-04:00",
+      endsAt: "2026-10-25T19:00:00-04:00",
+      source: "facebook",
+      image: null,
+    });
+    expect(halloween).toMatchObject({
+      title: "Sandy's Halloween Party",
+      startsAt: "2026-10-31T19:00:00-04:00",
+      source: "facebook",
+      image: null,
     });
   });
 

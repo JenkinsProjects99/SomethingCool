@@ -365,3 +365,106 @@ img {
     transition: none !important;
   }
 }
+
+.phone-app {
+  width: min(430px, 100%);
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  min-height: 100vh;
+}
+
+.phone-app .st-d-title {
+  font-size: clamp(32px, 9vw, 40px);
+  margin-top: 8px;
+}
+
+.phone-filters {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0 24px;
+}
+
+.phone-date {
+  display: grid;
+  gap: 6px;
+}
+
+.phone-date input {
+  min-height: 44px;
+  border: 2px solid var(--st-primary);
+  padding: 10px 14px;
+  font-family: var(--font-glacial);
+  font-size: 16px;
+}
+
+.photo-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.photo-card {
+  border: 1px solid var(--st-rule);
+  background: var(--st-paper);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-card__placeholder,
+.photo-card__image {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.photo-card__placeholder {
+  background:
+    linear-gradient(160deg, rgba(50, 109, 205, 0.92), rgba(123, 91, 187, 0.78)),
+    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+}
+
+.photo-card--music .photo-card__placeholder {
+  background:
+    linear-gradient(160deg, rgba(50, 109, 205, 0.95), rgba(0, 0, 0, 0.35)),
+    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+}
+
+.photo-card--festivals .photo-card__placeholder {
+  background:
+    linear-gradient(160deg, rgba(123, 91, 187, 0.9), rgba(50, 109, 205, 0.7)),
+    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+}
+
+.photo-card--sports .photo-card__placeholder {
+  background:
+    linear-gradient(160deg, #326dcd, #1d3f7a),
+    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+}
+
+.photo-card--library .photo-card__placeholder {
+  background:
+    linear-gradient(160deg, #5b7aa8, #326dcd),
+    url("/brand/visit-aky-logo.png") center 40% / 42% no-repeat;
+}
+
+.photo-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px 20px;
+}
+
+.photo-card__title {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.photo-card .st-primary {
+  width: 100%;
+}

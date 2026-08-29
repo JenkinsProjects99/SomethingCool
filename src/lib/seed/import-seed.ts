@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { PrismaClient } from "@prisma/client";
 import { hashToken } from "../auth";
-import { SeedEventSchema, type SeedEvent } from "../fields";
+import { isDateOnly, SeedEventSchema, type SeedEvent } from "../fields";
+import { parseInstant } from "../instants";
 import { log } from "../logger";
 import { resolveWriteStatus } from "../publish";
 import { assertAllowedEventUrl } from "../sources";
@@ -13,13 +14,11 @@ export const SEED_PATH = path.join(
   "data/seed/ashland-ky-events.v0.json",
 );
 
-/** Original editorial set. Library and remaining MaxPreps rows append when official payloads arrive. */
 export const ORIGINAL_SEED_ROWS = 27;
 export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
 export const TARGET_MAXPREPS_ROWS = 27;
-/** 27 original + 161 boyd-library (thebookplace.org) + 27 maxpreps home games. */
-export const TARGET_SEED_ROWS = 215;
+export const TARGET_SEED_ROWS = 225;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };
@@ -44,12 +43,11 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   }
   raw.events = raw.events.map((event) => SeedEventSchema.parse(event));
   const ids = new Set(raw.events.map((event) => event.id));
-  const slugs = new Set(raw.events.map((event) => event.slug));
   if (ids.size !== raw.events.length) {
     throw new Error("Seed ids must be unique");
   }
-  if (slugs.size !== raw.events.length) {
-    throw new Error("Seed slugs must be unique");
+  if (raw.events.some((event) => event.image !== null)) {
+    throw new Error("image stays null until Sean has photos");
   }
   for (const event of raw.events) {
     assertAllowedEventUrl(event.source, event.url);
@@ -113,16 +111,21 @@ export async function importSeed(
       unchangedStatus += 1;
     }
 
+    const dateOnly = isDateOnly(event.startsAt);
     const data = {
       id: event.id,
       title: event.title,
-      slug: event.slug,
-      startsAt: new Date(event.startsAt),
-      endsAt: event.endsAt ? new Date(event.endsAt) : null,
+      slug: event.slug ?? event.id,
+      startsAt: parseInstant(event.startsAt, event.timezone),
+      endsAt: event.endsAt ? parseInstant(event.endsAt, event.timezone) : null,
+      timezone: event.timezone,
       venue: event.venue,
+      address: event.address,
       source: event.source,
       url: event.url,
-      summary: event.summary,
+      image: event.image,
+      summary: event.summary ?? event.title,
+      dateOnly,
       status: decision.status,
       tenantId: tenant.id,
     };
@@ -135,10 +138,14 @@ export async function importSeed(
         slug: data.slug,
         startsAt: data.startsAt,
         endsAt: data.endsAt,
+        timezone: data.timezone,
         venue: data.venue,
+        address: data.address,
         source: data.source,
         url: data.url,
+        image: data.image,
         summary: data.summary,
+        dateOnly: data.dateOnly,
         tenantId: data.tenantId,
         ...(options.updateStatus ? { status: data.status } : {}),
       },

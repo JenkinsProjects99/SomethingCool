@@ -1,36 +1,45 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { pickFrozenNine, type FrozenEvent } from "./fields";
 import { filterEventsByRange, startOfToday, type EventRange } from "./filters";
+import { serializeInstant } from "./instants";
 import { scopedEventWhere } from "./tenant";
 
 export interface CalendarEvent extends FrozenEvent {
+  slug: string;
   startsAtDate: Date;
   endsAtDate: Date | null;
+  dateOnly: boolean;
 }
 
 function toCalendarEvent(row: {
+  id: string;
   title: string;
   slug: string;
   startsAt: Date;
   endsAt: Date | null;
+  timezone: string;
   venue: string;
-  source: string;
+  address: string;
   url: string;
-  summary: string;
-  status: "draft" | "published";
+  source: string;
+  image: string | null;
+  dateOnly: boolean;
 }): CalendarEvent {
   return {
+    id: row.id,
     title: row.title,
-    slug: row.slug,
-    startsAt: row.startsAt.toISOString(),
-    endsAt: row.endsAt ? row.endsAt.toISOString() : null,
+    startsAt: serializeInstant(row.startsAt, row.dateOnly, row.timezone),
+    endsAt: row.endsAt ? serializeInstant(row.endsAt, row.dateOnly, row.timezone) : null,
+    timezone: row.timezone,
     venue: row.venue,
-    source: row.source,
+    address: row.address,
     url: row.url,
-    summary: row.summary,
-    status: row.status,
+    source: row.source,
+    image: row.image,
+    slug: row.slug,
     startsAtDate: row.startsAt,
     endsAtDate: row.endsAt,
+    dateOnly: row.dateOnly,
   };
 }
 
@@ -53,11 +62,15 @@ export async function getPublishedEventBySlug(
   tenantId: string,
   slug: string,
 ): Promise<CalendarEvent | null> {
-  const row = await db.event.findUnique({
-    where: { tenantId_slug: { tenantId, slug } },
+  const row = await db.event.findFirst({
+    where: { tenantId, slug, status: "published" },
   });
-  if (!row || row.status !== "published") {
-    return null;
+  if (!row) {
+    const byId = await db.event.findUnique({ where: { id: slug } });
+    if (!byId || byId.tenantId !== tenantId || byId.status !== "published") {
+      return null;
+    }
+    return toCalendarEvent(byId);
   }
   return toCalendarEvent(row);
 }
@@ -75,9 +88,9 @@ export function splitFeatured(
   const upcoming = events.filter((event) => event.startsAtDate >= today);
   const featuredSource = upcoming.length > 0 ? upcoming : events;
   const featured = featuredSource.slice(0, featuredCount);
-  const featuredSlugs = new Set(featured.map((event) => event.slug));
+  const featuredIds = new Set(featured.map((event) => event.id));
   return {
     featured,
-    rest: events.filter((event) => !featuredSlugs.has(event.slug)),
+    rest: events.filter((event) => !featuredIds.has(event.id)),
   };
 }

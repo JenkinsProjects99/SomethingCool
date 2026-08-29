@@ -8,7 +8,23 @@ function read(list: Intl.DateTimeFormatPart[], type: string) {
   return list.find((part) => part.type === type)?.value ?? "";
 }
 
-export function formatCardWhen(startsAt: Date): string {
+export function formatCardWhen(
+  startsAt: Date,
+  dateOnly = false,
+  endsAt: Date | null = null,
+): string {
+  if (dateOnly) {
+    const start = parts(startsAt, { weekday: "short", month: "short", day: "numeric" });
+    const startLabel = `${read(start, "weekday").toUpperCase()} · ${read(start, "month").toUpperCase()} ${read(start, "day")}`;
+    if (!endsAt) return startLabel;
+    const sameDay =
+      startsAt.getFullYear() === endsAt.getFullYear() &&
+      startsAt.getMonth() === endsAt.getMonth() &&
+      startsAt.getDate() === endsAt.getDate();
+    if (sameDay) return startLabel;
+    const end = parts(endsAt, { weekday: "short", month: "short", day: "numeric" });
+    return `${startLabel} – ${read(end, "weekday").toUpperCase()} · ${read(end, "month").toUpperCase()} ${read(end, "day")}`;
+  }
   const list = parts(startsAt, {
     weekday: "short",
     month: "short",
@@ -42,7 +58,17 @@ export function formatTime(date: Date): string {
   return `${hour}:${minute} ${dayPeriod}`;
 }
 
-export function formatTimeRange(startsAt: Date, endsAt: Date | null): string {
+export function formatTimeRange(
+  startsAt: Date,
+  endsAt: Date | null,
+  dateOnly = false,
+): string {
+  if (dateOnly) {
+    const start = formatListDate(startsAt);
+    if (!endsAt) return `${start.weekday} ${start.monthDay}`;
+    const end = formatListDate(endsAt);
+    return `${start.monthDay} - ${end.monthDay}`;
+  }
   if (!endsAt) {
     return formatTime(startsAt);
   }

@@ -53,6 +53,6 @@ Focus uses a 3px `#326DCD` ring. Controls are at least 24×24 CSS pixels (2.5.8)
 
 ## Layouts
 
-- Public: centered logo, “What's happening”, This month / This week / All, two featured cards, list rows with Details.
-- Embed (360px): centered logo, Upcoming / All, stacked cards (first solid, second outline), compact rows with Go.
+- Phone PWA (`/`): centered logo, “What's happening”, client Upcoming / All, date, and category tabs, photo cards (branded placeholder while `image` is null). Source is a subheading, not a chip.
+- Embed (360px, secondary): centered logo, Upcoming / All, stacked cards (first solid, second outline), compact rows with Go.
 - Embed event: `/embed/{slug}` repeats the card for a partner iframe.

@@ -18,7 +18,9 @@ export function EventCard({
   return (
     <article className="event-card">
       <p className="event-card__when">
-        <time dateTime={event.startsAt}>{formatCardWhen(event.startsAtDate)}</time>
+        <time dateTime={event.startsAt}>
+          {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
+        </time>
       </p>
       <h3 className="event-card__title">{event.title}</h3>
       <p className="st-d-paragraph">{event.venue}</p>
