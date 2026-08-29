@@ -44,6 +44,7 @@ export async function GET(
         requestId,
         tenant: auth.tenantSlug,
         range,
+        count: events.length,
         events: events.map(publicEventPayload),
       },
       {

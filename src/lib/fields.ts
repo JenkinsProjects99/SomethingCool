@@ -53,8 +53,22 @@ export function assertFrozenShape(value: unknown): FrozenEvent {
   return FrozenEventSchema.parse(value);
 }
 
+/** Seed-file only. Never appears on GET /v1/:tenant/events. */
+export const SEED_ONLY_FIELDS = ["id"] as const;
+
+export const SeedEventSchema = FrozenEventSchema.extend({
+  id: z
+    .string()
+    .min(1)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id must be lowercase kebab-case"),
+});
+
+export type SeedEvent = z.infer<typeof SeedEventSchema>;
+
 export function extraPublicKeys(record: Record<string, unknown>): string[] {
   return Object.keys(record).filter(
-    (key) => !(FROZEN_NINE_FIELDS as readonly string[]).includes(key),
+    (key) =>
+      !(FROZEN_NINE_FIELDS as readonly string[]).includes(key) &&
+      !(SEED_ONLY_FIELDS as readonly string[]).includes(key),
   );
 }

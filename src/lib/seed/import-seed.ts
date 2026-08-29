@@ -2,9 +2,10 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { PrismaClient } from "@prisma/client";
 import { hashToken } from "../auth";
-import { FrozenEventSchema, type FrozenEvent } from "../fields";
+import { SeedEventSchema, type SeedEvent } from "../fields";
 import { log } from "../logger";
 import { resolveWriteStatus } from "../publish";
+import { assertAllowedEventUrl } from "../sources";
 import { ASHLAND_KY_SLUG } from "../tenant";
 
 export const SEED_PATH = path.join(
@@ -12,12 +13,15 @@ export const SEED_PATH = path.join(
   "data/seed/ashland-ky-events.v0.json",
 );
 
-export const EXPECTED_SEED_ROWS = 27;
+/** Original editorial set. Library rows append on this same file when payloads arrive. */
+export const ORIGINAL_SEED_ROWS = 27;
+/** Target after 144 boyd-library rows from thebookplace.org. Do not invent them. */
+export const TARGET_SEED_ROWS = 171;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };
   notes?: string;
-  events: FrozenEvent[];
+  events: SeedEvent[];
 }
 
 export interface ImportOptions {
@@ -32,13 +36,20 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   if (raw.tenant.slug !== ASHLAND_KY_SLUG) {
     throw new Error(`Seed tenant must be ${ASHLAND_KY_SLUG}`);
   }
-  if (raw.events.length !== EXPECTED_SEED_ROWS) {
-    throw new Error(`Seed must contain ${EXPECTED_SEED_ROWS} rows, got ${raw.events.length}`);
+  if (raw.events.length < ORIGINAL_SEED_ROWS) {
+    throw new Error(`Seed must keep the original ${ORIGINAL_SEED_ROWS} rows`);
   }
-  raw.events = raw.events.map((event) => FrozenEventSchema.parse(event));
+  raw.events = raw.events.map((event) => SeedEventSchema.parse(event));
+  const ids = new Set(raw.events.map((event) => event.id));
   const slugs = new Set(raw.events.map((event) => event.slug));
+  if (ids.size !== raw.events.length) {
+    throw new Error("Seed ids must be unique");
+  }
   if (slugs.size !== raw.events.length) {
     throw new Error("Seed slugs must be unique");
+  }
+  for (const event of raw.events) {
+    assertAllowedEventUrl(event.source, event.url);
   }
   return raw;
 }
@@ -79,13 +90,13 @@ export async function importSeed(
 
   for (const event of seed.events) {
     const existing = await db.event.findUnique({
-      where: { tenantId_slug: { tenantId: tenant.id, slug: event.slug } },
+      where: { id: event.id },
     });
 
     const intent = existing ? "reload" : "import";
     if (existing && !options.reload) {
       throw new Error(
-        `Refusing to overwrite ${event.slug}. Re-run with --reload for a reloadable import.`,
+        `Refusing to overwrite ${event.id}. Re-run with --reload for a reloadable import.`,
       );
     }
 
@@ -100,6 +111,7 @@ export async function importSeed(
     }
 
     const data = {
+      id: event.id,
       title: event.title,
       slug: event.slug,
       startsAt: new Date(event.startsAt),
@@ -113,16 +125,18 @@ export async function importSeed(
     };
 
     await db.event.upsert({
-      where: { tenantId_slug: { tenantId: tenant.id, slug: event.slug } },
+      where: { id: event.id },
       create: data,
       update: {
         title: data.title,
+        slug: data.slug,
         startsAt: data.startsAt,
         endsAt: data.endsAt,
         venue: data.venue,
         source: data.source,
         url: data.url,
         summary: data.summary,
+        tenantId: data.tenantId,
         ...(options.updateStatus ? { status: data.status } : {}),
       },
     });
@@ -137,6 +151,7 @@ export async function importSeed(
   log.info("seed.import.complete", {
     requestId,
     tenant: tenant.slug,
+    count: seed.events.length,
     inserted,
     updated,
     unchangedStatus,

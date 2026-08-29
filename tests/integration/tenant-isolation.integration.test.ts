@@ -36,8 +36,9 @@ describe.skipIf(!hasDatabase)("tenant isolation against postgres", () => {
     });
 
     await db.event.upsert({
-      where: { tenantId_slug: { tenantId: peer.id, slug: "other-city-festival" } },
+      where: { id: "other-city-festival" },
       create: {
+        id: "other-city-festival",
         tenantId: peer.id,
         title: "Other City Festival",
         slug: "other-city-festival",

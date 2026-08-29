@@ -4,10 +4,10 @@ import { describe, expect, it } from "vitest";
 import {
   extraPublicKeys,
   FROZEN_NINE_FIELDS,
-  FrozenEventSchema,
   pickFrozenNine,
+  SeedEventSchema,
 } from "@/lib/fields";
-import { EXPECTED_SEED_ROWS } from "@/lib/seed/import-seed";
+import { ORIGINAL_SEED_ROWS } from "@/lib/seed/import-seed";
 
 const seed = JSON.parse(
   readFileSync(path.join(process.cwd(), "data/seed/ashland-ky-events.v0.json"), "utf8"),
@@ -28,13 +28,17 @@ describe("frozen nine fields", () => {
     ]);
   });
 
-  it("validates every seed row against the frozen schema", () => {
-    expect(seed.events).toHaveLength(EXPECTED_SEED_ROWS);
+  it("validates every seed row and keeps the original set", () => {
+    expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
+    const ids = new Set<string>();
     for (const row of seed.events) {
-      const parsed = FrozenEventSchema.parse(row);
+      const parsed = SeedEventSchema.parse(row);
+      ids.add(parsed.id);
       expect(extraPublicKeys(row as Record<string, unknown>)).toEqual([]);
       expect(Object.keys(pickFrozenNine(parsed))).toEqual([...FROZEN_NINE_FIELDS]);
+      expect(Object.keys(pickFrozenNine(parsed))).not.toContain("id");
     }
+    expect(ids.size).toBe(seed.events.length);
   });
 
   it("rejects an eleventh public field on the wire shape", () => {

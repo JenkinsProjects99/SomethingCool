@@ -28,7 +28,11 @@ The public event contract is frozen. Adding or renaming a field requires a new A
 8. `summary`
 9. `status`
 
-`status` is `draft` or `published`. Internal columns (`id`, `tenantId`, timestamps) never appear on the partner payload.
+`status` is `draft` or `published`. Seed `id` is the upsert key and is not part of the public nine. Internal columns (`id`, `tenantId`, timestamps) never appear on the partner payload.
+
+`GET /v1/ashland-ky/events` returns every published row for the authenticated tenant and range. There is no 27-row cap.
+
+Target seed composition (same file, append-only): 12 paramount, 2 visit-aky, 8 sandys, 2 sandyridge, 2 other-official, 1 parks-rec, 144 boyd-library from [thebookplace.org](https://www.thebookplace.org/) only. Do not use ashland.librarycalendar.com (Ohio). Do not invent library rows. Sports append later on this file.
 
 `source` is a `.st-d-subheading` string. It is not a chip, pill, or colored badge. Purple `#7B5BBB` and mint `#7AD68D` are hover / outline tokens only.
 
@@ -43,7 +47,7 @@ The public event contract is frozen. Adding or renaming a field requires a new A
 
 Imports, creates, and reloads default to `draft`. A row becomes `published` only when an editor sets `status` explicitly (seed file on first import, `--update-status` on reload, or a future publish action). Completeness, a future `startsAt`, or a trusted source never flips the flag.
 
-Reloads update the eight content fields and leave `status` unchanged unless `--update-status` is passed.
+Reloads upsert on `id` and leave `status` unchanged unless `--update-status` is passed.
 
 ## Logs and request ids
 

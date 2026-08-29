@@ -7,7 +7,7 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Reloadable **27-row** seed (`data/seed/ashland-ky-events.v0.json`)
+- Reloadable seed (`data/seed/ashland-ky-events.v0.json`): original 27 now; 171 after official Boyd Library rows (thebookplace.org only, not invented)
 - Public calendar at `/`
 - Iframe calendar at `/embed`
 - Single-event embed at `/embed/{slug}`
@@ -79,7 +79,7 @@ Single listing:
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Vitest, including tenant isolation and never-auto-publish |
-| `npm run seed` | First import of 27 rows |
+| `npm run seed` | First import (upsert on `id`) |
 | `npm run seed:reload` | Upsert content, preserve status |
 
 ## Product rules

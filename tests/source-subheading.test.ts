@@ -7,7 +7,7 @@ describe("source is a subheading, not a chip", () => {
   const css = readFileSync(path.join(process.cwd(), "src/app/globals.css"), "utf8");
 
   it("renders source with st-d-subheading", () => {
-    expect(card).toContain('className="st-d-subheading">{event.source}');
+    expect(card).toContain('className="st-d-subheading">{sourceLabel(event.source)}');
     expect(card).not.toMatch(/chip|pill|badge/i);
   });
 

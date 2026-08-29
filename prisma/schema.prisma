@@ -40,7 +40,7 @@ model ApiToken {
 /// Frozen nine public fields live on Event.
 /// title, slug, startsAt, endsAt, venue, source, url, summary, status
 model Event {
-  id        String      @id @default(cuid())
+  id        String      @id
   tenantId  String      @map("tenant_id")
   tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   title     String
