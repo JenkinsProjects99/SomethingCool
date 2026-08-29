@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { startOfLookback } from "@/lib/filters";
 import { publishedEventsFromSeedFile } from "@/lib/seed/published-from-file";
 import { eventsForThumb } from "@/lib/tourist-feed";
 
@@ -12,7 +13,7 @@ describe("tourist upcoming bar and calendar tab", () => {
   it("shows upcoming-only photo cards in ET including Sean's weekend rows", () => {
     const upcoming = eventsForThumb(events, "upcoming", NOW);
     expect(upcoming.length).toBeGreaterThan(0);
-    expect(upcoming.every((event) => event.startsAtDate >= NOW || event.startsAt.startsWith("2026-08-29") || event.startsAt >= "2026-08-29")).toBe(true);
+    expect(upcoming.every((event) => event.startsAtDate >= startOfLookback(NOW))).toBe(true);
     expect(
       upcoming.some((event) => event.id === "ashland-tomcats-volleyball-johnson-central-2026-08-29"),
     ).toBe(true);
