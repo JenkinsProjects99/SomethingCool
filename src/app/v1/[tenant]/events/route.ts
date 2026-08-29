@@ -13,10 +13,14 @@ import {
   type EventRange,
 } from "@/lib/filters";
 import { log, readRequestId } from "@/lib/logger";
-import { publishedEventsFromSeedQuery } from "@/lib/published-feed";
+import {
+  publishedEventsFromSeedQuery,
+  shouldPreferOfficialSeedFile,
+} from "@/lib/published-feed";
 import {
   ASHLAND_KY_SLUG,
   InvalidQueryError,
+  scopedEventWhere,
   TenantScopeError,
   UnauthorizedError,
 } from "@/lib/tenant";
@@ -59,13 +63,23 @@ export async function GET(
         tenantSlug,
       );
       tenantOut = auth.tenantSlug;
-      const dbEvents = await listPublishedEvents(db, auth.tenantId, {
-        range,
-        from,
-        to,
-      });
-      if (dbEvents.length >= fileEvents.length) {
-        events = dbEvents;
+      if (tenantOut === ASHLAND_KY_SLUG) {
+        const dbPublished = await db.event.count({
+          where: scopedEventWhere(auth.tenantId),
+        });
+        if (!shouldPreferOfficialSeedFile(dbPublished)) {
+          events = await listPublishedEvents(db, auth.tenantId, {
+            range,
+            from,
+            to,
+          });
+        }
+      } else {
+        events = await listPublishedEvents(db, auth.tenantId, {
+          range,
+          from,
+          to,
+        });
       }
     } catch (error) {
       if (

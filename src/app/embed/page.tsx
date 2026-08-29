@@ -19,8 +19,12 @@ export default async function EmbedCalendarPage({
   try {
     const tenant = await getAshlandTenant();
     if (tenant) {
-      const rows = await listPublishedEvents(getPrisma(), tenant.id, range);
-      if (rows.length >= fromFile.length) events = rows;
+      const db = getPrisma();
+      const published = await listPublishedEvents(db, tenant.id, "all");
+      const fileAll = publishedEventsFromSeedQuery({ range: "all" });
+      if (published.length >= fileAll.length) {
+        events = await listPublishedEvents(db, tenant.id, range);
+      }
     }
   } catch {
     events = fromFile;

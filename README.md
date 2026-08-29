@@ -39,10 +39,17 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 
 ## Partner API
 
+`GET /v1/ashland-ky/events` reads Sean’s 225-row seed file when Postgres is empty, down, or still on the old ~32-row stub. A stale local DB cannot replace the official file until it has at least as many published rows. Payload includes additive `image` and `category`.
+
 ```bash
 curl -s -H "Authorization: Bearer dev-ashland-ky-local-token" \
-  "http://localhost:3000/v1/ashland-ky/events?from=2026-09-01&to=2026-10-01"
+  "http://localhost:3000/v1/ashland-ky/events?range=all"
+
+curl -s -H "Authorization: Bearer dev-ashland-ky-local-token" \
+  "http://localhost:3000/v1/ashland-ky/events?from=2026-08-29&to=2026-08-31"
 ```
+
+The weekend window is exactly the seven verified Aug 29–31 rows (three volleyball, Sandy’s Exacta 11:30pm ET, Novel Tea Monday, Boyd soccer 6pm and 8pm). Those rows have `image: null`; the PWA shows the Visit AKY logo in the client and does not write that URL into JSON.
 
 The example token is a local dummy. Rotate it before any shared host.
 

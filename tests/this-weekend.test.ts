@@ -23,10 +23,8 @@ describe("this-weekend GET window", () => {
       from: parseWindowBound("2026-08-29"),
       to: parseToBound("2026-08-31"),
     });
-    const ids = events.map((event) => event.id);
-    for (const id of WEEKEND_IDS) {
-      expect(ids).toContain(id);
-    }
+    expect(events.map((event) => event.id)).toEqual([...WEEKEND_IDS]);
+    expect(events).toHaveLength(WEEKEND_IDS.length);
     const exacta = events.find((event) => event.id === WEEKEND_IDS[3]);
     expect(exacta?.startsAt).toBe("2026-08-29T23:30:00-04:00");
     for (const event of events) {
@@ -34,8 +32,8 @@ describe("this-weekend GET window", () => {
       expect(payload).toHaveProperty("category");
       expect(payload).toHaveProperty("image");
       expect(payload.category).toBeTruthy();
+      expect(payload.image).toBeNull();
     }
-    expect(events.find((event) => event.id === WEEKEND_IDS[3])?.image).toBeNull();
   });
 
   it("fails import when any row is missing category", async () => {

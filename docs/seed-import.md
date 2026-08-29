@@ -32,7 +32,7 @@ npx prisma migrate deploy
 
 Or point `DATABASE_URL` at any Postgres 16 database and run the same migrate command.
 
-`ASHLAND_KY_API_TOKEN` in `.env` is hashed (SHA-256) and stored on the tenant. The example value is a local placeholder, not a production secret. The phone UI and GET fall back to this seed file when Postgres is empty or down.
+`ASHLAND_KY_API_TOKEN` in `.env` is hashed (SHA-256) and stored on the tenant. The example value is a local placeholder, not a production secret. The phone UI and GET fall back to this seed file when Postgres is empty, down, or still holding the old ~32-row stub. Compare published totals, not a month-window slice.
 
 ## First import
 
