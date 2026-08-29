@@ -6,7 +6,7 @@ import { MonthCalendar } from "@/components/MonthCalendar";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import { cardImageSrc } from "@/lib/card-image";
 import type { CalendarEvent } from "@/lib/events";
-import { firstScreenUsedUpcoming, startOfToday } from "@/lib/filters";
+import { firstScreenUsedUpcoming, upcomingOnly } from "@/lib/filters";
 import { formatCardWhen } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
 import { eventsForThumb, type TouristThumb } from "@/lib/tourist-feed";
@@ -54,19 +54,18 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
   const [view, setView] = useState<View>("cards");
   const now = useMemo(() => new Date(), []);
 
-  const visible = useMemo(() => eventsForThumb(events, thumb, now), [events, thumb, now]);
+  const upcoming = useMemo(() => upcomingOnly(events, now), [events, now]);
+  const visible = useMemo(() => eventsForThumb(upcoming, thumb, now), [upcoming, thumb, now]);
 
   const calendarEvents = useMemo(() => {
-    if (thumb === "weekend") {
-      return events.filter((event) => event.startsAtDate >= startOfToday(now));
-    }
+    if (thumb === "weekend") return upcoming;
     return visible;
-  }, [events, thumb, visible, now]);
+  }, [upcoming, thumb, visible]);
 
   const usedUpcoming =
     thumb === "weekend" &&
     firstScreenUsedUpcoming(
-      events.map((event) => ({ startsAt: event.startsAtDate })),
+      upcoming.map((event) => ({ startsAt: event.startsAtDate })),
       now,
     );
 

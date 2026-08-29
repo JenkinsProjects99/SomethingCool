@@ -4,7 +4,7 @@ import { FilterBar } from "@/components/FilterBar";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import type { CalendarEvent } from "@/lib/events";
 import { splitFeatured } from "@/lib/events";
-import type { EventRange } from "@/lib/filters";
+import { upcomingOnly, type EventRange } from "@/lib/filters";
 
 export function CalendarView({
   mode,
@@ -15,7 +15,8 @@ export function CalendarView({
   range: EventRange;
   events: CalendarEvent[];
 }) {
-  const { featured, rest } = splitFeatured(events);
+  const touristEvents = upcomingOnly(events);
+  const { featured, rest } = splitFeatured(touristEvents);
   const embed = mode === "embed";
 
   const filters = embed
@@ -52,7 +53,7 @@ export function CalendarView({
       <main id="main">
         <FilterBar filters={filters} active={range} labelledBy="calendar-heading" />
 
-        {events.length === 0 ? (
+        {touristEvents.length === 0 ? (
           <div className="empty-state">
             <p className="st-d-paragraph">No published events in this range yet.</p>
           </div>

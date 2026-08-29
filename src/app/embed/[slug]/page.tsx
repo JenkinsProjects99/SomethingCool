@@ -3,6 +3,7 @@ import { EventCard } from "@/components/EventCard";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import { getPrisma } from "@/lib/db";
 import { getPublishedEventBySlug } from "@/lib/events";
+import { startOfToday } from "@/lib/filters";
 import { publishedEventsFromSeedFile } from "@/lib/seed/published-from-file";
 import { getAshlandTenant } from "@/lib/tenant-data";
 
@@ -23,7 +24,7 @@ export default async function EmbedEventPage({
   } catch {
     // Keep the seed-file row, including when image is null.
   }
-  if (!event) {
+  if (!event || event.startsAtDate < startOfToday()) {
     notFound();
   }
 

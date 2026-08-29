@@ -133,11 +133,10 @@ export function splitFeatured(
 ) {
   const today = startOfToday(now);
   const upcoming = events.filter((event) => event.startsAtDate >= today);
-  const featuredSource = upcoming.length > 0 ? upcoming : events;
-  const featured = featuredSource.slice(0, featuredCount);
+  const featured = upcoming.slice(0, featuredCount);
   const featuredIds = new Set(featured.map((event) => event.id));
   return {
     featured,
-    rest: events.filter((event) => !featuredIds.has(event.id)),
+    rest: upcoming.filter((event) => !featuredIds.has(event.id)),
   };
 }

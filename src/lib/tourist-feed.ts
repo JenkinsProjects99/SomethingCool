@@ -5,7 +5,7 @@ import {
   sortForTourist,
 } from "./categories";
 import type { CalendarEvent } from "./events";
-import { firstScreenEvents, startOfToday } from "./filters";
+import { firstScreenEvents, upcomingOnly } from "./filters";
 
 export type TouristThumb = "weekend" | "music" | "sports" | "family";
 
@@ -14,8 +14,7 @@ export function eventsForThumb(
   thumb: TouristThumb,
   now = new Date(),
 ): CalendarEvent[] {
-  const today = startOfToday(now);
-  const upcoming = events.filter((event) => event.startsAtDate >= today);
+  const upcoming = upcomingOnly(events, now);
   if (thumb === "weekend") {
     const rows = firstScreenEvents(
       upcoming.map((event) => ({ event, startsAt: event.startsAtDate })),

@@ -37,6 +37,6 @@ describe("featured split", () => {
       "first-friday-september",
       "deana-carter",
     ]);
-    expect(rest.map((row) => row.id)).toEqual(["sammy-kershaw"]);
+    expect(rest.map((row) => row.id)).toEqual([]);
   });
 });

@@ -81,6 +81,15 @@ export function startOfToday(now = new Date()): Date {
   return startOfZonedDay(now);
 }
 
+/** Public tourist UI: today and later in America/New_York. */
+export function upcomingOnly<T extends { startsAtDate: Date }>(
+  events: T[],
+  now = new Date(),
+): T[] {
+  const today = startOfToday(now);
+  return events.filter((event) => event.startsAtDate >= today);
+}
+
 function addZonedDays(start: Date, days: number): Date {
   const parts = zonedParts(start);
   const utc = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days));
