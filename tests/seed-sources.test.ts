@@ -49,13 +49,20 @@ describe("seed source rules", () => {
   it("requires category on every row and never stores the Visit AKY logo URL", () => {
     expect(seed.events.every((event) => Boolean(event.category))).toBe(true);
     const withImages = seed.events.filter((event) => event.image);
-    expect(withImages.length).toBeGreaterThan(0);
-    expect(withImages.length).toBeLessThanOrEqual(OFFICIAL_IMAGE_ROWS);
+    expect(withImages).toHaveLength(OFFICIAL_IMAGE_ROWS);
     for (const event of withImages) {
       const host = new URL(event.image as string).hostname;
       expect(["cdn.saffire.com", "static.showit.co"]).toContain(host);
     }
     expect(JSON.stringify(seed.events)).not.toMatch(/visit-aky-logo|\/brand\/visit/i);
+    expect(seed.events.filter((event) => event.id.startsWith("sandys-")).every((event) => event.image === null)).toBe(
+      true,
+    );
+    for (const event of seed.events) {
+      if (/sesame|blippi|nutcracker|festival of trees/i.test(event.title)) {
+        expect(event.category).toBe("family");
+      }
+    }
   });
 
   it("keeps the specified maxpreps football games", () => {

@@ -30,10 +30,10 @@ export function categoryForEvent(event: {
   source?: string;
   title?: string;
 }): EventCategory {
-  if (event.title && FAMILY_TITLE.test(event.title)) return "family";
   if (!event.category || !(EVENT_CATEGORIES as readonly string[]).includes(event.category)) {
     throw new Error(`Import failed: category is missing on ${event.id ?? "a seed row"}`);
   }
+  if (event.title && FAMILY_TITLE.test(event.title)) return "family";
   return event.category as EventCategory;
 }
 

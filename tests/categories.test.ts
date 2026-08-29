@@ -23,10 +23,10 @@ describe("client ranking", () => {
   it("keeps Sesame, Blippi, Nutcracker, and Festival of Trees on family", () => {
     expect(isFamilyEvent({ category: "family" })).toBe(true);
     expect(isFamilyEvent({ category: "music" })).toBe(false);
-    expect(categoryForEvent({ source: "paramount", title: "Sesame Street Live" })).toBe("family");
-    expect(categoryForEvent({ source: "paramount", title: "The Nutcracker" })).toBe("family");
-    expect(categoryForEvent({ source: "paramount", title: "Blippi" })).toBe("family");
-    expect(categoryForEvent({ source: "paramount", title: "Festival of Trees" })).toBe("family");
+    expect(categoryForEvent({ category: "music", title: "Sesame Street Live" })).toBe("family");
+    expect(categoryForEvent({ category: "music", title: "The Nutcracker" })).toBe("family");
+    expect(categoryForEvent({ category: "music", title: "Blippi" })).toBe("family");
+    expect(categoryForEvent({ category: "music", title: "Festival of Trees" })).toBe("family");
   });
 
   it("uses the stored category and fails when category is missing", () => {

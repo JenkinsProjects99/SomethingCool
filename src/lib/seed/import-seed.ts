@@ -57,8 +57,8 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
     throw new Error(`Seed must be ${TARGET_SEED_ROWS} official rows`);
   }
   const pictured = raw.events.filter((event) => event.image !== null);
-  if (pictured.length > OFFICIAL_IMAGE_ROWS) {
-    throw new Error(`at most ${OFFICIAL_IMAGE_ROWS} official Paramount/Visit AKY photos are allowed`);
+  if (pictured.length !== OFFICIAL_IMAGE_ROWS) {
+    throw new Error(`exactly ${OFFICIAL_IMAGE_ROWS} official Paramount/Visit AKY photos are required`);
   }
   for (const event of pictured) {
     if (/visit-aky-logo|\/brand\/visit/i.test(event.image ?? "")) {

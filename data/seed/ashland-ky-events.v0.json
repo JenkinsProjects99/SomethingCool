@@ -3,7 +3,7 @@
     "slug": "ashland-ky",
     "name": "Visit AKY"
   },
-  "notes": "Reloadable seed. Public nine + additive image and category. 225 official rows. No First Friday, winter makers, tentative NYE, or Music Trail weekend. Category is required on every row; import fails if it is missing. Official Paramount/Visit AKY image URLs stay on the pictured rows; all others image null. Never write the Visit AKY logo URL into JSON. Client shows the logo when image is null. Do not invent pub nights. Upsert on id. Poage and Festival of Trees are date-only.",
+  "notes": "Reloadable seed. Public nine + additive image and category. 225 official rows. 14 rows have official Paramount/Visit AKY image URLs; Sandy's and all others image null. Category is required on every row and is not inferred from source. Sesame, Blippi, Nutcracker, and Festival of Trees are family. No First Friday, winter makers, tentative NYE, or Music Trail. Upsert on id.",
   "events": [
     {
       "id": "sammy-kershaw",
@@ -287,7 +287,7 @@
       "address": "Ashland Riverfront, Ashland, KY 41101",
       "url": "https://visitaky.com/",
       "source": "visit-aky",
-      "image": null,
+      "image": "https://static.showit.co/1200/Lwc6ITBu0JZwqfQCFQE3gg/327307/555606446_10115681365290174_2717048400223972814_n.jpg",
       "slug": "floodwall-mural-tour",
       "summary": "Outdoor walk along the Ohio River floodwall murals. Confirm weather before you go.",
       "status": "published",
@@ -495,7 +495,7 @@
       "address": "1300 Winchester Ave, Ashland, KY 41101",
       "url": "https://www.paramountashland.com/events/2026/shrek",
       "source": "paramount",
-      "image": null,
+      "image": "https://cdn.saffire.com/images.ashx?t=ig&rid=ParamountTheatre&i=Shrek.jpg&cb=5c644b50",
       "category": "family",
       "slug": "shrek-the-musical",
       "summary": "Shrek at Paramount Theater Ashland.",
@@ -511,7 +511,7 @@
       "address": "1300 Winchester Ave, Ashland, KY 41101",
       "url": "https://www.paramountashland.com/events/2026/festival-of-trees--trains",
       "source": "paramount",
-      "image": null,
+      "image": "https://cdn.saffire.com/images.ashx?t=ig&rid=ParamountTheatre&i=Festival_of_Trees.jpg&cb=6e5ee84d",
       "category": "family",
       "slug": "festival-of-trees-and-trains-2026",
       "summary": "Festival of Trees & Trains at the Paramount. Confirm daily hours before you go.",
