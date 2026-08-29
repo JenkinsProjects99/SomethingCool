@@ -42,10 +42,15 @@ export function categoryForEvent(event: {
   source: string;
   title?: string;
 }): EventCategory {
-  if (event.category && (EVENT_CATEGORIES as readonly string[]).includes(event.category)) {
+  if (event.title && FAMILY_TITLE.test(event.title)) return "family";
+  // `community` is the DB default when seed omitted category — still infer.
+  if (
+    event.category &&
+    event.category !== "community" &&
+    (EVENT_CATEGORIES as readonly string[]).includes(event.category)
+  ) {
     return event.category as EventCategory;
   }
-  if (event.title && FAMILY_TITLE.test(event.title)) return "family";
   return SOURCE_CATEGORY[event.source] ?? "community";
 }
 

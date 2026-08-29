@@ -403,6 +403,119 @@ img {
   padding: 10px 8px;
 }
 
+.phone-views {
+  display: flex;
+  gap: 8px;
+  margin: -8px 0 24px;
+}
+
+.phone-views .st-primary,
+.phone-views .st-secondary {
+  flex: 1;
+  padding: 10px 8px;
+}
+
+.month-cal {
+  margin-bottom: 24px;
+}
+
+.month-cal__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.month-cal__title {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+}
+
+.month-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.month-cal__dow {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 4px;
+}
+
+.month-cal__cell {
+  min-height: 44px;
+  border: 1px solid var(--st-rule);
+  background: var(--st-paper);
+  color: var(--st-ink);
+  font-family: var(--font-open-sans);
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 0;
+}
+
+.month-cal__cell--empty {
+  border-color: transparent;
+}
+
+.month-cal__cell--has {
+  border-color: var(--st-primary);
+}
+
+.month-cal__cell--on {
+  background: var(--st-primary);
+  color: var(--st-primary-label);
+  border-color: var(--st-primary);
+}
+
+.month-cal__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: block;
+}
+
+.month-cal__list {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.month-cal__list li {
+  border-top: 1px solid var(--st-rule);
+  padding: 12px 0;
+}
+
+.month-cal__list a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.month-cal__list strong {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
 .photo-stack {
   display: grid;
   gap: 14px;

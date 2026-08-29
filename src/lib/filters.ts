@@ -121,6 +121,49 @@ export function thisWeekendWindow<T extends { startsAt: Date }>(
   return { from: friday, to: addZonedDays(friday, 3) };
 }
 
+const MIN_FIRST_SCREEN = 6;
+
+/** Weekend hits if any; pad with upcoming so the first screen is never empty. */
+export function firstScreenEvents<T extends { startsAt: Date }>(
+  events: T[],
+  now = new Date(),
+): T[] {
+  const today = startOfZonedDay(now);
+  const upcoming = [...events]
+    .filter((event) => event.startsAt >= today)
+    .sort((left, right) => left.startsAt.getTime() - right.startsAt.getTime());
+  if (upcoming.length === 0) return [];
+  const weekend = thisWeekendWindow(
+    now,
+    upcoming.map((event) => ({ startsAt: event.startsAt })),
+  );
+  const inWeekend = upcoming.filter((event) => eventInWindow(event.startsAt, weekend));
+  if (inWeekend.length >= MIN_FIRST_SCREEN) return inWeekend;
+  const seen = new Set(inWeekend);
+  const padded = [...inWeekend];
+  for (const event of upcoming) {
+    if (padded.length >= MIN_FIRST_SCREEN) break;
+    if (!seen.has(event)) {
+      seen.add(event);
+      padded.push(event);
+    }
+  }
+  return padded;
+}
+
+export function firstScreenUsedUpcoming<T extends { startsAt: Date }>(
+  events: T[],
+  now = new Date(),
+): boolean {
+  const today = startOfZonedDay(now);
+  const upcoming = events.filter((event) => event.startsAt >= today);
+  const weekend = thisWeekendWindow(
+    now,
+    upcoming.map((event) => ({ startsAt: event.startsAt })),
+  );
+  return firstScreenEvents(events, now).some((event) => !eventInWindow(event.startsAt, weekend));
+}
+
 export function rangeBounds(
   range: EventRange,
   now = new Date(),

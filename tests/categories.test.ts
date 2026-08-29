@@ -28,4 +28,28 @@ describe("client ranking", () => {
     expect(categoryForEvent({ source: "paramount", title: "Blippi" })).toBe("family");
     expect(categoryForEvent({ source: "paramount", title: "Festival of Trees" })).toBe("family");
   });
+
+  it("infers music and sports when the stored category is the community default", () => {
+    expect(
+      categoryForEvent({
+        category: "community",
+        source: "paramount",
+        title: "Deana Carter",
+      }),
+    ).toBe("music");
+    expect(
+      categoryForEvent({
+        category: "community",
+        source: "maxpreps",
+        title: "Ashland Tomcats Football vs. Lawrence County",
+      }),
+    ).toBe("sports");
+    expect(
+      categoryForEvent({
+        category: "community",
+        source: "paramount",
+        title: "Sesame Street Live",
+      }),
+    ).toBe("family");
+  });
 });

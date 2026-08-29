@@ -3,6 +3,7 @@ import {
   eventInRange,
   eventInWindow,
   filterEventsByRange,
+  firstScreenEvents,
   parseEmbedRange,
   parsePublicRange,
   thisWeekendWindow,
@@ -43,5 +44,27 @@ describe("calendar ranges", () => {
     const window = thisWeekendWindow(now, [deana]);
     expect(eventInWindow(deana.startsAt, window)).toBe(true);
     expect(eventInWindow(new Date("2026-08-29T12:00:00-04:00"), window)).toBe(false);
+  });
+
+  it("fills the first screen with upcoming tourist events when this weekend is empty", () => {
+    const deana = { startsAt: new Date("2026-09-04T20:00:00-04:00"), id: "deana-carter" };
+    const fridayIfAug29IsFriday = new Date("2026-08-29T15:00:00-04:00");
+    const shown = firstScreenEvents([deana], fridayIfAug29IsFriday);
+    expect(shown.map((event) => event.id)).toContain("deana-carter");
+  });
+
+  it("pads a sparse weekend with the next upcoming rows so the first screen is not empty", () => {
+    const weekendOnly = { startsAt: new Date("2026-08-30T12:00:00-04:00"), id: "one" };
+    const later = [
+      { startsAt: new Date("2026-09-04T20:00:00-04:00"), id: "deana-carter" },
+      { startsAt: new Date("2026-09-10T20:00:00-04:00"), id: "ashley-mcbryde" },
+      { startsAt: new Date("2026-09-12T09:00:00-04:00"), id: "makers" },
+      { startsAt: new Date("2026-09-18T00:00:00-04:00"), id: "poage" },
+      { startsAt: new Date("2026-09-19T10:00:00-04:00"), id: "walk" },
+    ];
+    const shown = firstScreenEvents([weekendOnly, ...later], now);
+    expect(shown.length).toBeGreaterThanOrEqual(6);
+    expect(shown[0]?.id).toBe("one");
+    expect(shown.map((event) => event.id)).toContain("deana-carter");
   });
 });
