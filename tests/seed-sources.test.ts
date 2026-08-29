@@ -28,7 +28,7 @@ const seed = JSON.parse(
 
 describe("seed source rules", () => {
   it("ships official rows without invented pub nights", () => {
-    expect(TARGET_SEED_ROWS).toBe(231);
+    expect(TARGET_SEED_ROWS).toBe(245);
     expect(seed.events).toHaveLength(TARGET_SEED_ROWS);
     expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
     expect(seed.events.filter((event) => event.source === "boyd-library").length).toBeGreaterThanOrEqual(
@@ -39,18 +39,18 @@ describe("seed source rules", () => {
     );
     expect(pubNights).toHaveLength(0);
     expect(
-      seed.events.some((event) => /first[\s-]?friday/i.test(`${event.id} ${event.title}`)),
-    ).toBe(false);
+      seed.events.some((event) => event.id === "facebook-first-friday-2026-09-04"),
+    ).toBe(true);
   });
 
-  it("keeps at most 14 official Paramount/Visit AKY image URLs and nulls the rest", () => {
+  it("keeps at most 28 official or Facebook image URLs and nulls the rest", () => {
     const withImages = seed.events.filter((event) => event.image);
     expect(withImages.length).toBeGreaterThan(0);
-    expect(withImages.length).toBeLessThanOrEqual(OFFICIAL_IMAGE_ROWS);
+    expect(withImages.length).toBe(OFFICIAL_IMAGE_ROWS);
     for (const event of withImages) {
       const host = new URL(event.image as string).hostname;
-      expect(["cdn.saffire.com", "static.showit.co"]).toContain(host);
-      expect(["paramount", "visit-aky"]).toContain(event.source);
+      expect(["cdn.saffire.com", "static.showit.co", "sandyridge.com"]).toContain(host);
+      expect(["paramount", "visit-aky", "facebook", "sandyridge"]).toContain(event.source);
     }
     expect(seed.events.filter((event) => event.image === null)).toHaveLength(
       TARGET_SEED_ROWS - withImages.length,

@@ -6,8 +6,8 @@ The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Publi
 
 | Stage | Rows |
 | --- | --- |
-| Official published rows | **231** (Sean’s 225 + Poage main-stage times + Thanksgiving Eve and NYE at 10am ET) |
-| Official Paramount / Visit AKY images | **at most 14** |
+| Official published rows | **245** (Sean’s 225 + Poage main-stage times + Thanksgiving Eve and NYE at 10am ET + facebook First Fridays + Sandy Ridge race days + Sep 5 Exacta) |
+| Official or Facebook images | **28** |
 | Remaining images | `null` in JSON (client shows the Visit AKY logo; do not write the logo URL into the seed) |
 
 The file keeps the original editorial 27, specified school/facebook rows, official Paramount extras (Shrek, Festival of Trees & Trains), official MaxPreps Ashland home games, and published [thebookplace.org](https://www.thebookplace.org/) programs (161+). Closings and meeting-room reservations were not copied. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
@@ -16,7 +16,7 @@ The file keeps the original editorial 27, specified school/facebook rows, offici
 
 Poage Landing Days keeps the date-only festival row (`2026-09-18`–`2026-09-20`) plus official Main Stage times from [poagelandingdays.com/main-stage.html](https://www.poagelandingdays.com/main-stage.html): Opening Ceremony Sat 7:00 PM, JigJam Sat 7:15 PM, The Kentucky Headhunters Sat 9:00 PM, House of Grace Sun 11:00 AM.
 
-Thanksgiving Eve and New Year’s Eve at Sandy’s are both `10:00 AM` ET (`2026-11-25T10:00:00-05:00` and `2026-12-31T10:00:00-05:00`). A tentative 8pm downtown NYE is not in the file. Extra unpublished rows were not invented to force 245.
+Thanksgiving Eve and New Year’s Eve at Sandy’s are both `10:00 AM` ET (`2026-11-25T10:00:00-05:00` and `2026-12-31T10:00:00-05:00`). Facebook First Friday September 4 is `6:00 PM` ET (`facebook-first-friday-2026-09-04`) with the official Visit AKY First Friday photo. Category is stored; First Friday is `community` and never a Sports row.
 
 `GET /v1/ashland-ky/events` returns every **published** row for the range. It does not cap at 27. Date-only `to` includes that calendar day in Eastern Time.
 

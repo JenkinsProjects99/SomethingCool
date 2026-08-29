@@ -43,7 +43,7 @@ Additive fields: `image` (official URL or `null`) and `category` (`music` | `spo
 
 One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`. Official published rows only (Sean’s 225, Poage main-stage times, Thanksgiving Eve and NYE at 10am ET). Do not invent events.
 
-At most 14 rows carry official Paramount (`cdn.saffire.com`) or Visit AKY (`static.showit.co`) image URLs. Every other row is `image: null` in JSON. The PWA draws the Visit AKY logo as a client-only fallback. Never drop a row for a missing photo. Do not write the logo URL into the seed. Do not invent events or fake photos as content.
+28 rows carry official Paramount, Visit AKY, or Facebook/Sandy Ridge image URLs. Every other row is `image: null` in JSON. The PWA draws the Visit AKY logo as a client-only fallback. Never drop a row for a missing photo. Do not write the logo URL into the seed. Category is stored; do not infer it from title.
 
 Library rows come from published [thebookplace.org](https://www.thebookplace.org/) programs. MaxPreps rows are official Ashland home games. Do not invent pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows include Poage Landing Days (date-only festival plus official main-stage times from poagelandingdays.com) and the Sandy’s nights.
 

@@ -71,8 +71,16 @@ describe("stored category", () => {
   });
 
   it("never treats First Friday as a sports event", () => {
+    const firstFriday = seed.events.find(
+      (event) => event.id === "facebook-first-friday-2026-09-04",
+    );
+    expect(firstFriday?.category).toBe("community");
     expect(
-      seed.events.some((event) => /first[\s-]?friday/i.test(`${event.id} ${event.title}`)),
+      isSportsEvent({
+        category: firstFriday!.category as "community",
+        id: firstFriday!.id,
+        title: firstFriday!.title,
+      }),
     ).toBe(false);
     expect(
       isSportsEvent({

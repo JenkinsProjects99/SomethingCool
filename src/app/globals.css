@@ -594,7 +594,8 @@ img {
 }
 
 .photo-card__when,
-.photo-card__venue {
+.photo-card__venue,
+.photo-card .st-d-paragraph {
   font-family: var(--font-glacial);
   font-weight: 400;
   font-size: 14px;
@@ -603,7 +604,8 @@ img {
   color: #ffffff;
 }
 
-.photo-card__venue {
+.photo-card__venue,
+.photo-card .st-d-paragraph {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

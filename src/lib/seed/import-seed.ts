@@ -18,8 +18,8 @@ export const ORIGINAL_SEED_ROWS = 27;
 export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
 export const TARGET_MAXPREPS_ROWS = 27;
-export const TARGET_SEED_ROWS = 231;
-export const OFFICIAL_IMAGE_ROWS = 14;
+export const TARGET_SEED_ROWS = 245;
+export const OFFICIAL_IMAGE_ROWS = 28;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };
@@ -58,7 +58,7 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   }
   const pictured = raw.events.filter((event) => event.image !== null);
   if (pictured.length > OFFICIAL_IMAGE_ROWS) {
-    throw new Error(`at most ${OFFICIAL_IMAGE_ROWS} official Paramount/Visit AKY photos are allowed`);
+    throw new Error(`at most ${OFFICIAL_IMAGE_ROWS} official or Facebook photos are allowed`);
   }
   for (const event of pictured) {
     if (/visit-aky-logo|\/brand\/visit|visit\.png/i.test(event.image ?? "")) {

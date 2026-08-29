@@ -13,6 +13,7 @@ describe("tourist phone preview", () => {
     expect(phone).toContain("Community");
     expect(phone).not.toContain('label: "Family"');
     expect(phone).toContain("{event.venue}");
+    expect(phone).toContain("st-d-paragraph");
     expect(phone).toContain("Event details");
     expect(phone).toContain("MonthCalendar");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
@@ -53,7 +54,8 @@ describe("Dana weekend preview", () => {
     expect(dana).not.toContain("min-height: 320px");
     expect(dana).toContain("ashland-tomcats-volleyball-wolfe-county-2026-08-29");
     expect(dana).toMatch(/first\[\\s-\]\?friday/i);
-    expect(dana).not.toMatch(/first-friday-august|first-friday-september|First Friday August|First Friday September/);
+    expect(dana).toContain("facebook-first-friday-2026-09-04");
+    expect(dana).toContain("First Friday September");
     expect(dana).not.toMatch(/localhost/);
     expect(dana).not.toContain("disabled>");
     expect(dana).toContain("(left.startsMs - right.startsMs)");

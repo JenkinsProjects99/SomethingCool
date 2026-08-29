@@ -50,7 +50,7 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
             {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
           </time>
         </p>
-        <p className="photo-card__venue">{event.venue}</p>
+        <p className="st-d-paragraph photo-card__venue">{event.venue}</p>
         <p className="st-d-subheading">{sourceLabel(event.source)}</p>
         <a className="st-primary" href={event.url} target="_blank" rel="noreferrer">
           Event details
