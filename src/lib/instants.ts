@@ -28,5 +28,24 @@ export function serializeInstant(date: Date, dateOnly: boolean, timezone: string
       day: "2-digit",
     }).format(date);
   }
-  return date.toISOString();
+
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+    timeZoneName: "longOffset",
+  }).formatToParts(date);
+  const read = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${read("year")}-${read("month")}-${read("day")}T${read("hour")}:${read("minute")}:${read("second")}${offsetFromName(read("timeZoneName"))}`;
+}
+
+function offsetFromName(value: string): string {
+  const match = value.match(/GMT([+-])(\d{1,2})(?::?(\d{2}))?/i);
+  if (!match) return "Z";
+  return `${match[1]}${match[2].padStart(2, "0")}:${(match[3] ?? "00").padStart(2, "0")}`;
 }
