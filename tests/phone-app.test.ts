@@ -23,6 +23,9 @@ describe("tourist phone preview", () => {
     expect(css).toContain("photo-card__body");
     expect(css).not.toContain("photo-card__overlay");
     expect(css).not.toContain("text-overflow: ellipsis");
+    expect(css).toContain("flex-wrap: wrap");
+    expect(css).toContain("min-width: max-content");
+    expect(css).toContain("flex: 0 0 auto");
     expect(phone).toContain("MonthCalendar");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(phone).not.toMatch(/chip|pill|badge/i);
@@ -60,7 +63,11 @@ describe("Dana weekend preview", () => {
     expect(dana).toContain("photo-card__body");
     expect(dana).not.toContain("photo-card__overlay");
     expect(dana).not.toContain("text-overflow: ellipsis");
-    expect(dana).not.toContain("white-space: nowrap");
+    expect(dana).not.toMatch(/photo-card[^}]*white-space:\s*nowrap/);
+    expect(dana).toContain("flex-wrap: wrap");
+    expect(dana).toContain("min-width: max-content");
+    expect(dana).toContain("flex: 0 0 auto");
+    expect(dana).toContain(">Community</button>");
     expect(dana).toContain("THIS_WEEK_HEADLINERS");
     expect(dana).toContain("deana-carter");
     expect(dana).toContain("makers-market");

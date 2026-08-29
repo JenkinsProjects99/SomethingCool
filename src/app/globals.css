@@ -416,10 +416,6 @@ img {
   margin-top: 0;
 }
 
-.phone-cats {
-  flex-wrap: nowrap;
-}
-
 .phone-times .st-primary,
 .phone-times .st-secondary,
 .phone-views .st-primary,
@@ -429,15 +425,23 @@ img {
   padding: 10px 8px;
 }
 
+.phone-cats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
 .phone-cats .st-primary,
-.phone-cats .st-secondary,
-.phone-thumbs .st-primary,
-.phone-thumbs .st-secondary {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 4px;
-  font-size: 12px;
-  padding: 10px 8px;
+.phone-cats .st-secondary {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: max-content;
+  overflow: visible;
+  white-space: nowrap;
+  text-overflow: unset;
+  padding: 8px 12px;
+  font-size: 11px;
 }
 
 .month-cal {

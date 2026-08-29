@@ -22,10 +22,10 @@
     .st-primary, .st-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 6px; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 0; cursor: pointer; }
     .st-primary { background: var(--st-primary); color: var(--st-primary-label); border: 2px solid var(--st-primary); }
     .st-secondary { background: transparent; color: var(--st-primary); border: 2px solid var(--st-primary); }
-    .phone-times, .phone-cats { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
-    .phone-cats { margin-top: 0; flex-wrap: nowrap; }
+    .phone-times { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
+    .phone-cats { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 6px; margin: 0 0 10px; }
     .phone-times .st-primary, .phone-times .st-secondary { flex: 1; }
-    .phone-cats .st-primary, .phone-cats .st-secondary { flex: 1; min-width: 0; padding: 8px 4px; font-size: 12px; }
+    .phone-cats .st-primary, .phone-cats .st-secondary { flex: 0 0 auto; width: auto; min-width: max-content; overflow: visible; white-space: nowrap; text-overflow: unset; padding: 8px 12px; font-size: 11px; }
     .photo-stack { display: grid; gap: 16px; }
     .photo-card { display: flex; flex-direction: column; overflow: visible; color: var(--st-ink); background: var(--st-paper); border-bottom: 1px solid var(--st-rule); padding-bottom: 4px; }
     .photo-card__media { min-height: 148px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
