@@ -17,4 +17,10 @@ describe("installable PWA", () => {
     expect(layout).toContain('manifest: "/manifest.webmanifest"');
     expect(layout).toContain("RegisterServiceWorker");
   });
+
+  it("keeps a Visit AKY logo on cards when image is null", () => {
+    const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
+    expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
+    expect(phone).not.toMatch(/if\s*\(\s*!event\.image/);
+  });
 });

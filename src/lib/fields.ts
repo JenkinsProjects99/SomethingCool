@@ -13,7 +13,20 @@ export const FROZEN_NINE_FIELDS = [
   "source",
 ] as const;
 
-export const ADDITIVE_PUBLIC_FIELDS = ["image"] as const;
+export const ADDITIVE_PUBLIC_FIELDS = ["image", "category"] as const;
+
+export const EVENT_CATEGORIES = [
+  "music",
+  "sports",
+  "family",
+  "arts",
+  "community",
+  "food",
+  "outdoor",
+] as const;
+
+export const EventCategorySchema = z.enum(EVENT_CATEGORIES);
+export type PublicEventCategory = (typeof EVENT_CATEGORIES)[number];
 
 export type FrozenField = (typeof FROZEN_NINE_FIELDS)[number];
 
@@ -49,6 +62,7 @@ export const FrozenEventSchema = z.object({
   url: z.string().url(),
   source: z.string().min(1),
   image: z.string().url().nullable(),
+  category: EventCategorySchema.optional(),
 });
 
 export type FrozenEvent = z.infer<typeof FrozenEventSchema>;
@@ -65,6 +79,7 @@ export function pickFrozenNine<T extends FrozenEvent>(event: T): FrozenEvent {
     url: event.url,
     source: event.source,
     image: event.image,
+    category: event.category ?? "community",
   };
 }
 

@@ -431,6 +431,12 @@ img {
   object-fit: cover;
 }
 
+.photo-card__image--logo {
+  object-fit: contain;
+  padding: 36px 28px 72px;
+  background: linear-gradient(160deg, #326dcd, #7b5bbb);
+}
+
 .photo-card__placeholder {
   background:
     linear-gradient(160deg, rgba(50, 109, 205, 0.88), rgba(123, 91, 187, 0.72)),

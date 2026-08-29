@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { PrismaClient } from "@prisma/client";
 import { hashToken } from "../auth";
+import { categoryForEvent } from "../categories";
 import { isDateOnly, SeedEventSchema, type SeedEvent } from "../fields";
 import { parseInstant } from "../instants";
 import { log } from "../logger";
@@ -46,8 +47,9 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   if (ids.size !== raw.events.length) {
     throw new Error("Seed ids must be unique");
   }
-  if (raw.events.some((event) => event.image !== null)) {
-    throw new Error("image stays null until Sean has photos");
+  const pictured = raw.events.filter((event) => event.image !== null);
+  if (pictured.length > 14) {
+    throw new Error("only 14 official Paramount/Visit AKY photos are allowed");
   }
   for (const event of raw.events) {
     assertAllowedEventUrl(event.source, event.url);
@@ -124,6 +126,7 @@ export async function importSeed(
       source: event.source,
       url: event.url,
       image: event.image,
+      category: categoryForEvent(event),
       summary: event.summary ?? event.title,
       dateOnly,
       status: decision.status,
@@ -144,6 +147,7 @@ export async function importSeed(
         source: data.source,
         url: data.url,
         image: data.image,
+        category: data.category,
         summary: data.summary,
         dateOnly: data.dateOnly,
         tenantId: data.tenantId,

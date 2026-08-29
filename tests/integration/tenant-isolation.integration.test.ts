@@ -50,6 +50,7 @@ describe.skipIf(!hasDatabase)("tenant isolation against postgres", () => {
         source: "Peer Tenant",
         url: "https://example.com/other-city-festival",
         image: null,
+        category: "community",
         summary: "Must never leak into ashland-ky.",
         dateOnly: false,
         status: "published",

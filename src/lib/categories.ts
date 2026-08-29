@@ -1,71 +1,71 @@
-export type EventCategory =
-  | "festivals"
-  | "music"
-  | "downtown"
-  | "sports"
-  | "library"
-  | "food";
+import { EVENT_CATEGORIES, type PublicEventCategory } from "./fields";
+
+export type EventCategory = PublicEventCategory;
 
 export const CATEGORY_LABELS: Record<EventCategory, string> = {
-  festivals: "Festivals",
   music: "Music",
-  downtown: "Downtown",
   sports: "Sports",
-  library: "Library",
+  family: "Family",
+  arts: "Arts",
+  community: "Community",
   food: "Food",
+  outdoor: "Outdoor",
 };
 
 const SOURCE_CATEGORY: Record<string, EventCategory> = {
-  facebook: "festivals",
   paramount: "music",
-  "visit-aky": "downtown",
-  school: "sports",
   maxpreps: "sports",
-  "parks-rec": "downtown",
-  "other-official": "downtown",
-  "boyd-library": "library",
+  school: "sports",
+  facebook: "community",
+  "visit-aky": "community",
+  "boyd-library": "family",
   sandys: "food",
   sandyridge: "food",
+  "parks-rec": "outdoor",
+  "other-official": "community",
 };
+
+const FAMILY_TITLE = /sesame|blippi|nutcracker|festival of trees/i;
 
 const CATEGORY_RANK: Record<EventCategory, number> = {
-  festivals: 10,
-  music: 20,
-  downtown: 30,
-  food: 40,
-  sports: 50,
-  library: 90,
+  music: 10,
+  family: 20,
+  community: 30,
+  arts: 40,
+  food: 50,
+  outdoor: 60,
+  sports: 70,
 };
 
-export function categoryForSource(source: string): EventCategory {
-  return SOURCE_CATEGORY[source] ?? "downtown";
+export function categoryForEvent(event: {
+  category?: string | null;
+  source: string;
+  title?: string;
+}): EventCategory {
+  if (event.category && (EVENT_CATEGORIES as readonly string[]).includes(event.category)) {
+    return event.category as EventCategory;
+  }
+  if (event.title && FAMILY_TITLE.test(event.title)) return "family";
+  return SOURCE_CATEGORY[event.source] ?? "community";
 }
 
-export function rankEvent(source: string): number {
-  return CATEGORY_RANK[categoryForSource(source)];
+export function isFamilyEvent(event: { category: EventCategory }): boolean {
+  return event.category === "family";
 }
 
-const FAMILY_TITLE =
-  /sesame|blippi|ballet|makers|holiday|first friday|walking|mural|nutcracker|storytime|scavenger|kids|family|youth/i;
-
-export function isFamilyEvent(event: { source: string; title: string }): boolean {
-  if (event.source === "visit-aky" || event.source === "boyd-library") return true;
-  return FAMILY_TITLE.test(event.title);
+export function isMusicEvent(event: { category: EventCategory }): boolean {
+  return event.category === "music";
 }
 
-export function isMusicEvent(event: { source: string }): boolean {
-  return categoryForSource(event.source) === "music";
+export function isSportsEvent(event: { category: EventCategory }): boolean {
+  return event.category === "sports";
 }
 
-export function isSportsEvent(event: { source: string }): boolean {
-  return categoryForSource(event.source) === "sports";
-}
-
-export function sortForTourist<T extends { source: string; startsAtDate: Date }>(
+export function sortForTourist<T extends { category: EventCategory; startsAtDate: Date }>(
   events: T[],
 ): T[] {
   return [...events].sort((left, right) => {
-    const rank = rankEvent(left.source) - rankEvent(right.source);
+    const rank = CATEGORY_RANK[left.category] - CATEGORY_RANK[right.category];
     if (rank !== 0) return rank;
     return left.startsAtDate.getTime() - right.startsAtDate.getTime();
   });

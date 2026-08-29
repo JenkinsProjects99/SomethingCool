@@ -75,17 +75,19 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
           visible.map((event, index) => (
             <a
               key={event.id}
-              className={`photo-card photo-card--${thumb} ${index === 0 ? "photo-card--featured" : ""}`}
+              className={`photo-card photo-card--${event.category} ${index === 0 ? "photo-card--featured" : ""}`}
               href={event.url}
               target="_blank"
               rel="noreferrer"
             >
-              {event.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img className="photo-card__image" src={event.image} alt="" />
-              ) : (
-                <div className="photo-card__placeholder" aria-hidden="true" />
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className={
+                  event.image ? "photo-card__image" : "photo-card__image photo-card__image--logo"
+                }
+                src={event.image ?? "/brand/visit-aky-logo.png"}
+                alt=""
+              />
               <div className="photo-card__overlay">
                 <h2 className="photo-card__title">{event.title}</h2>
                 <p className="photo-card__when">

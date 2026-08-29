@@ -4,6 +4,7 @@
   "private": true,
   "description": "Visit AKY Ashland tourist PWA v0 — Design 96, public nine fields plus image, never auto-publish.",
   "scripts": {
+    "predev": "node scripts/ensure-env.mjs",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",

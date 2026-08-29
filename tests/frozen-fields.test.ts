@@ -40,7 +40,7 @@ describe("frozen nine fields", () => {
       const publicRow = pickFrozenNine(parsed);
       expect(FrozenEventSchema.parse(publicRow).image).toBeNull();
       expect(Object.keys(publicRow).sort()).toEqual(
-        [...FROZEN_NINE_FIELDS, "image"].sort(),
+        [...FROZEN_NINE_FIELDS, "image", "category"].sort(),
       );
       expect(Object.keys(publicRow)).not.toContain("status");
       expect(Object.keys(publicRow)).not.toContain("slug");
@@ -50,6 +50,6 @@ describe("frozen nine fields", () => {
 
   it("rejects an eleventh public field on the wire shape", () => {
     const [first] = seed.events;
-    expect(extraSeedKeys({ ...first, category: "concert" })).toEqual(["category"]);
+    expect(extraSeedKeys({ ...first, mood: "concert" })).toEqual(["mood"]);
   });
 });

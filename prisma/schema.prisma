@@ -53,6 +53,7 @@ model Event {
   url       String
   source    String
   image     String?
+  category  String      @default("community")
   summary   String      @default("")
   dateOnly  Boolean     @default(false) @map("date_only")
   status    EventStatus @default(draft)
