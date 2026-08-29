@@ -50,6 +50,7 @@ describe("seed source rules", () => {
     expect(seed.events.filter((event) => event.image === null)).toHaveLength(
       TARGET_SEED_ROWS - OFFICIAL_IMAGE_ROWS,
     );
+    expect(JSON.stringify(seed.events)).not.toMatch(/visit-aky-logo|\/brand\/visit|visit\.png/i);
   });
 
   it("keeps the specified maxpreps football games", () => {

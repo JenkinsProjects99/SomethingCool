@@ -9,7 +9,7 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 - PostgreSQL schema with tenant-scoped events
 - Installable PWA at `/` (full-bleed photo cards, this weekend / date / category / upcoming vs all)
 - Secondary iframe at `/embed`
-- Reloadable 225-row official seed. 14 rows have official Paramount/Visit AKY image URLs; others are `image: null` and use the Visit AKY photo-card fallback. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source. Kids Paramount shows are family.
+- Reloadable 225-row official seed. 14 rows have official Paramount/Visit AKY image URLs; others stay `image: null` in JSON. Photo cards show the Visit AKY logo when `image` is null (client-only; the logo URL is not in the seed). Never drop a row for a missing photo. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source. Kids Paramount shows are family.
 - `GET /v1/ashland-ky/events` with Bearer auth
 - Public nine fields plus additive `image` and `category`
 - Never auto-publish

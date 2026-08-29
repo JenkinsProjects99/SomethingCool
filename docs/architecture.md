@@ -42,7 +42,7 @@ Additive fields: `image` (official URL or `null`) and `category` (`music` | `spo
 
 One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`. **225 official rows.**
 
-14 rows carry official Paramount (`cdn.saffire.com`) or Visit AKY (`static.showit.co`) image URLs. Every other row is `image: null`. The PWA uses a Visit AKY photo-card fallback for null images. Do not invent events or fake photos as content.
+14 rows carry official Paramount (`cdn.saffire.com`) or Visit AKY (`static.showit.co`) image URLs. Every other row is `image: null` in JSON. The PWA draws the Visit AKY logo as a client-only fallback. Never drop a row for a missing photo. Do not write the logo URL into the seed. Do not invent events or fake photos as content.
 
 Library rows come from published [thebookplace.org](https://www.thebookplace.org/) programs. MaxPreps rows are official Ashland home games. Do not invent pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows: Poage Landing Days (date-only) and the two Sandy’s nights.
 

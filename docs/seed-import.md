@@ -8,7 +8,7 @@ The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Publi
 | --- | --- |
 | Official published rows | **225** |
 | Official Paramount / Visit AKY images | **14** |
-| Remaining images | `null` (Visit AKY photo-card fallback in the PWA) |
+| Remaining images | `null` in JSON (client shows the Visit AKY logo; do not write the logo URL into the seed) |
 
 The file keeps the original editorial 27, specified school/facebook rows, official Paramount extras (Shrek, Festival of Trees & Trains), official MaxPreps Ashland home games, and published [thebookplace.org](https://www.thebookplace.org/) programs (161+). Closings and meeting-room reservations were not copied. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
 
@@ -70,6 +70,7 @@ npm test
 
 - Do not invent events or fake photos as content.
 - Do not infer `category` from `source`.
-- Do not put unofficial stock photos on rows. Null images use the Visit AKY photo-card fallback.
+- Do not write the Visit AKY logo URL into the seed. Null `image` stays null; the logo fallback is client-only.
+- Never drop a row because a photo is missing.
 - Do not treat a complete row as published.
 - Do not put real API tokens in the seed file.

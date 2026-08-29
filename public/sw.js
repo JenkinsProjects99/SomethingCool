@@ -7,7 +7,6 @@ self.addEventListener("install", (event) => {
         "/",
         "/manifest.webmanifest",
         "/brand/visit-aky-logo.png",
-        "/brand/visit-aky-photocard.jpg",
       ]),
     ),
   );

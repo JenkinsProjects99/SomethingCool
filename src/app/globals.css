@@ -450,26 +450,26 @@ img {
 
 .photo-card__fallback {
   background:
-    linear-gradient(180deg, rgba(10, 18, 36, 0.15), rgba(10, 18, 36, 0.45)),
-    url("/brand/visit-aky-photocard.jpg") center / cover no-repeat;
+    linear-gradient(160deg, rgba(50, 109, 205, 0.88), rgba(123, 91, 187, 0.72)),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
 .photo-card--music .photo-card__fallback {
   background:
-    linear-gradient(160deg, rgba(50, 109, 205, 0.28), rgba(10, 18, 36, 0.42)),
-    url("/brand/visit-aky-photocard.jpg") center / cover no-repeat;
+    linear-gradient(160deg, rgba(50, 109, 205, 0.92), rgba(0, 0, 0, 0.4)),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
 .photo-card--sports .photo-card__fallback {
   background:
-    linear-gradient(160deg, rgba(29, 63, 122, 0.35), rgba(50, 109, 205, 0.28)),
-    url("/brand/visit-aky-photocard.jpg") center / cover no-repeat;
+    linear-gradient(160deg, #1d3f7a, #326dcd),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
 .photo-card--family .photo-card__fallback {
   background:
-    linear-gradient(160deg, rgba(123, 91, 187, 0.28), rgba(50, 109, 205, 0.22)),
-    url("/brand/visit-aky-photocard.jpg") center / cover no-repeat;
+    linear-gradient(160deg, rgba(123, 91, 187, 0.88), rgba(50, 109, 205, 0.7)),
+    url("/brand/visit-aky-logo.png") center 38% / 46% no-repeat;
 }
 
 .photo-card__overlay {
