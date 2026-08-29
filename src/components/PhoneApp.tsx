@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
+import { cardImageSrc } from "@/lib/card-image";
 import type { CalendarEvent } from "@/lib/events";
 import { firstScreenUsedUpcoming, startOfToday } from "@/lib/filters";
 import { formatCardWhen } from "@/lib/format";
@@ -32,7 +33,7 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
         className={
           event.image ? "photo-card__image" : "photo-card__image photo-card__image--logo"
         }
-        src={event.image ?? "/brand/visit-aky-logo.png"}
+        src={cardImageSrc(event.image)}
         alt=""
       />
       <div className="photo-card__overlay">

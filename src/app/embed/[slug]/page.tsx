@@ -3,6 +3,7 @@ import { EventCard } from "@/components/EventCard";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import { getPrisma } from "@/lib/db";
 import { getPublishedEventBySlug } from "@/lib/events";
+import { publishedEventsFromSeedFile } from "@/lib/seed/published-from-file";
 import { getAshlandTenant } from "@/lib/tenant-data";
 
 export const dynamic = "force-dynamic";
@@ -13,12 +14,15 @@ export default async function EmbedEventPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tenant = await getAshlandTenant();
-  if (!tenant) {
-    notFound();
+  let event = publishedEventsFromSeedFile().find((row) => row.slug === slug || row.id === slug);
+  try {
+    const tenant = await getAshlandTenant();
+    if (tenant) {
+      event = (await getPublishedEventBySlug(getPrisma(), tenant.id, slug)) ?? event;
+    }
+  } catch {
+    // Keep the seed-file row, including when image is null.
   }
-
-  const event = await getPublishedEventBySlug(getPrisma(), tenant.id, slug);
   if (!event) {
     notFound();
   }

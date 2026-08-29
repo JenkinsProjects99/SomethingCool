@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cardImageSrc } from "@/lib/card-image";
 import type { CalendarEvent } from "@/lib/events";
 import { formatCardWhen } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
@@ -17,6 +18,12 @@ export function EventCard({
 
   return (
     <article className="event-card">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className={event.image ? "event-card__image" : "event-card__image event-card__image--logo"}
+        src={cardImageSrc(event.image)}
+        alt=""
+      />
       <p className="event-card__when">
         <time dateTime={event.startsAt}>
           {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}

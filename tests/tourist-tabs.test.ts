@@ -17,7 +17,7 @@ describe("tourist first screen and category tabs", () => {
     ).toBe(true);
     expect(weekend.some((event) => !event.image)).toBe(true);
     const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
-    expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
+    expect(phone).toContain("cardImageSrc(event.image)");
     expect(phone).toContain("MonthCalendar");
     expect(phone).toContain('setView("calendar")');
   });

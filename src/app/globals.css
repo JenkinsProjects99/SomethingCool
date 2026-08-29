@@ -237,6 +237,20 @@ img {
   gap: 14px;
 }
 
+.event-card__image {
+  display: block;
+  width: calc(100% + 48px);
+  height: 160px;
+  margin: -28px -24px 0;
+  object-fit: cover;
+}
+
+.event-card__image--logo {
+  object-fit: contain;
+  padding: 24px 20px;
+  background: linear-gradient(160deg, #326dcd, #7b5bbb);
+}
+
 .event-card__when {
   font-family: var(--font-open-sans);
   font-weight: 800;
