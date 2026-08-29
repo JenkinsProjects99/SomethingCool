@@ -62,7 +62,7 @@ export const FrozenEventSchema = z.object({
   url: z.string().url(),
   source: z.string().min(1),
   image: z.string().url().nullable(),
-  category: EventCategorySchema.optional(),
+  category: EventCategorySchema,
 });
 
 export type FrozenEvent = z.infer<typeof FrozenEventSchema>;
@@ -79,7 +79,7 @@ export function pickFrozenNine<T extends FrozenEvent>(event: T): FrozenEvent {
     url: event.url,
     source: event.source,
     image: event.image,
-    category: event.category ?? "community",
+    category: event.category,
   };
 }
 

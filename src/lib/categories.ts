@@ -12,19 +12,6 @@ export const CATEGORY_LABELS: Record<EventCategory, string> = {
   outdoor: "Outdoor",
 };
 
-const SOURCE_CATEGORY: Record<string, EventCategory> = {
-  paramount: "music",
-  maxpreps: "sports",
-  school: "sports",
-  facebook: "community",
-  "visit-aky": "community",
-  "boyd-library": "family",
-  sandys: "food",
-  sandyridge: "food",
-  "parks-rec": "outdoor",
-  "other-official": "community",
-};
-
 const FAMILY_TITLE = /sesame|blippi|nutcracker|festival of trees/i;
 
 const CATEGORY_RANK: Record<EventCategory, number> = {
@@ -38,20 +25,16 @@ const CATEGORY_RANK: Record<EventCategory, number> = {
 };
 
 export function categoryForEvent(event: {
+  id?: string;
   category?: string | null;
-  source: string;
+  source?: string;
   title?: string;
 }): EventCategory {
   if (event.title && FAMILY_TITLE.test(event.title)) return "family";
-  // `community` is the DB default when seed omitted category — still infer.
-  if (
-    event.category &&
-    event.category !== "community" &&
-    (EVENT_CATEGORIES as readonly string[]).includes(event.category)
-  ) {
-    return event.category as EventCategory;
+  if (!event.category || !(EVENT_CATEGORIES as readonly string[]).includes(event.category)) {
+    throw new Error(`Import failed: category is missing on ${event.id ?? "a seed row"}`);
   }
-  return SOURCE_CATEGORY[event.source] ?? "community";
+  return event.category as EventCategory;
 }
 
 export function isFamilyEvent(event: { category: EventCategory }): boolean {

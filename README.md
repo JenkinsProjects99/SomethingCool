@@ -32,8 +32,8 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 
 - Installable PWA at `/` (full-bleed photo cards, This weekend / Music / Sports / Family)
 - Secondary iframe at `/embed` and `/embed/{slug}`
-- `GET /v1/ashland-ky/events` with Bearer auth, frozen `from`/`to`
-- Public nine fields plus additive `image` and `category`
+- `GET /v1/ashland-ky/events` with Bearer auth, frozen `from`/`to` (225 published seed rows; `category` and `image` on the payload)
+- Public nine fields plus additive `image` and `category`. `category` is required on every seed row.
 - Never auto-publish
 - Structured JSON logs and `x-request-id`
 

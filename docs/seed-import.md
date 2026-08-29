@@ -1,25 +1,26 @@
 # Seed import how-to
 
-The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Public nine fields plus additive `image`. Seed-only: `slug`, `summary`, `status`.
+The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Public nine fields plus additive `image` and `category`. Seed-only: `slug`, `summary`, `status`.
 
 ## Count
 
-| Stage | Rows |
-| --- | --- |
-| Original editorial set | 27 |
-| Specified maxpreps football | +2 (in the file now) |
-| Specified school rows | +4 (published times only) |
-| Poage Landing Days | +1 date-only facebook row |
-| Specified Sandy’s facebook nights | +2 |
-| Target | 225 = 27 + 161 `boyd-library` + 27 maxpreps + specified school/facebook rows |
+Sean’s 225 official rows are on this path. `category` is required on every row. Import fails if any row is missing `category`. Do not default missing category to `community`.
 
-Sean’s complete seed is 225 rows / ~108KB on this same reloadable path. This workspace does not have that file yet. The committed file is official rows only (original 27, specified sports, Poage Landing Days date-only, specified Sandy’s nights). Do not invent the missing library or kickoff rows to fake 108KB.
+First Friday, proposed winter makers, tentative NYE, and Music Trail weekend are not in this file.
 
-The 161 library rows come only from [thebookplace.org](https://www.thebookplace.org/). They are not scraped or invented here. Remaining MaxPreps kickoffs wait for official payloads. Do not invent Jerk Riley’s, Kel’s, or other pub nights.
+A few Paramount/Visit AKY rows keep official image URLs. Every other row is `image: null`. The Visit AKY logo is a client fallback only. Never write that logo URL into JSON. Never drop a row for a missing photo.
 
-`image` is `null` on every row until Sean has photos. Poage Landing Days is date-only (`2026-09-18`–`2026-09-20`), no invented clock times.
+Library rows come only from [thebookplace.org](https://www.thebookplace.org/). Do not invent Jerk Riley’s, Kel’s, or other pub nights.
 
-`GET /v1/ashland-ky/events` returns every **published** row for the range. It does not cap at 27 and it does not invent unpublished library/sports rows to force 225.
+Poage Landing Days and Festival of Trees & Trains are date-only.
+
+`GET /v1/ashland-ky/events` returns every **published** row for the range, including additive `image` and `category`. Default public UI is upcoming only, `America/New_York`.
+
+This-weekend window for Dana:
+
+`GET /v1/ashland-ky/events?from=2026-08-29&to=2026-08-31`
+
+Date-only `to` includes that calendar day.
 
 ## Prerequisites
 
@@ -31,7 +32,7 @@ npx prisma migrate deploy
 
 Or point `DATABASE_URL` at any Postgres 16 database and run the same migrate command.
 
-`ASHLAND_KY_API_TOKEN` in `.env` is hashed (SHA-256) and stored on the tenant. The example value is a local placeholder, not a production secret.
+`ASHLAND_KY_API_TOKEN` in `.env` is hashed (SHA-256) and stored on the tenant. The example value is a local placeholder, not a production secret. The phone UI and GET fall back to this seed file when Postgres is empty or down.
 
 ## First import
 
@@ -52,7 +53,7 @@ npm run seed:reload
 Reload is upsert-by-`id`:
 
 - Inserts any new ids
-- Updates title, slug, times, timezone, venue, address, source, url, image, summary, and date-only flag
+- Updates title, slug, times, timezone, venue, address, source, url, image, category, summary, and date-only flag
 - **Leaves `status` alone** unless you pass `--update-status`
 
 ```bash
@@ -67,7 +68,7 @@ npx tsx scripts/import-seed.ts --reload --update-status
 npm test
 ```
 
-`tests/frozen-fields.test.ts` validates every row against the public nine plus `image`. `tests/seed-sources.test.ts` blocks Ohio library URLs and invented Boyd Library rows.
+`tests/this-weekend.test.ts` locks the Aug 29–31 GET ids. `tests/frozen-fields.test.ts` validates every row against the public nine plus `image` and `category`.
 
 ## Do not
 
@@ -76,3 +77,4 @@ npm test
 - Do not invent remaining MaxPreps kickoffs or pub nights.
 - Do not treat a complete row as published.
 - Do not put real API tokens in the seed file.
+- Do not write `/brand/visit-aky-logo.png` into JSON.

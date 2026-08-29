@@ -4,7 +4,6 @@ import { describe, expect, it } from "vitest";
 import {
   extraSeedKeys,
   FROZEN_NINE_FIELDS,
-  FrozenEventSchema,
   pickFrozenNine,
   SeedEventSchema,
 } from "@/lib/fields";
@@ -29,16 +28,17 @@ describe("frozen nine fields", () => {
     ]);
   });
 
-  it("validates every seed row and keeps image null", () => {
+  it("validates every seed row and keeps category plus image on the public shape", () => {
     expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
     const ids = new Set<string>();
     for (const row of seed.events) {
       const parsed = SeedEventSchema.parse(row);
       ids.add(parsed.id);
       expect(extraSeedKeys(row)).toEqual([]);
-      expect(parsed.image).toBeNull();
+      expect(parsed.category).toBeTruthy();
       const publicRow = pickFrozenNine(parsed);
-      expect(FrozenEventSchema.parse(publicRow).image).toBeNull();
+      expect(publicRow.category).toBe(parsed.category);
+      expect(publicRow.image).toBe(parsed.image);
       expect(Object.keys(publicRow).sort()).toEqual(
         [...FROZEN_NINE_FIELDS, "image", "category"].sort(),
       );

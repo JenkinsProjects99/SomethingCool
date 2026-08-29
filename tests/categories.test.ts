@@ -29,10 +29,10 @@ describe("client ranking", () => {
     expect(categoryForEvent({ source: "paramount", title: "Festival of Trees" })).toBe("family");
   });
 
-  it("infers music and sports when the stored category is the community default", () => {
+  it("uses the stored category and fails when category is missing", () => {
     expect(
       categoryForEvent({
-        category: "community",
+        category: "music",
         source: "paramount",
         title: "Deana Carter",
       }),
@@ -40,16 +40,16 @@ describe("client ranking", () => {
     expect(
       categoryForEvent({
         category: "community",
-        source: "maxpreps",
-        title: "Ashland Tomcats Football vs. Lawrence County",
-      }),
-    ).toBe("sports");
-    expect(
-      categoryForEvent({
-        category: "community",
         source: "paramount",
-        title: "Sesame Street Live",
+        title: "Deana Carter",
       }),
-    ).toBe("family");
+    ).toBe("community");
+    expect(() =>
+      categoryForEvent({
+        id: "deana-carter",
+        source: "paramount",
+        title: "Deana Carter",
+      }),
+    ).toThrow(/category is missing on deana-carter/);
   });
 });

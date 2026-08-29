@@ -2,7 +2,6 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { PrismaClient } from "@prisma/client";
 import { hashToken } from "../auth";
-import { categoryForEvent } from "../categories";
 import { isDateOnly, SeedEventSchema, type SeedEvent } from "../fields";
 import { parseInstant } from "../instants";
 import { log } from "../logger";
@@ -20,6 +19,7 @@ export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
 export const TARGET_MAXPREPS_ROWS = 27;
 export const TARGET_SEED_ROWS = 225;
+export const OFFICIAL_IMAGE_ROWS = 14;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };
@@ -42,14 +42,36 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   if (raw.events.length < ORIGINAL_SEED_ROWS) {
     throw new Error(`Seed must keep the original ${ORIGINAL_SEED_ROWS} rows`);
   }
+  const missingCategory = raw.events.filter((event) => !event?.category);
+  if (missingCategory.length > 0) {
+    throw new Error(
+      `Import failed: category is missing on ${missingCategory.map((event) => event.id).join(", ")}`,
+    );
+  }
   raw.events = raw.events.map((event) => SeedEventSchema.parse(event));
   const ids = new Set(raw.events.map((event) => event.id));
   if (ids.size !== raw.events.length) {
     throw new Error("Seed ids must be unique");
   }
+  if (raw.events.length !== TARGET_SEED_ROWS) {
+    throw new Error(`Seed must be ${TARGET_SEED_ROWS} official rows`);
+  }
   const pictured = raw.events.filter((event) => event.image !== null);
-  if (pictured.length > 14) {
-    throw new Error("only 14 official Paramount/Visit AKY photos are allowed");
+  if (pictured.length > OFFICIAL_IMAGE_ROWS) {
+    throw new Error(`at most ${OFFICIAL_IMAGE_ROWS} official Paramount/Visit AKY photos are allowed`);
+  }
+  for (const event of pictured) {
+    if (/visit-aky-logo|\/brand\/visit/i.test(event.image ?? "")) {
+      throw new Error(`${event.id} must not store the Visit AKY logo URL`);
+    }
+  }
+  const dropped = raw.events.filter((event) =>
+    /first-friday|winter-makers-market|downtown-new-years-eve|kentucky-music-trail/i.test(
+      event.id,
+    ),
+  );
+  if (dropped.length > 0) {
+    throw new Error(`Seed must not include ${dropped.map((event) => event.id).join(", ")}`);
   }
   for (const event of raw.events) {
     assertAllowedEventUrl(event.source, event.url);
@@ -126,7 +148,7 @@ export async function importSeed(
       source: event.source,
       url: event.url,
       image: event.image,
-      category: categoryForEvent(event),
+      category: event.category,
       summary: event.summary ?? event.title,
       dateOnly,
       status: decision.status,

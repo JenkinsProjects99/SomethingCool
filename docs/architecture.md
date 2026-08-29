@@ -16,7 +16,7 @@ There is no React Native app and no second repo. Playlist script stays with the 
 
 The PWA loads published events on the server with the same tenant-scoped query as the partner feed. The Bearer token never goes to the browser.
 
-`GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive, `to` exclusive). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
+`GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive, `to` exclusive). Date-only `to` includes that calendar day in `America/New_York`. The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough. Public payload includes additive `image` and `category`.
 
 ## Public event contract
 
@@ -32,7 +32,7 @@ Nine frozen fields (do not rename):
 8. `url`
 9. `source`
 
-Additive field only: `image` (URL or `null`). `image` is `null` on every seed row until Sean has photos.
+Additive fields: `image` (URL or `null`) and `category` (`music|sports|family|arts|community|food|outdoor`). `category` is required on every seed row. Official Paramount/Visit AKY photos stay on the pictured rows; all other `image` values are `null`. The Visit AKY logo is client-only.
 
 `startsAt` / `endsAt` may be `YYYY-MM-DD` (date-only, no invented clock time) or an offset datetime. `status`, `slug`, and `summary` stay internal. Never auto-publish.
 
@@ -42,7 +42,7 @@ Additive field only: `image` (URL or `null`). `image` is `null` on every seed ro
 
 One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`.
 
-Target **225** = 27 original + 161 `boyd-library` (thebookplace.org only) + 27 maxpreps home games + specified school/facebook rows. This file holds official rows only. Do not invent library rows, remaining kickoffs, or pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows: Poage Landing Days (date-only) and the two Sandy’s nights.
+Target **225** official rows, including 161+ `boyd-library` programs from thebookplace.org only. Do not invent remaining kickoffs or pub nights (including Jerk Riley’s and Kel’s). First Friday, winter makers, tentative NYE, and Music Trail weekend are not in this file.
 
 ## PWA
 

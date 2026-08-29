@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { categoryForEvent } from "../categories";
 import type { CalendarEvent } from "../events";
 import { SeedEventSchema } from "../fields";
 import { parseInstant } from "../instants";
@@ -21,7 +20,7 @@ export function publishedEventsFromSeedFile(filePath = SEED_PATH): CalendarEvent
         ...event,
         slug: event.slug ?? event.id,
         image: event.image,
-        category: categoryForEvent(event),
+        category: event.category,
         startsAtDate,
         endsAtDate,
         dateOnly,

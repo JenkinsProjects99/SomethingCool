@@ -79,7 +79,7 @@ describe.skipIf(!hasDatabase)("tenant isolation against postgres", () => {
     expect(slugs).not.toContain("winter-makers-market");
     expect(payload.every((row) => !("tenantId" in row))).toBe(true);
     expect(payload.every((row) => !("status" in row) && !("slug" in row))).toBe(true);
-    expect(payload.every((row) => row.image === null)).toBe(true);
+    expect(payload.every((row) => "image" in row && "category" in row)).toBe(true);
     const poage = payload.find((row) => row.id === "poage-landing-days-2026");
     expect(poage?.startsAt).toBe("2026-09-18");
     expect(poage?.endsAt).toBe("2026-09-20");

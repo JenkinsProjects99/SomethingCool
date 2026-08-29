@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   eventInWindow,
+  parseToBound,
   parseWindowBound,
   serializeWindowBound,
 } from "@/lib/filters";
@@ -29,6 +30,13 @@ describe("frozen from/to query window", () => {
     expect(eventInWindow(later, { from, to })).toBe(false);
     expect(serializeWindowBound(from)).toBe("2026-09-18");
     expect(serializeWindowBound(to)).toBe("2026-09-21");
+  });
+
+  it("treats date-only to as including that calendar day in America/New_York", () => {
+    const from = parseWindowBound("2026-08-29");
+    const to = parseToBound("2026-08-31");
+    expect(eventInWindow(new Date("2026-08-31T20:00:00-04:00"), { from, to })).toBe(true);
+    expect(eventInWindow(new Date("2026-09-01T00:00:00-04:00"), { from, to })).toBe(false);
   });
 
   it("rejects a malformed from/to value", () => {

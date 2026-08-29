@@ -225,6 +225,17 @@ export function parseWindowBound(value: string | null | undefined): Date | undef
   return parseInstant(parsed.data, TIME_ZONE);
 }
 
+/** Date-only `to` includes that calendar day (exclusive the next midnight ET). */
+export function parseToBound(value: string | null | undefined): Date | undefined {
+  if (value == null || value === "") return undefined;
+  const start = parseWindowBound(value);
+  if (!start) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return addZonedDays(start, 1);
+  }
+  return start;
+}
+
 export function eventInWindow(startsAt: Date, window: EventWindow): boolean {
   if (window.from && startsAt < window.from) return false;
   if (window.to && startsAt >= window.to) return false;

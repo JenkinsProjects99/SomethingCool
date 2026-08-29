@@ -12,7 +12,9 @@ describe("tourist first screen and category tabs", () => {
   it("shows photo cards and Sep 4 tourist events on Friday Aug 29, 2026", () => {
     const weekend = eventsForThumb(events, "weekend", NOW);
     expect(weekend.length).toBeGreaterThan(0);
-    expect(weekend.some((event) => event.id === "deana-carter")).toBe(true);
+    expect(
+      weekend.some((event) => event.id === "ashland-tomcats-volleyball-johnson-central-2026-08-29"),
+    ).toBe(true);
     expect(weekend.some((event) => !event.image)).toBe(true);
     const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
