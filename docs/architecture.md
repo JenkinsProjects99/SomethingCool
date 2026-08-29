@@ -6,7 +6,8 @@ v0 is a single Next.js App Router service with PostgreSQL. Primary surface is an
 
 | Route | Role |
 | --- | --- |
-| `/` | Tourist phone PWA (installable, photo cards, client filters) |
+| `/` | Tourist phone PWA (installable, photo cards, calendar tab, client filters) |
+| `/dana.html` | Shareable Dana preview of this weekend’s official rows (static, no localhost) |
 | `/embed` | Secondary 360px iframe widget |
 | `/embed/{slug}` | Single published event embed |
 | `GET /v1/ashland-ky/events` | Partner feed, Bearer token. Frozen `from`/`to` window; additive `range` |
@@ -16,7 +17,7 @@ There is no React Native app and no second repo. Playlist script stays with the 
 
 The PWA loads published events on the server with the same tenant-scoped query as the partner feed. If Postgres is not provisioned, `/` falls back to published rows in the seed file so the phone preview still renders. The Bearer token never goes to the browser.
 
-`GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive, `to` exclusive). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
+`GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive). Date-only `to` includes that calendar day in America/New_York (exclusive the next midnight ET). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
 
 ## Public event contract
 
@@ -40,15 +41,15 @@ Additive fields: `image` (official URL or `null`) and `category` (`music` | `spo
 
 ## Seed
 
-One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`. **225 official rows.**
+One reloadable file: `data/seed/ashland-ky-events.v0.json`. Upsert on `id`. Official published rows only. Do not invent events.
 
-14 rows carry official Paramount (`cdn.saffire.com`) or Visit AKY (`static.showit.co`) image URLs. Every other row is `image: null` in JSON. The PWA draws the Visit AKY logo as a client-only fallback. Never drop a row for a missing photo. Do not write the logo URL into the seed. Do not invent events or fake photos as content.
+At most 14 rows carry official Paramount (`cdn.saffire.com`) or Visit AKY (`static.showit.co`) image URLs. Every other row is `image: null` in JSON. The PWA draws the Visit AKY logo as a client-only fallback. Never drop a row for a missing photo. Do not write the logo URL into the seed. Do not invent events or fake photos as content.
 
-Library rows come from published [thebookplace.org](https://www.thebookplace.org/) programs. MaxPreps rows are official Ashland home games. Do not invent pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows: Poage Landing Days (date-only) and the two Sandy’s nights.
+Library rows come from published [thebookplace.org](https://www.thebookplace.org/) programs. MaxPreps rows are official Ashland home games. Do not invent pub nights (including Jerk Riley’s and Kel’s). Specified facebook rows include Poage Landing Days (date-only festival plus official main-stage times from poagelandingdays.com) and the Sandy’s nights.
 
 ## PWA
 
-`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title/time overlay; official image or branded photocard fallback), a centered logo, and Design 96 tokens. Default thumb is **This weekend**. Other thumbs: date (this weekend / this week / this month), category, and upcoming vs all. Music and family sort ahead of sports.
+`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title/time overlay; official image or Visit AKY logo fallback), a centered logo, Design 96 tokens, and a Calendar tab. Default thumb is **Upcoming**. Public UI is upcoming first, then a **7-day ET lookback** — not the full seed history. Music and family sort ahead of sports. Times are America/New_York.
 
 ## Tenancy
 

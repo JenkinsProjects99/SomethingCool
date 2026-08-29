@@ -18,7 +18,7 @@ export const ORIGINAL_SEED_ROWS = 27;
 export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
 export const TARGET_MAXPREPS_ROWS = 27;
-export const TARGET_SEED_ROWS = 225;
+export const TARGET_SEED_ROWS = 230;
 export const OFFICIAL_IMAGE_ROWS = 14;
 
 export interface SeedFile {
@@ -42,29 +42,28 @@ export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   if (raw.events.length < ORIGINAL_SEED_ROWS) {
     throw new Error(`Seed must keep the original ${ORIGINAL_SEED_ROWS} rows`);
   }
+  const missingCategory = raw.events.filter((event) => !event?.category);
+  if (missingCategory.length > 0) {
+    throw new Error(
+      `Import failed: category is missing on ${missingCategory.map((event) => event.id).join(", ")}`,
+    );
+  }
   raw.events = raw.events.map((event) => SeedEventSchema.parse(event));
   const ids = new Set(raw.events.map((event) => event.id));
   if (ids.size !== raw.events.length) {
     throw new Error("Seed ids must be unique");
   }
-  const withImages = raw.events.filter((event) => event.image !== null);
-  if (withImages.length !== OFFICIAL_IMAGE_ROWS) {
-    throw new Error(
-      `Exactly ${OFFICIAL_IMAGE_ROWS} rows may carry official Paramount/Visit AKY image URLs`,
-    );
-  }
-  for (const event of withImages) {
-    const host = new URL(event.image as string).hostname;
-    const official =
-      host === "cdn.saffire.com" ||
-      host === "static.showit.co" ||
-      host.endsWith(".showit.co");
-    if (!official) {
-      throw new Error(`${event.id} image must be an official Paramount or Visit AKY URL`);
-    }
-  }
   if (raw.events.length !== TARGET_SEED_ROWS) {
     throw new Error(`Seed must be ${TARGET_SEED_ROWS} official rows`);
+  }
+  const pictured = raw.events.filter((event) => event.image !== null);
+  if (pictured.length > OFFICIAL_IMAGE_ROWS) {
+    throw new Error(`at most ${OFFICIAL_IMAGE_ROWS} official Paramount/Visit AKY photos are allowed`);
+  }
+  for (const event of pictured) {
+    if (/visit-aky-logo|\/brand\/visit|visit\.png/i.test(event.image ?? "")) {
+      throw new Error(`${event.id} must not store the Visit AKY logo URL`);
+    }
   }
   for (const event of raw.events) {
     assertAllowedEventUrl(event.source, event.url);

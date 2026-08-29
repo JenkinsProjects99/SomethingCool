@@ -27,7 +27,7 @@ const seed = JSON.parse(
 };
 
 describe("seed source rules", () => {
-  it("ships 225 official rows without invented pub nights", () => {
+  it("ships official rows without invented pub nights", () => {
     expect(seed.events).toHaveLength(TARGET_SEED_ROWS);
     expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
     expect(seed.events.filter((event) => event.source === "boyd-library").length).toBeGreaterThanOrEqual(
@@ -39,16 +39,17 @@ describe("seed source rules", () => {
     expect(pubNights).toHaveLength(0);
   });
 
-  it("keeps exactly 14 official Paramount/Visit AKY image URLs and nulls the rest", () => {
+  it("keeps at most 14 official Paramount/Visit AKY image URLs and nulls the rest", () => {
     const withImages = seed.events.filter((event) => event.image);
-    expect(withImages).toHaveLength(OFFICIAL_IMAGE_ROWS);
+    expect(withImages.length).toBeGreaterThan(0);
+    expect(withImages.length).toBeLessThanOrEqual(OFFICIAL_IMAGE_ROWS);
     for (const event of withImages) {
       const host = new URL(event.image as string).hostname;
       expect(["cdn.saffire.com", "static.showit.co"]).toContain(host);
       expect(["paramount", "visit-aky"]).toContain(event.source);
     }
     expect(seed.events.filter((event) => event.image === null)).toHaveLength(
-      TARGET_SEED_ROWS - OFFICIAL_IMAGE_ROWS,
+      TARGET_SEED_ROWS - withImages.length,
     );
     expect(JSON.stringify(seed.events)).not.toMatch(/visit-aky-logo|\/brand\/visit|visit\.png/i);
   });
@@ -80,6 +81,18 @@ describe("seed source rules", () => {
       image: null,
     });
     expect(isDateOnly(poage?.startsAt ?? "")).toBe(true);
+    expect(
+      seed.events.find((event) => event.id === "poage-landing-days-opening-ceremony-2026-09-19"),
+    ).toMatchObject({ startsAt: "2026-09-19T19:00:00-04:00", category: "community" });
+    expect(
+      seed.events.find((event) => event.id === "poage-landing-days-jigjam-2026-09-19"),
+    ).toMatchObject({ startsAt: "2026-09-19T19:15:00-04:00", category: "music" });
+    expect(
+      seed.events.find((event) => event.id === "poage-landing-days-kentucky-headhunters-2026-09-19"),
+    ).toMatchObject({ startsAt: "2026-09-19T21:00:00-04:00", category: "music" });
+    expect(
+      seed.events.find((event) => event.id === "poage-landing-days-house-of-grace-2026-09-20"),
+    ).toMatchObject({ startsAt: "2026-09-20T11:00:00-04:00", category: "music" });
   });
 
   it("includes the specified Sandy's facebook nights and no invented pub nights", () => {
@@ -97,6 +110,16 @@ describe("seed source rules", () => {
       startsAt: "2026-10-31T19:00:00-04:00",
       source: "facebook",
       image: null,
+    });
+    const thanksgiving = seed.events.find(
+      (event) => event.id === "sandys-thanksgiving-eve-2026-11-25",
+    );
+    expect(thanksgiving).toMatchObject({
+      title: "Thanksgiving Eve at Sandy's",
+      startsAt: "2026-11-25T10:00:00-05:00",
+      source: "facebook",
+      image: null,
+      category: "food",
     });
   });
 

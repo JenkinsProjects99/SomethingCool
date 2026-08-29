@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What's Happening this weekend | Visit AKY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;800&display=swap">
+  <style>
+    @font-face {
+      font-family: "Glacial Indifference";
+      src: url("./fonts/GlacialIndifference-Regular.otf") format("opentype");
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Glacial Indifference";
+      src: url("./fonts/GlacialIndifference-Bold.otf") format("opentype");
+      font-weight: 700;
+      font-style: normal;
+    }
+    :root {
+      --st-primary: #326dcd;
+      --st-primary-label: #f5f5f5;
+      --st-nav-hover: #7b5bbb;
+      --st-paper: #ffffff;
+      --st-ink: #000000;
+      --st-rule: #e6e6e6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--st-paper);
+      color: var(--st-ink);
+      font-family: "Glacial Indifference", ui-sans-serif, sans-serif;
+    }
+    .phone-app { width: min(430px, 100%); margin: 0 auto; padding: 20px 16px 48px; }
+    .brand { display: flex; justify-content: center; margin-bottom: 20px; }
+    .brand img { width: 180px; height: auto; }
+    .phone-app__eyebrow {
+      font-family: "Open Sans", ui-sans-serif, sans-serif;
+      font-weight: 600; font-size: 13px; letter-spacing: 0.1em;
+      text-transform: uppercase; text-align: center; margin: 0 0 8px;
+    }
+    .st-d-title {
+      font-family: "Open Sans", ui-sans-serif, sans-serif;
+      font-weight: 800; font-size: clamp(32px, 9vw, 40px);
+      letter-spacing: 0.025em; text-transform: uppercase; margin: 8px 0 0;
+    }
+    .st-d-paragraph { letter-spacing: 0.05em; line-height: 1.6; margin: 12px 0 0; }
+    .st-d-subheading {
+      font-family: "Glacial Indifference", ui-sans-serif, sans-serif;
+      font-weight: 700; font-size: 14px; letter-spacing: 0.1em;
+      text-transform: uppercase; margin: 0; color: #f5f5f5;
+    }
+    .st-primary, .st-secondary {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 10px 14px;
+      font-family: "Open Sans", ui-sans-serif, sans-serif;
+      font-weight: 600; font-size: 14px; letter-spacing: 0.1em;
+      text-transform: uppercase; border-radius: 0; cursor: pointer;
+    }
+    .st-primary { background: var(--st-primary); color: var(--st-primary-label); border: 2px solid var(--st-primary); }
+    .st-secondary { background: transparent; color: var(--st-primary); border: 2px solid var(--st-primary); }
+    .phone-thumbs, .phone-views { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 16px; }
+    .phone-views { margin-top: 0; }
+    .phone-thumbs .st-primary, .phone-thumbs .st-secondary,
+    .phone-views .st-primary, .phone-views .st-secondary { flex: 1; }
+    .photo-stack { display: grid; gap: 14px; }
+    .photo-card { position: relative; display: block; overflow: hidden; min-height: 220px; text-decoration: none; color: #fff; }
+    .photo-card--featured { min-height: 320px; }
+    .photo-card__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .photo-card__image--logo { object-fit: contain; padding: 36px 28px 72px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
+    .photo-card__overlay {
+      position: absolute; inset: auto 0 0; display: flex; flex-direction: column; gap: 6px;
+      padding: 56px 16px 18px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.78));
+    }
+    .photo-card__title {
+      font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800;
+      font-size: clamp(22px, 6vw, 28px); letter-spacing: 0.025em; text-transform: uppercase;
+      line-height: 1.05; margin: 0; color: #fff;
+    }
+    .photo-card__when { margin: 0; color: #fff; letter-spacing: 0.04em; }
+    .month-cal__nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .month-cal__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; }
+    .month-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .month-cal__dow { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; margin: 0 0 4px; }
+    .month-cal__cell {
+      min-height: 44px; border: 1px solid var(--st-rule); background: #fff; color: #000;
+      font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 700; font-size: 14px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    }
+    .month-cal__cell--empty { border-color: transparent; }
+    .month-cal__cell--has { border-color: var(--st-primary); }
+    .month-cal__cell--on { background: var(--st-primary); color: #f5f5f5; border-color: var(--st-primary); }
+    .month-cal__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: block; }
+    .month-cal__list { margin: 16px 0 0; padding: 0; list-style: none; }
+    .month-cal__list li { border-top: 1px solid var(--st-rule); padding: 12px 0; }
+    .month-cal__list a { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
+    .month-cal__list strong { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; letter-spacing: 0.025em; text-transform: uppercase; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="phone-app">
+    <header>
+      <div class="brand"><img src="./brand/visit-aky-logo.png" alt="Visit AKY, Ashland, Kentucky"></div>
+      <p class="phone-app__eyebrow">You are now viewing events</p>
+      <h1 class="st-d-title">What's happening</h1>
+      <p class="st-d-paragraph">This weekend in Ashland, Eastern Time. Official rows only. Confirm times before you go.</p>
+    </header>
+    <div class="phone-thumbs" role="tablist" aria-label="Quick filters">
+      <button type="button" class="st-primary" aria-selected="true">Upcoming</button>
+      <button type="button" class="st-secondary" disabled>Music</button>
+      <button type="button" class="st-secondary" disabled>Sports</button>
+      <button type="button" class="st-secondary" disabled>Family</button>
+    </div>
+    <div class="phone-views" role="group" aria-label="View">
+      <button type="button" id="btn-cards" class="st-primary" aria-pressed="true">Cards</button>
+      <button type="button" id="btn-cal" class="st-secondary" aria-pressed="false">Calendar</button>
+    </div>
+    <main id="cards" class="photo-stack">
+      <a class="photo-card photo-card--sports photo-card--featured" href="https://www.maxpreps.com/ky/ashland/blazer-tomcats/volleyball/" target="_blank" rel="noreferrer" data-id="ashland-tomcats-volleyball-johnson-central-2026-08-29" data-category="sports">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Ashland Tomcats Volleyball vs. Johnson Central</h2>
+        <p class="photo-card__when"><time datetime="2026-08-29T11:00:00-04:00">SAT · AUG 29 · 11:00 AM</time></p>
+        <p class="st-d-subheading">MaxPreps</p>
+      </div>
+    </a>
+<a class="photo-card photo-card--sports" href="https://www.maxpreps.com/ky/ashland/fairview-eagles/volleyball/" target="_blank" rel="noreferrer" data-id="fairview-eagles-volleyball-rose-hill-2026-08-29" data-category="sports">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Fairview Eagles Volleyball vs. Rose Hill Christian</h2>
+        <p class="photo-card__when"><time datetime="2026-08-29T12:00:00-04:00">SAT · AUG 29 · 12:00 PM</time></p>
+        <p class="st-d-subheading">MaxPreps</p>
+      </div>
+    </a>
+<a class="photo-card photo-card--sports" href="https://www.maxpreps.com/ky/ashland/blazer-tomcats/volleyball/" target="_blank" rel="noreferrer" data-id="ashland-tomcats-volleyball-wolfe-county-2026-08-29" data-category="sports">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Ashland Tomcats Volleyball vs. Wolfe County</h2>
+        <p class="photo-card__when"><time datetime="2026-08-29T13:00:00-04:00">SAT · AUG 29 · 1:00 PM</time></p>
+        <p class="st-d-subheading">MaxPreps</p>
+      </div>
+    </a>
+<a class="photo-card photo-card--food" href="https://www.facebook.com/playsandys/" target="_blank" rel="noreferrer" data-id="sandys-exacta-giveaway-bronco-sport-2026-08-29" data-category="food">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Sandy's Exacta Giveaway Bronco Sport</h2>
+        <p class="photo-card__when"><time datetime="2026-08-29T23:30:00-04:00">SAT · AUG 29 · 11:30 PM</time></p>
+        <p class="st-d-subheading">Facebook</p>
+      </div>
+    </a>
+<a class="photo-card photo-card--community" href="https://www.thebookplace.org/event/novel-tea-book-club-midland-12404" target="_blank" rel="noreferrer" data-id="boyd-library-midland-novel-tea-book-club-2026-08-31" data-category="community">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Novel Tea Book Club -Midland</h2>
+        <p class="photo-card__when"><time datetime="2026-08-31T13:00:00-04:00">MON · AUG 31 · 1:00 PM</time></p>
+        <p class="st-d-subheading">Boyd County Public Library</p>
+      </div>
+    </a>
+<a class="photo-card photo-card--sports" href="https://www.maxpreps.com/ky/ashland/boyd-county-lions/soccer/girls/" target="_blank" rel="noreferrer" data-id="boyd-lions-girls-soccer-greenup-2026-08-31" data-category="sports">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Boyd County Lions Girls Soccer vs. Greenup County</h2>
+        <p class="photo-card__when"><time datetime="2026-08-31T18:00:00-04:00">MON · AUG 31 · 6:00 PM</time></p>
+        <p class="st-d-subheading">MaxPreps</p>
+      </div>
+    </a>
+<a class="photo-card photo-card--sports" href="https://www.maxpreps.com/ky/ashland/boyd-county-lions/soccer/" target="_blank" rel="noreferrer" data-id="boyd-lions-boys-soccer-greenup-2026-08-31" data-category="sports">
+      <img class="photo-card__image photo-card__image--logo" src="./brand/visit-aky-logo.png" alt="">
+      <div class="photo-card__overlay">
+        <h2 class="photo-card__title">Boyd County Lions Boys Soccer vs. Greenup County</h2>
+        <p class="photo-card__when"><time datetime="2026-08-31T20:00:00-04:00">MON · AUG 31 · 8:00 PM</time></p>
+        <p class="st-d-subheading">MaxPreps</p>
+      </div>
+    </a>
+    </main>
+    <main id="calendar" class="hidden" aria-label="Calendar">
+      <section class="month-cal">
+        <div class="month-cal__nav">
+          <span class="st-secondary" aria-hidden="true">Prev</span>
+          <h2 class="month-cal__title">August 2026</h2>
+          <span class="st-secondary" aria-hidden="true">Next</span>
+        </div>
+        <div class="month-cal__grid" role="grid" aria-label="August 2026">
+          <p class="month-cal__dow">Sun</p><p class="month-cal__dow">Mon</p><p class="month-cal__dow">Tue</p><p class="month-cal__dow">Wed</p><p class="month-cal__dow">Thu</p><p class="month-cal__dow">Fri</p><p class="month-cal__dow">Sat</p>
+          <div class="month-cal__cell month-cal__cell--empty"></div>
+<div class="month-cal__cell month-cal__cell--empty"></div>
+<div class="month-cal__cell month-cal__cell--empty"></div>
+<div class="month-cal__cell month-cal__cell--empty"></div>
+<div class="month-cal__cell month-cal__cell--empty"></div>
+<div class="month-cal__cell month-cal__cell--empty"></div>
+<button type="button" class="month-cal__cell" data-day="1"><span>1</span></button>
+<button type="button" class="month-cal__cell" data-day="2"><span>2</span></button>
+<button type="button" class="month-cal__cell" data-day="3"><span>3</span></button>
+<button type="button" class="month-cal__cell" data-day="4"><span>4</span></button>
+<button type="button" class="month-cal__cell" data-day="5"><span>5</span></button>
+<button type="button" class="month-cal__cell" data-day="6"><span>6</span></button>
+<button type="button" class="month-cal__cell" data-day="7"><span>7</span></button>
+<button type="button" class="month-cal__cell" data-day="8"><span>8</span></button>
+<button type="button" class="month-cal__cell" data-day="9"><span>9</span></button>
+<button type="button" class="month-cal__cell" data-day="10"><span>10</span></button>
+<button type="button" class="month-cal__cell" data-day="11"><span>11</span></button>
+<button type="button" class="month-cal__cell" data-day="12"><span>12</span></button>
+<button type="button" class="month-cal__cell" data-day="13"><span>13</span></button>
+<button type="button" class="month-cal__cell" data-day="14"><span>14</span></button>
+<button type="button" class="month-cal__cell" data-day="15"><span>15</span></button>
+<button type="button" class="month-cal__cell" data-day="16"><span>16</span></button>
+<button type="button" class="month-cal__cell" data-day="17"><span>17</span></button>
+<button type="button" class="month-cal__cell" data-day="18"><span>18</span></button>
+<button type="button" class="month-cal__cell" data-day="19"><span>19</span></button>
+<button type="button" class="month-cal__cell" data-day="20"><span>20</span></button>
+<button type="button" class="month-cal__cell" data-day="21"><span>21</span></button>
+<button type="button" class="month-cal__cell" data-day="22"><span>22</span></button>
+<button type="button" class="month-cal__cell" data-day="23"><span>23</span></button>
+<button type="button" class="month-cal__cell" data-day="24"><span>24</span></button>
+<button type="button" class="month-cal__cell" data-day="25"><span>25</span></button>
+<button type="button" class="month-cal__cell" data-day="26"><span>26</span></button>
+<button type="button" class="month-cal__cell" data-day="27"><span>27</span></button>
+<button type="button" class="month-cal__cell" data-day="28"><span>28</span></button>
+<button type="button" class="month-cal__cell month-cal__cell--on month-cal__cell--has" data-day="29"><span>29</span><i class="month-cal__dot" aria-hidden="true"></i></button>
+<button type="button" class="month-cal__cell" data-day="30"><span>30</span></button>
+<button type="button" class="month-cal__cell month-cal__cell--has" data-day="31"><span>31</span><i class="month-cal__dot" aria-hidden="true"></i></button>
+        </div>
+        <ol class="month-cal__list" id="cal-list">
+          <li data-day="29"><a href="https://www.maxpreps.com/ky/ashland/blazer-tomcats/volleyball/" target="_blank" rel="noreferrer"><strong>Ashland Tomcats Volleyball vs. Johnson Central</strong><span>SAT · AUG 29 · 11:00 AM · MaxPreps</span></a></li>
+<li data-day="29"><a href="https://www.maxpreps.com/ky/ashland/fairview-eagles/volleyball/" target="_blank" rel="noreferrer"><strong>Fairview Eagles Volleyball vs. Rose Hill Christian</strong><span>SAT · AUG 29 · 12:00 PM · MaxPreps</span></a></li>
+<li data-day="29"><a href="https://www.maxpreps.com/ky/ashland/blazer-tomcats/volleyball/" target="_blank" rel="noreferrer"><strong>Ashland Tomcats Volleyball vs. Wolfe County</strong><span>SAT · AUG 29 · 1:00 PM · MaxPreps</span></a></li>
+<li data-day="29"><a href="https://www.facebook.com/playsandys/" target="_blank" rel="noreferrer"><strong>Sandy's Exacta Giveaway Bronco Sport</strong><span>SAT · AUG 29 · 11:30 PM · Facebook</span></a></li>
+<li data-day="31"><a href="https://www.thebookplace.org/event/novel-tea-book-club-midland-12404" target="_blank" rel="noreferrer"><strong>Novel Tea Book Club -Midland</strong><span>MON · AUG 31 · 1:00 PM · Boyd County Public Library</span></a></li>
+<li data-day="31"><a href="https://www.maxpreps.com/ky/ashland/boyd-county-lions/soccer/girls/" target="_blank" rel="noreferrer"><strong>Boyd County Lions Girls Soccer vs. Greenup County</strong><span>MON · AUG 31 · 6:00 PM · MaxPreps</span></a></li>
+<li data-day="31"><a href="https://www.maxpreps.com/ky/ashland/boyd-county-lions/soccer/" target="_blank" rel="noreferrer"><strong>Boyd County Lions Boys Soccer vs. Greenup County</strong><span>MON · AUG 31 · 8:00 PM · MaxPreps</span></a></li>
+        </ol>
+      </section>
+    </main>
+  </div>
+  <script>
+    const cards = document.getElementById('cards');
+    const calendar = document.getElementById('calendar');
+    const btnCards = document.getElementById('btn-cards');
+    const btnCal = document.getElementById('btn-cal');
+    const items = [...document.querySelectorAll('#cal-list li')];
+    function show(view) {
+      const isCal = view === 'calendar';
+      calendar.classList.toggle('hidden', !isCal);
+      cards.classList.toggle('hidden', isCal);
+      btnCal.className = isCal ? 'st-primary' : 'st-secondary';
+      btnCards.className = isCal ? 'st-secondary' : 'st-primary';
+      btnCal.setAttribute('aria-pressed', String(isCal));
+      btnCards.setAttribute('aria-pressed', String(!isCal));
+    }
+    btnCards.onclick = () => show('cards');
+    btnCal.onclick = () => show('calendar');
+    document.querySelectorAll('.month-cal__cell[data-day]').forEach((cell) => {
+      cell.onclick = () => {
+        document.querySelectorAll('.month-cal__cell--on').forEach((el) => el.classList.remove('month-cal__cell--on'));
+        cell.classList.add('month-cal__cell--on');
+        const day = cell.getAttribute('data-day');
+        items.forEach((li) => { li.style.display = li.getAttribute('data-day') === day ? '' : 'none'; });
+      };
+    });
+    document.querySelector('.month-cal__cell[data-day="29"]')?.click();
+  </script>
+</body>
+</html>

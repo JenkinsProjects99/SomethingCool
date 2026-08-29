@@ -81,6 +81,13 @@ export function startOfToday(now = new Date()): Date {
   return startOfZonedDay(now);
 }
 
+/** Public UI lookback: do not dump the full seed history. */
+export const TOURIST_LOOKBACK_DAYS = 7;
+
+export function startOfLookback(now = new Date(), days = TOURIST_LOOKBACK_DAYS): Date {
+  return addZonedDays(startOfToday(now), -days);
+}
+
 function addZonedDays(start: Date, days: number): Date {
   const parts = zonedParts(start);
   const utc = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days));
@@ -171,6 +178,36 @@ export function eventInRange(
   return true;
 }
 
+const MIN_FIRST_SCREEN = 6;
+
+/** Weekend hits if any; pad with upcoming so the first screen is never empty. */
+export function firstScreenEvents<T extends { startsAt: Date }>(
+  events: T[],
+  now = new Date(),
+): T[] {
+  const today = startOfZonedDay(now);
+  const upcoming = [...events]
+    .filter((event) => event.startsAt >= today)
+    .sort((left, right) => left.startsAt.getTime() - right.startsAt.getTime());
+  if (upcoming.length === 0) return [];
+  const weekend = thisWeekendWindow(
+    now,
+    upcoming.map((event) => ({ startsAt: event.startsAt })),
+  );
+  const inWeekend = upcoming.filter((event) => eventInWindow(event.startsAt, weekend));
+  if (inWeekend.length >= MIN_FIRST_SCREEN) return inWeekend;
+  const seen = new Set(inWeekend);
+  const padded = [...inWeekend];
+  for (const event of upcoming) {
+    if (padded.length >= MIN_FIRST_SCREEN) break;
+    if (!seen.has(event)) {
+      seen.add(event);
+      padded.push(event);
+    }
+  }
+  return padded;
+}
+
 /** Frozen partner window. `from` inclusive, `to` exclusive. Date-only is midnight ET. */
 export function parseWindowBound(value: string | null | undefined): Date | undefined {
   if (value == null || value === "") return undefined;
@@ -179,6 +216,17 @@ export function parseWindowBound(value: string | null | undefined): Date | undef
     throw new InvalidQueryError("from/to must be YYYY-MM-DD or an offset datetime");
   }
   return parseInstant(parsed.data, TIME_ZONE);
+}
+
+/** Date-only `to` includes that calendar day (exclusive the next midnight ET). */
+export function parseToBound(value: string | null | undefined): Date | undefined {
+  if (value == null || value === "") return undefined;
+  const start = parseWindowBound(value);
+  if (!start) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return addZonedDays(start, 1);
+  }
+  return start;
 }
 
 export function eventInWindow(startsAt: Date, window: EventWindow): boolean {

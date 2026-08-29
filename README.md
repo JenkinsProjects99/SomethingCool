@@ -7,9 +7,10 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Installable PWA at `/` (full-bleed photo cards, this weekend / date / category / upcoming vs all)
+- Installable PWA at `/` (full-bleed photo cards, Upcoming / Music / Sports / Family, Calendar tab)
+- Shareable Dana preview at [`/dana.html`](https://cdn.jsdelivr.net/gh/JenkinsProjects99/SomethingCool@cursor/pwa-photo-cards-b62f/public/dana.html) (this weekend’s official rows, Visit AKY logo fallback, no localhost)
 - Secondary iframe at `/embed`
-- Reloadable 225-row official seed. 14 rows have official Paramount/Visit AKY image URLs; others stay `image: null` in JSON. Photo cards show the Visit AKY logo when `image` is null (client-only; the logo URL is not in the seed). Never drop a row for a missing photo. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source. Kids Paramount shows are family.
+- Reloadable official seed (Sean’s 225 plus official Poage main-stage times and Thanksgiving Eve at 10am ET). At most 14 rows have official Paramount/Visit AKY image URLs; others stay `image: null` in JSON. Photo cards show the Visit AKY logo when `image` is null (client-only; the logo URL is not in the seed). Never drop a row for a missing photo. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source. Kids Paramount shows are family.
 - `GET /v1/ashland-ky/events` with Bearer auth
 - Public nine fields plus additive `image` and `category`
 - Never auto-publish
@@ -29,18 +30,18 @@ npm run seed
 npm run dev
 ```
 
-Open the phone app at [http://localhost:3000](http://localhost:3000). Secondary widget: [http://localhost:3000/embed](http://localhost:3000/embed).
+Open the phone app at [http://localhost:3000](http://localhost:3000). Secondary widget: [http://localhost:3000/embed](http://localhost:3000/embed). Dana preview (no app server): [http://localhost:3000/dana.html](http://localhost:3000/dana.html).
 
-The tourist page also renders from the seed file if Postgres is not up, so a preview host can show this weekend with photos in one load.
+The tourist page also renders from the seed file if Postgres is not up.
 
 ## Partner API
 
 ```bash
 curl -s -H "Authorization: Bearer dev-ashland-ky-local-token" \
-  "http://localhost:3000/v1/ashland-ky/events?from=2026-09-01&to=2026-10-01"
+  "http://localhost:3000/v1/ashland-ky/events?from=2026-08-29&to=2026-08-31"
 ```
 
-`from` and `to` are the frozen window (`from` inclusive, `to` exclusive; `YYYY-MM-DD` or an offset datetime). Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when `from`/`to` are omitted. Drafts never appear.
+`from` and `to` are the frozen window (`from` inclusive; date-only `to` includes that Eastern Time calendar day). Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when `from`/`to` are omitted. Drafts never appear. The weekend query above must return Sean’s volleyball, Exacta, soccer, and Novel Tea rows. Each payload includes `category`. Null `image` stays null.
 
 The example token is a local placeholder. Rotate it before any shared host. A token for another tenant receives `403` even if the URL says `ashland-ky`.
 
@@ -90,4 +91,4 @@ Single listing:
 - Playlist script stays in the logo file, not as a widget type.
 - Events do not auto-publish.
 - Do not invent events or fake photos as content.
-- **This weekend** is the default tourist view. If the current Fri–Sun has no official events, it rolls to the next weekend that does.
+- **Upcoming** is the default tourist view. Cards and calendar are upcoming first, then a 7-day Eastern Time lookback — not the full seed history.

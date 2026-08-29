@@ -5,14 +5,30 @@ import { describe, expect, it } from "vitest";
 describe("tourist phone preview", () => {
   const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
 
-  it("defaults to this weekend with date, category, and upcoming thumbs", () => {
-    expect(phone).toContain('useState<DateThumb>("weekend")');
-    expect(phone).toContain('This weekend');
-    expect(phone).toContain('This week');
-    expect(phone).toContain('This month');
-    expect(phone).toContain('Upcoming');
-    expect(phone).toContain("EVENT_CATEGORIES");
-    expect(phone).toContain("photo-card__fallback");
-    expect(phone).toContain("event.image");
+  it("defaults to upcoming in ET with a calendar tab and logo fallback", () => {
+    expect(phone).toContain('useState<TouristThumb>("upcoming")');
+    expect(phone).toContain("Upcoming");
+    expect(phone).toContain("Calendar");
+    expect(phone).toContain("MonthCalendar");
+    expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
+    expect(phone).not.toMatch(/chip|pill|badge/i);
+  });
+});
+
+describe("Dana weekend preview", () => {
+  const dana = readFileSync(path.join(process.cwd(), "public/dana.html"), "utf8");
+
+  it("shows Sean's verified weekend rows with the Visit AKY logo fallback", () => {
+    expect(dana).toContain("ashland-tomcats-volleyball-johnson-central-2026-08-29");
+    expect(dana).toContain("fairview-eagles-volleyball-rose-hill-2026-08-29");
+    expect(dana).toContain("ashland-tomcats-volleyball-wolfe-county-2026-08-29");
+    expect(dana).toContain("sandys-exacta-giveaway-bronco-sport-2026-08-29");
+    expect(dana).toContain("boyd-library-midland-novel-tea-book-club-2026-08-31");
+    expect(dana).toContain("boyd-lions-girls-soccer-greenup-2026-08-31");
+    expect(dana).toContain("boyd-lions-boys-soccer-greenup-2026-08-31");
+    expect(dana).toContain("./brand/visit-aky-logo.png");
+    expect(dana).toContain("Calendar");
+    expect(dana).toContain('data-category="sports"');
+    expect(dana).not.toMatch(/localhost/);
   });
 });

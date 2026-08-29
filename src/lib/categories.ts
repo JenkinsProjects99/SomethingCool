@@ -38,6 +38,18 @@ export function rankCategory(category: EventCategory): number {
   return CATEGORY_RANK[category];
 }
 
+export function isFamilyEvent(event: { category: EventCategory }): boolean {
+  return event.category === "family";
+}
+
+export function isMusicEvent(event: { category: EventCategory }): boolean {
+  return event.category === "music";
+}
+
+export function isSportsEvent(event: { category: EventCategory }): boolean {
+  return event.category === "sports";
+}
+
 export function sortForTourist<T extends { category: EventCategory; startsAtDate: Date }>(
   events: T[],
 ): T[] {
