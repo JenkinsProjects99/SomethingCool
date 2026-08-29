@@ -1,0 +1,142 @@
+export type PublicRange = "month" | "week" | "all";
+export type EmbedRange = "upcoming" | "all";
+export type EventRange = PublicRange | EmbedRange;
+
+export const PUBLIC_RANGES: PublicRange[] = ["month", "week", "all"];
+export const EMBED_RANGES: EmbedRange[] = ["upcoming", "all"];
+
+const TIME_ZONE = "America/New_York";
+
+export function parsePublicRange(value: string | undefined | null): PublicRange {
+  if (value === "week" || value === "all" || value === "month") {
+    return value;
+  }
+  return "month";
+}
+
+export function parseEmbedRange(value: string | undefined | null): EmbedRange {
+  if (value === "all" || value === "upcoming") {
+    return value;
+  }
+  return "upcoming";
+}
+
+function zonedParts(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+  }).formatToParts(date);
+  const read = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return {
+    year: Number(read("year")),
+    month: Number(read("month")),
+    day: Number(read("day")),
+    weekday: read("weekday"),
+  };
+}
+
+function startOfZonedDay(date: Date): Date {
+  const { year, month, day } = zonedParts(date);
+  return wallTimeToUtc(year, month, day, 0, 0);
+}
+
+function wallTimeToUtc(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute: number,
+): Date {
+  const guess = new Date(Date.UTC(year, month - 1, day, hour + 4, minute));
+  const shown = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(guess);
+  const read = (type: string) => Number(shown.find((part) => part.type === type)?.value);
+  const deltaMinutes =
+    (hour - read("hour")) * 60 +
+    (minute - read("minute")) +
+    (day - read("day")) * 24 * 60;
+  return new Date(guess.getTime() + deltaMinutes * 60_000);
+}
+
+export function startOfToday(now = new Date()): Date {
+  return startOfZonedDay(now);
+}
+
+export function rangeBounds(
+  range: EventRange,
+  now = new Date(),
+  options: { rollMonthForward?: boolean } = {},
+): { start?: Date; end?: Date } {
+  if (range === "all") {
+    return {};
+  }
+
+  const today = startOfZonedDay(now);
+  const parts = zonedParts(now);
+
+  if (range === "upcoming") {
+    return { start: today };
+  }
+
+  if (range === "month") {
+    let year = parts.year;
+    let month = parts.month;
+    if (options.rollMonthForward) {
+      month += 1;
+      if (month === 13) {
+        month = 1;
+        year += 1;
+      }
+    }
+    const start = wallTimeToUtc(year, month, 1, 0, 0);
+    const endMonth = month === 12 ? 1 : month + 1;
+    const endYear = month === 12 ? year + 1 : year;
+    const end = wallTimeToUtc(endYear, endMonth, 1, 0, 0);
+    return { start, end };
+  }
+
+  const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(parts.weekday);
+  const weekStart = new Date(today.getTime() - weekdayIndex * 86_400_000);
+  const weekEnd = new Date(weekStart.getTime() + 7 * 86_400_000);
+  return { start: weekStart, end: weekEnd };
+}
+
+export function eventInRange(
+  startsAt: Date,
+  range: EventRange,
+  now = new Date(),
+  options: { rollMonthForward?: boolean } = {},
+): boolean {
+  const { start, end } = rangeBounds(range, now, options);
+  if (start && startsAt < start) return false;
+  if (end && startsAt >= end) return false;
+  return true;
+}
+
+export function filterEventsByRange<T extends { startsAt: Date }>(
+  events: T[],
+  range: EventRange,
+  now = new Date(),
+): T[] {
+  const firstPass = events.filter((event) => eventInRange(event.startsAt, range, now));
+  if (range !== "month") {
+    return firstPass;
+  }
+  const today = startOfZonedDay(now);
+  if (firstPass.some((event) => event.startsAt >= today)) {
+    return firstPass;
+  }
+  return events.filter((event) =>
+    eventInRange(event.startsAt, range, now, { rollMonthForward: true }),
+  );
+}
