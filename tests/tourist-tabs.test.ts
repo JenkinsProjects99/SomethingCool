@@ -31,7 +31,7 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(phone).toContain("Community");
     expect(phone).not.toContain('label: "Family"');
     expect(phone).toContain("{event.venue}");
-    expect(phone).toContain("Event details");
+    expect(phone).toContain("Event Details");
   });
 
   it("defaults This Week to date-first weekend rows before later music", () => {
@@ -90,6 +90,8 @@ describe("tourist upcoming bar and calendar tab", () => {
       ),
     ).toBe(true);
     expect(communityUpcoming.some((event) => event.category === "family")).toBe(true);
+    const sesame = communityUpcoming.find((event) => event.id === "sesame-street-live");
+    expect(sesame?.category).toBe("family");
     const community = eventsForTouristView(events, "week", "community", NOW);
     expect(community.length).toBeGreaterThan(0);
     expect(

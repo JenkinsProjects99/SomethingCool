@@ -82,7 +82,9 @@ describe.skipIf(!hasDatabase)("tenant isolation against postgres", () => {
     const deana = payload.find((row) => row.id === "deana-carter");
     expect(deana?.image).toMatch(/^https:\/\/cdn\.saffire\.com\//);
     expect(deana?.category).toBe("music");
-    expect(payload.filter((row) => row.image).length).toBe(14);
+    expect(payload.filter((row) => row.image).length).toBe(28);
+    const sesame = payload.find((row) => row.id === "sesame-street-live");
+    expect(sesame?.category).toBe("family");
     const poage = payload.find((row) => row.id === "poage-landing-days-2026");
     expect(poage?.startsAt).toBe("2026-09-18");
     expect(poage?.endsAt).toBe("2026-09-20");

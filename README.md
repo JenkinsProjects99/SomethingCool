@@ -7,7 +7,7 @@ Centered Visit AKY logo, Open Sans 800 titles, Glacial Indifference body, source
 ## What ships in v0
 
 - PostgreSQL schema with tenant-scoped events
-- Installable PWA at `/` (full-bleed photo cards with venue + Event details; Upcoming / This Week / Calendar; All / Music / Sports / Community)
+- Installable PWA at `/` (full-bleed photo cards with venue + Event Details; Upcoming / This Week / Calendar; All / Music / Sports / Community)
 - Dana-only phone preview (This Week default, date-first sort, photo cards, blue/purple logo fallback, Sports without First Friday, Calendar): `/dana.html` on this branch. Do not send localhost.
 - Secondary iframe at `/embed`
 - Reloadable official seed (245 rows / 28 official or Facebook photos). Photo cards show the Visit AKY logo when `image` is null (client-only; the logo URL is not in the seed). Never drop a row for a missing photo. Category is stored (`music|sports|family|arts|community|food|outdoor`) and is not inferred from source or title. Kids Paramount shows are family. Community includes stored `family`.

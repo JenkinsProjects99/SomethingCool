@@ -60,14 +60,15 @@ describe("stored category", () => {
     expect(ranked.map((event) => event.category)).toEqual(["music", "sports"]);
   });
 
-  it("puts stored family rows in the Community bucket without reading the title", () => {
+  it("keeps stored family on JSON and only maps those rows in the Community tab", () => {
+    const kids = ["sesame-street-live", "blippi", "ashland-youth-ballet-nutcracker"];
+    for (const id of kids) {
+      expect(seed.events.find((event) => event.id === id)?.category).toBe("family");
+    }
     expect(isCommunityEvent({ category: "family" })).toBe(true);
     expect(isCommunityEvent({ category: "community" })).toBe(true);
     expect(isCommunityEvent({ category: "music" })).toBe(false);
     expect(isCommunityEvent({ category: "sports" })).toBe(false);
-    const sesame = seed.events.find((event) => event.id === "sesame-street-live");
-    expect(sesame?.category).toBe("family");
-    expect(isCommunityEvent({ category: sesame!.category as "family" })).toBe(true);
   });
 
   it("never treats First Friday as a sports event", () => {
