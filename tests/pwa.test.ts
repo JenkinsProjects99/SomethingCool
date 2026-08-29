@@ -11,7 +11,8 @@ describe("installable PWA", () => {
     expect(manifest.start_url).toBe("/");
     expect(manifest.name).toBe("Visit AKY");
     const sw = readFileSync(path.join(process.cwd(), "public/sw.js"), "utf8");
-    expect(sw).toContain("serviceWorker");
+    expect(sw).toContain('addEventListener("install"');
+    expect(sw).toContain("caches.open");
     const layout = readFileSync(path.join(process.cwd(), "src/app/layout.tsx"), "utf8");
     expect(layout).toContain('manifest: "/manifest.webmanifest"');
     expect(layout).toContain("RegisterServiceWorker");

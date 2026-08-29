@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import {
@@ -55,6 +56,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
         <div className="filters" role="tablist" aria-label="When">
           <button
             type="button"
+            role="tab"
             className={range === "upcoming" ? "st-primary" : "st-secondary"}
             aria-selected={range === "upcoming"}
             onClick={() => setRange("upcoming")}
@@ -63,6 +65,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
           </button>
           <button
             type="button"
+            role="tab"
             className={range === "all" ? "st-primary" : "st-secondary"}
             aria-selected={range === "all"}
             onClick={() => setRange("all")}
@@ -83,6 +86,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
         <div className="filters" role="tablist" aria-label="Category">
           <button
             type="button"
+            role="tab"
             className={category === "all" ? "st-primary" : "st-secondary"}
             aria-selected={category === "all"}
             onClick={() => setCategory("all")}
@@ -93,6 +97,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
             <button
               key={key}
               type="button"
+              role="tab"
               className={category === key ? "st-primary" : "st-secondary"}
               aria-selected={category === key}
               onClick={() => setCategory(key)}
@@ -135,7 +140,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
 
       <footer className="footer-note">
         <p className="st-d-paragraph">
-          Partner iframe still lives at <a className="st-text-link" href="/embed">/embed</a>.
+          Partner iframe still lives at <Link className="st-text-link" href="/embed">/embed</Link>.
         </p>
       </footer>
     </div>
