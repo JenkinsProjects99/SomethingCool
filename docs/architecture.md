@@ -37,7 +37,7 @@ The public event contract is frozen. Adding or renaming a field requires a new A
 - Every event and API token belongs to one tenant.
 - The Bearer token resolves a tenant. The URL slug must match that tenant or the request is `403`.
 - Queries always include `tenantId` from the authenticated token, never a client-supplied id.
-- Public pages only load `ashland-ky`.
+- Public pages only load `ashland-ky`. Featured cards prefer the next upcoming rows even when the selected range includes past events. If **This month** has no remaining upcoming events, the calendar rolls forward to the next month so late-month visits still show what is happening.
 
 ## Never auto-publish
 

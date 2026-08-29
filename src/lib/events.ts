@@ -1,6 +1,6 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { pickFrozenNine, type FrozenEvent } from "./fields";
-import { eventInRange, type EventRange } from "./filters";
+import { filterEventsByRange, startOfToday, type EventRange } from "./filters";
 import { scopedEventWhere } from "./tenant";
 
 export interface CalendarEvent extends FrozenEvent {
@@ -45,9 +45,7 @@ export async function listPublishedEvents(
     where,
     orderBy: { startsAt: "asc" },
   });
-  return rows
-    .filter((row) => eventInRange(row.startsAt, range, now))
-    .map(toCalendarEvent);
+  return filterEventsByRange(rows, range, now).map(toCalendarEvent);
 }
 
 export async function getPublishedEventBySlug(
@@ -68,9 +66,18 @@ export function publicEventPayload(event: CalendarEvent): FrozenEvent {
   return pickFrozenNine(event);
 }
 
-export function splitFeatured(events: CalendarEvent[], featuredCount = 2) {
+export function splitFeatured(
+  events: CalendarEvent[],
+  featuredCount = 2,
+  now = new Date(),
+) {
+  const today = startOfToday(now);
+  const upcoming = events.filter((event) => event.startsAtDate >= today);
+  const featuredSource = upcoming.length > 0 ? upcoming : events;
+  const featured = featuredSource.slice(0, featuredCount);
+  const featuredSlugs = new Set(featured.map((event) => event.slug));
   return {
-    featured: events.slice(0, featuredCount),
-    rest: events.slice(featuredCount),
+    featured,
+    rest: events.filter((event) => !featuredSlugs.has(event.slug)),
   };
 }

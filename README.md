@@ -87,3 +87,4 @@ Single listing:
 - Source is a subheading, not a pill. Purple and mint are hover / themed outlines only.
 - Playlist script stays in the logo file, not as a widget type.
 - Events do not auto-publish.
+- **This month** rolls forward when the current month has no remaining upcoming events, so a late-August visit still shows September.

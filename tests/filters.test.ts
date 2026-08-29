@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { eventInRange, parseEmbedRange, parsePublicRange } from "@/lib/filters";
+import { eventInRange, filterEventsByRange, parseEmbedRange, parsePublicRange } from "@/lib/filters";
 
 describe("calendar ranges", () => {
   const now = new Date("2026-08-29T15:00:00-04:00");
@@ -15,6 +15,13 @@ describe("calendar ranges", () => {
     expect(eventInRange(deana, "upcoming", now)).toBe(true);
     expect(eventInRange(deana, "all", now)).toBe(true);
     expect(eventInRange(deana, "month", new Date("2026-09-01T08:00:00-04:00"))).toBe(true);
+  });
+
+  it("rolls this month forward when the current month has no remaining events", () => {
+    const augustPast = { startsAt: new Date("2026-08-07T17:00:00-04:00") };
+    const deana = { startsAt: new Date("2026-09-04T20:00:00-04:00") };
+    const rolled = filterEventsByRange([augustPast, deana], "month", now);
+    expect(rolled).toEqual([deana]);
   });
 
   it("treats this week as the current Sunday-Saturday window", () => {

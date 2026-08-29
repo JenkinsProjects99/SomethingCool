@@ -68,7 +68,15 @@ function wallTimeToUtc(
   return new Date(guess.getTime() + deltaMinutes * 60_000);
 }
 
-export function rangeBounds(range: EventRange, now = new Date()): { start?: Date; end?: Date } {
+export function startOfToday(now = new Date()): Date {
+  return startOfZonedDay(now);
+}
+
+export function rangeBounds(
+  range: EventRange,
+  now = new Date(),
+  options: { rollMonthForward?: boolean } = {},
+): { start?: Date; end?: Date } {
   if (range === "all") {
     return {};
   }
@@ -81,9 +89,18 @@ export function rangeBounds(range: EventRange, now = new Date()): { start?: Date
   }
 
   if (range === "month") {
-    const start = wallTimeToUtc(parts.year, parts.month, 1, 0, 0);
-    const endMonth = parts.month === 12 ? 1 : parts.month + 1;
-    const endYear = parts.month === 12 ? parts.year + 1 : parts.year;
+    let year = parts.year;
+    let month = parts.month;
+    if (options.rollMonthForward) {
+      month += 1;
+      if (month === 13) {
+        month = 1;
+        year += 1;
+      }
+    }
+    const start = wallTimeToUtc(year, month, 1, 0, 0);
+    const endMonth = month === 12 ? 1 : month + 1;
+    const endYear = month === 12 ? year + 1 : year;
     const end = wallTimeToUtc(endYear, endMonth, 1, 0, 0);
     return { start, end };
   }
@@ -94,8 +111,13 @@ export function rangeBounds(range: EventRange, now = new Date()): { start?: Date
   return { start: weekStart, end: weekEnd };
 }
 
-export function eventInRange(startsAt: Date, range: EventRange, now = new Date()): boolean {
-  const { start, end } = rangeBounds(range, now);
+export function eventInRange(
+  startsAt: Date,
+  range: EventRange,
+  now = new Date(),
+  options: { rollMonthForward?: boolean } = {},
+): boolean {
+  const { start, end } = rangeBounds(range, now, options);
   if (start && startsAt < start) return false;
   if (end && startsAt >= end) return false;
   return true;
@@ -106,5 +128,15 @@ export function filterEventsByRange<T extends { startsAt: Date }>(
   range: EventRange,
   now = new Date(),
 ): T[] {
-  return events.filter((event) => eventInRange(event.startsAt, range, now));
+  const firstPass = events.filter((event) => eventInRange(event.startsAt, range, now));
+  if (range !== "month") {
+    return firstPass;
+  }
+  const today = startOfZonedDay(now);
+  if (firstPass.some((event) => event.startsAt >= today)) {
+    return firstPass;
+  }
+  return events.filter((event) =>
+    eventInRange(event.startsAt, range, now, { rollMonthForward: true }),
+  );
 }
