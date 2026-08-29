@@ -35,15 +35,17 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
     <article
       className={`photo-card photo-card--${event.category} ${featured ? "photo-card--featured" : ""}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={
-          event.image ? "photo-card__image" : "photo-card__image photo-card__image--logo"
-        }
-        src={event.image ?? "/brand/visit-aky-logo.png"}
-        alt=""
-      />
-      <div className="photo-card__overlay">
+      <div className="photo-card__media">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={
+            event.image ? "photo-card__image" : "photo-card__image photo-card__image--logo"
+          }
+          src={event.image ?? "/brand/visit-aky-logo.png"}
+          alt=""
+        />
+      </div>
+      <div className="photo-card__body">
         <h2 className="photo-card__title">{event.title}</h2>
         <p className="photo-card__when">
           <time dateTime={event.startsAt}>

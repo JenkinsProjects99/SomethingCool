@@ -18,7 +18,7 @@
     .phone-app__eyebrow { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; margin: 0 0 4px; }
     .st-d-title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: clamp(26px, 8vw, 34px); letter-spacing: 0.025em; text-transform: uppercase; margin: 4px 0 0; }
     .st-d-paragraph { letter-spacing: 0.05em; line-height: 1.5; margin: 8px 0 0; }
-    .st-d-subheading { font-weight: 700; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; margin: 0; color: #f5f5f5; }
+    .st-d-subheading { font-weight: 700; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; margin: 0; color: var(--st-ink); }
     .st-primary, .st-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 6px; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 0; cursor: pointer; }
     .st-primary { background: var(--st-primary); color: var(--st-primary-label); border: 2px solid var(--st-primary); }
     .st-secondary { background: transparent; color: var(--st-primary); border: 2px solid var(--st-primary); }
@@ -26,17 +26,18 @@
     .phone-cats { margin-top: 0; flex-wrap: nowrap; }
     .phone-times .st-primary, .phone-times .st-secondary { flex: 1; }
     .phone-cats .st-primary, .phone-cats .st-secondary { flex: 1; min-width: 0; padding: 8px 4px; font-size: 12px; }
-    .photo-stack { display: grid; gap: 8px; }
-    .photo-card { position: relative; display: block; overflow: hidden; min-height: 148px; color: #fff; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
-    .photo-card--featured { min-height: 168px; }
-    .photo-card__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .photo-card__image--logo { object-fit: contain; padding: 16px 20px 56px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
-    .photo-card__overlay { position: absolute; inset: auto 0 0; display: flex; flex-direction: column; gap: 4px; padding: 28px 14px 12px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.78)); }
-    .photo-card__image--logo + .photo-card__overlay { background: linear-gradient(180deg, rgba(50,109,205,0), rgba(50,40,90,.75)); }
-    .photo-card__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: clamp(16px, 4.4vw, 20px); letter-spacing: 0.025em; text-transform: uppercase; line-height: 1.05; margin: 0; color: #fff; }
-    .photo-card__when, .photo-card__venue, .photo-card .st-d-paragraph { margin: 0; color: #fff; letter-spacing: 0.04em; font-size: 14px; }
-    .photo-card__venue { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .photo-card .st-primary { align-self: flex-start; min-height: 32px; padding: 6px 10px; font-size: 11px; margin-top: 2px; }
+    .photo-stack { display: grid; gap: 16px; }
+    .photo-card { display: flex; flex-direction: column; overflow: visible; color: var(--st-ink); background: var(--st-paper); border-bottom: 1px solid var(--st-rule); padding-bottom: 4px; }
+    .photo-card__media { min-height: 148px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
+    .photo-card--featured .photo-card__media { min-height: 168px; }
+    .photo-card__image { display: block; width: 100%; height: 148px; object-fit: cover; }
+    .photo-card--featured .photo-card__image { height: 168px; }
+    .photo-card__image--logo { object-fit: contain; padding: 16px 20px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
+    .photo-card__body { display: flex; flex-direction: column; gap: 6px; padding: 12px 0 8px; }
+    .photo-card__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: clamp(16px, 4.4vw, 20px); letter-spacing: 0.025em; text-transform: uppercase; line-height: 1.15; margin: 0; color: var(--st-ink); overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+    .photo-card__when, .photo-card__venue, .photo-card .st-d-paragraph { margin: 0; color: var(--st-ink); letter-spacing: 0.04em; font-size: 16px; overflow: visible; text-overflow: unset; white-space: normal; overflow-wrap: anywhere; }
+    .photo-card .st-d-subheading { color: var(--st-ink); overflow: visible; white-space: normal; }
+    .photo-card .st-primary { align-self: flex-start; min-height: 36px; padding: 8px 12px; font-size: 13px; margin-top: 4px; }
     .month-cal__nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .month-cal__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; }
     .month-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -133,9 +134,18 @@
         "'": "&#39;",
       }[ch]));
     }
+    const THIS_WEEK_HEADLINERS = ["deana-carter", "facebook-first-friday-2026-09-04", "makers-market"];
+    function pinThisWeekHeadliners(week, pool) {
+      const pinned = THIS_WEEK_HEADLINERS.map((id) => pool.find((event) => event.id === id)).filter(Boolean);
+      const pinnedIds = new Set(pinned.map((event) => event.id));
+      return pinned.concat(week.filter((event) => !pinnedIds.has(event.id)));
+    }
     function eventsForView() {
       const windowed = EVENTS.filter(inWindow);
-      if (time === "week") return filterCategory(windowed.filter(inThisWeek), cat).sort(byTourist);
+      if (time === "week") {
+        const week = filterCategory(windowed.filter(inThisWeek), cat).sort(byTourist);
+        return pinThisWeekHeadliners(week, filterCategory(windowed, cat));
+      }
       return filterCategory(sortUpcomingFirst(windowed), cat);
     }
     function cardHtml(event, featured) {
@@ -143,8 +153,10 @@
       const imgClass = event.image ? "photo-card__image" : "photo-card__image photo-card__image--logo";
       const feat = featured ? " photo-card--featured" : "";
       return `<article class="photo-card photo-card--${event.category}${feat}" data-id="${event.id}" data-category="${event.category}">
-        <img class="${imgClass}" src="${src}" alt="">
-        <div class="photo-card__overlay">
+        <div class="photo-card__media">
+          <img class="${imgClass}" src="${src}" alt="">
+        </div>
+        <div class="photo-card__body">
           <h2 class="photo-card__title">${escapeHtml(event.title)}</h2>
           <p class="photo-card__when"><time datetime="${event.startsAt}">${escapeHtml(event.when)}</time></p>
           <p class="st-d-paragraph photo-card__venue">${escapeHtml(event.venue)}</p>

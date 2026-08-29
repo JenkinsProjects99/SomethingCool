@@ -10,7 +10,7 @@ describe("source is a subheading, not a chip", () => {
   it("renders source with st-d-subheading", () => {
     expect(card).toContain('className="st-d-subheading">{sourceLabel(event.source)}');
     expect(phone).toContain('className="st-d-subheading">{sourceLabel(event.source)}');
-    expect(phone).toContain("photo-card__overlay");
+    expect(phone).toContain("photo-card__body");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(card).not.toMatch(/chip|pill|badge/i);
     expect(phone).not.toMatch(/chip|pill|badge/i);

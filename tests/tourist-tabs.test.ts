@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { startOfLookback } from "@/lib/filters";
 import { publishedEventsFromSeedFile } from "@/lib/seed/published-from-file";
-import { eventsForThumb, eventsForTouristView } from "@/lib/tourist-feed";
+import { eventsForThumb, eventsForTouristView, THIS_WEEK_HEADLINERS } from "@/lib/tourist-feed";
 
 const NOW = new Date("2026-08-29T15:00:00-04:00");
 
@@ -34,19 +34,34 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(phone).toContain("Event Details");
   });
 
-  it("defaults This Week to date-first weekend rows before later music", () => {
+  it("pins Paramount and Visit AKY headliners above the date-first This Week list", () => {
     const week = eventsForTouristView(events, "week", "all", NOW);
-    expect(week[0]?.id).toBe("ashland-tomcats-volleyball-johnson-central-2026-08-29");
-    expect(week.some((event) => event.id === "deana-carter")).toBe(true);
-    expect(week.findIndex((event) => event.id === "deana-carter")).toBeGreaterThan(0);
-    expect(week.some((event) => event.id === "tomcats-football-2026-08-28")).toBe(false);
-    expect(week.slice(0, 4).map((event) => event.id)).toEqual([
+    expect(THIS_WEEK_HEADLINERS).toEqual([
+      "deana-carter",
+      "facebook-first-friday-2026-09-04",
+      "makers-market",
+    ]);
+    expect(week.slice(0, 7).map((event) => event.id)).toEqual([
+      "deana-carter",
+      "facebook-first-friday-2026-09-04",
+      "makers-market",
       "ashland-tomcats-volleyball-johnson-central-2026-08-29",
       "fairview-eagles-volleyball-rose-hill-2026-08-29",
       "ashland-tomcats-volleyball-wolfe-county-2026-08-29",
       "sandys-exacta-giveaway-bronco-sport-2026-08-29",
     ]);
-    expect(week[2]?.title).toMatch(/Wolfe County/);
+    expect(week.filter((event) => event.id === "deana-carter")).toHaveLength(1);
+    expect(week.some((event) => event.id === "tomcats-football-2026-08-28")).toBe(false);
+    expect(week[5]?.title).toMatch(/Wolfe County/);
+  });
+
+  it("does not pin headliners onto Sports This Week", () => {
+    const sports = eventsForTouristView(events, "week", "sports", NOW);
+    expect(sports[0]?.id).toBe("ashland-tomcats-volleyball-johnson-central-2026-08-29");
+    expect(sports.every((event) => !(THIS_WEEK_HEADLINERS as readonly string[]).includes(event.id))).toBe(
+      true,
+    );
+    expect(sports.every((event) => !/first[\s-]?friday/i.test(`${event.id} ${event.title}`))).toBe(true);
   });
 
   it("sorts upcoming by date so this weekend beats later music", () => {
@@ -98,6 +113,10 @@ describe("tourist upcoming bar and calendar tab", () => {
       community.every((event) => event.category === "community" || event.category === "family"),
     ).toBe(true);
     expect(community.some((event) => event.category === "family")).toBe(true);
+    expect(community.slice(0, 2).map((event) => event.id)).toEqual([
+      "facebook-first-friday-2026-09-04",
+      "makers-market",
+    ]);
     expect(community.some((event) => event.id === "boyd-library-storytime-midland-ages-3-5-12469")).toBe(
       true,
     );

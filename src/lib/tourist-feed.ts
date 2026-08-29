@@ -11,6 +11,13 @@ export type TouristTime = "upcoming" | "week";
 export type TouristCategory = "all" | "music" | "sports" | "community";
 export type TouristThumb = "upcoming" | "music" | "sports" | "community";
 
+/** Paramount + Visit AKY headliners pinned above the date-first This Week list. */
+export const THIS_WEEK_HEADLINERS = [
+  "deana-carter",
+  "facebook-first-friday-2026-09-04",
+  "makers-market",
+] as const;
+
 /** Upcoming first, then the last seven ET days. Never the full history. */
 export function touristWindowEvents(
   events: CalendarEvent[],
@@ -47,6 +54,18 @@ export function filterTouristCategory(
   return events.filter(isCommunityEvent);
 }
 
+export function pinThisWeekHeadliners(
+  week: CalendarEvent[],
+  pool: CalendarEvent[],
+): CalendarEvent[] {
+  const pinned = THIS_WEEK_HEADLINERS.flatMap((id) => {
+    const hit = pool.find((event) => event.id === id);
+    return hit ? [hit] : [];
+  });
+  const pinnedIds = new Set(pinned.map((event) => event.id));
+  return [...pinned, ...week.filter((event) => !pinnedIds.has(event.id))];
+}
+
 export function eventsForTouristView(
   events: CalendarEvent[],
   time: TouristTime,
@@ -55,7 +74,9 @@ export function eventsForTouristView(
 ): CalendarEvent[] {
   const windowed = touristWindowEvents(events, now);
   const timed = time === "week" ? thisWeekEvents(windowed, now) : sortUpcomingFirst(windowed, now);
-  return filterTouristCategory(timed, category);
+  const filtered = filterTouristCategory(timed, category);
+  if (time !== "week") return filtered;
+  return pinThisWeekHeadliners(filtered, filterTouristCategory(windowed, category));
 }
 
 export function eventsForThumb(

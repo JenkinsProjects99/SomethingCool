@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 describe("tourist phone preview", () => {
   const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
+  const css = readFileSync(path.join(process.cwd(), "src/app/globals.css"), "utf8");
 
   it("defaults to This Week with Joanna's two-row IA and logo fallback", () => {
     expect(phone).toContain('useState<TimeTab>("week")');
@@ -15,6 +16,12 @@ describe("tourist phone preview", () => {
     expect(phone).toContain("{event.venue}");
     expect(phone).toContain("st-d-paragraph");
     expect(phone).toContain("Event Details");
+    expect(phone).toContain("photo-card__media");
+    expect(phone).toContain("photo-card__body");
+    expect(phone).not.toContain("photo-card__overlay");
+    expect(css).toContain("photo-card__body");
+    expect(css).not.toContain("photo-card__overlay");
+    expect(css).not.toContain("text-overflow: ellipsis");
     expect(phone).toContain("MonthCalendar");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(phone).not.toMatch(/chip|pill|badge/i);
@@ -48,6 +55,14 @@ describe("Dana weekend preview", () => {
     expect(dana).toContain('data-cat="sports"');
     expect(dana).toContain('data-cat="community"');
     expect(dana).toContain("photo-card__image--logo");
+    expect(dana).toContain("photo-card__media");
+    expect(dana).toContain("photo-card__body");
+    expect(dana).not.toContain("photo-card__overlay");
+    expect(dana).not.toContain("text-overflow: ellipsis");
+    expect(dana).not.toContain("white-space: nowrap");
+    expect(dana).toContain("THIS_WEEK_HEADLINERS");
+    expect(dana).toContain("deana-carter");
+    expect(dana).toContain("makers-market");
     expect(dana).toContain("linear-gradient(160deg, #326dcd, #7b5bbb)");
     expect(dana).not.toMatch(/background:\s*#000/);
     expect(dana).toContain("min-height: 148px");
