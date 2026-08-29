@@ -27,7 +27,8 @@ const seed = JSON.parse(
 };
 
 describe("seed source rules", () => {
-  it("ships official rows without invented pub nights", () => {
+  it("ships 229 official rows without invented pub nights", () => {
+    expect(TARGET_SEED_ROWS).toBe(229);
     expect(seed.events).toHaveLength(TARGET_SEED_ROWS);
     expect(seed.events.length).toBeGreaterThanOrEqual(ORIGINAL_SEED_ROWS);
     expect(seed.events.filter((event) => event.source === "boyd-library").length).toBeGreaterThanOrEqual(
@@ -111,16 +112,9 @@ describe("seed source rules", () => {
       source: "facebook",
       image: null,
     });
-    const thanksgiving = seed.events.find(
-      (event) => event.id === "sandys-thanksgiving-eve-2026-11-25",
-    );
-    expect(thanksgiving).toMatchObject({
-      title: "Thanksgiving Eve at Sandy's",
-      startsAt: "2026-11-25T10:00:00-05:00",
-      source: "facebook",
-      image: null,
-      category: "food",
-    });
+    expect(
+      seed.events.some((event) => event.id === "sandys-thanksgiving-eve-2026-11-25"),
+    ).toBe(false);
   });
 
   it("rejects the Ohio library calendar host", () => {

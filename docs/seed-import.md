@@ -6,7 +6,7 @@ The v0 seed is `data/seed/ashland-ky-events.v0.json`. One reloadable file. Publi
 
 | Stage | Rows |
 | --- | --- |
-| Official published rows | **230** (Sean’s 225 + official Poage main-stage times + Thanksgiving Eve at 10am ET) |
+| Official published rows | **229** (Sean’s 225 + official Poage main-stage times) |
 | Official Paramount / Visit AKY images | **at most 14** |
 | Remaining images | `null` in JSON (client shows the Visit AKY logo; do not write the logo URL into the seed) |
 
@@ -16,7 +16,7 @@ The file keeps the original editorial 27, specified school/facebook rows, offici
 
 Poage Landing Days keeps the date-only festival row (`2026-09-18`–`2026-09-20`) plus official Main Stage times from [poagelandingdays.com/main-stage.html](https://www.poagelandingdays.com/main-stage.html): Opening Ceremony Sat 7:00 PM, JigJam Sat 7:15 PM, The Kentucky Headhunters Sat 9:00 PM, House of Grace Sun 11:00 AM.
 
-Thanksgiving Eve at Sandy’s is `2026-11-25T10:00:00-05:00`. A tentative 8pm downtown NYE was removed; do not invent a replacement NYE row.
+A tentative 8pm downtown NYE was removed; do not invent a replacement NYE row.
 
 `GET /v1/ashland-ky/events` returns every **published** row for the range. It does not cap at 27. Date-only `to` includes that calendar day in Eastern Time.
 

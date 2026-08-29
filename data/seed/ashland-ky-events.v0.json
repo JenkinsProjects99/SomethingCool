@@ -3,7 +3,7 @@
     "slug": "ashland-ky",
     "name": "Visit AKY"
   },
-  "notes": "Reloadable seed. Public nine + additive image and category. 230 official rows. Official Paramount/Visit AKY image URLs stay on pictured rows; all others image null. Never write the Visit AKY logo URL into JSON. Client shows the logo when image is null. Category is required. Poage main-stage times from poagelandingdays.com. Thanksgiving Eve at Sandy's at 10am ET. No First Friday, winter makers, tentative 8pm NYE, or Music Trail. Do not invent pub nights. Upsert on id.",
+  "notes": "Reloadable seed. Public nine + additive image and category. 229 official rows. Sean's 225 plus official Poage main-stage times from poagelandingdays.com (Opening Ceremony, JigJam, Kentucky Headhunters, House of Grace). Official Paramount/Visit AKY image URLs stay on pictured rows; all others image null. Never write the Visit AKY logo URL into JSON. Client shows the logo when image is null. Category is required. No First Friday, winter makers, tentative NYE, or Music Trail. Do not invent pub nights. Upsert on id.",
   "events": [
     {
       "id": "sammy-kershaw",
@@ -3668,22 +3668,6 @@
       "summary": "House of Grace on the Main Stage Sunday 11:00 AM. Confirm time before you go.",
       "status": "published",
       "category": "music"
-    },
-    {
-      "id": "sandys-thanksgiving-eve-2026-11-25",
-      "title": "Thanksgiving Eve at Sandy's",
-      "startsAt": "2026-11-25T10:00:00-05:00",
-      "endsAt": null,
-      "timezone": "America/New_York",
-      "venue": "Sandy's Racing & Gaming",
-      "address": "10775 US Route 60, Ashland, KY 41102",
-      "url": "https://www.facebook.com/playsandys/",
-      "source": "facebook",
-      "image": null,
-      "slug": "sandys-thanksgiving-eve-2026-11-25",
-      "summary": "Thanksgiving Eve at Sandy's. 10:00 AM ET. Confirm time before you go.",
-      "status": "published",
-      "category": "food"
     }
   ]
 }

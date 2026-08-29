@@ -18,7 +18,7 @@ export const ORIGINAL_SEED_ROWS = 27;
 export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
 export const TARGET_MAXPREPS_ROWS = 27;
-export const TARGET_SEED_ROWS = 230;
+export const TARGET_SEED_ROWS = 229;
 export const OFFICIAL_IMAGE_ROWS = 14;
 
 export interface SeedFile {
