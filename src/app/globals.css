@@ -416,6 +416,10 @@ img {
   margin-top: 0;
 }
 
+.phone-cats {
+  flex-wrap: nowrap;
+}
+
 .phone-times .st-primary,
 .phone-times .st-secondary,
 .phone-views .st-primary,
@@ -429,8 +433,10 @@ img {
 .phone-cats .st-secondary,
 .phone-thumbs .st-primary,
 .phone-thumbs .st-secondary {
-  flex: 1 1 calc(25% - 8px);
+  flex: 1;
   min-width: 0;
+  padding: 8px 4px;
+  font-size: 12px;
   padding: 10px 8px;
 }
 

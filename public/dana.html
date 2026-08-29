@@ -23,9 +23,9 @@
     .st-primary { background: var(--st-primary); color: var(--st-primary-label); border: 2px solid var(--st-primary); }
     .st-secondary { background: transparent; color: var(--st-primary); border: 2px solid var(--st-primary); }
     .phone-times, .phone-cats { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
-    .phone-cats { margin-top: 0; }
+    .phone-cats { margin-top: 0; flex-wrap: nowrap; }
     .phone-times .st-primary, .phone-times .st-secondary { flex: 1; }
-    .phone-cats .st-primary, .phone-cats .st-secondary { flex: 1 1 calc(25% - 8px); }
+    .phone-cats .st-primary, .phone-cats .st-secondary { flex: 1; min-width: 0; padding: 8px 4px; font-size: 12px; }
     .photo-stack { display: grid; gap: 8px; }
     .photo-card { position: relative; display: block; overflow: hidden; min-height: 148px; color: #fff; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
     .photo-card--featured { min-height: 168px; }
