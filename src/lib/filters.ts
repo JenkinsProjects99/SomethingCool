@@ -88,6 +88,12 @@ export function startOfLookback(now = new Date(), days = TOURIST_LOOKBACK_DAYS):
   return addZonedDays(startOfToday(now), -days);
 }
 
+/** Rolling seven ET days from the start of today (today through +7 exclusive). */
+export function thisWeekFromToday(now = new Date()): EventWindow {
+  const from = startOfToday(now);
+  return { from, to: addZonedDays(from, 7) };
+}
+
 function addZonedDays(start: Date, days: number): Date {
   const parts = zonedParts(start);
   const utc = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days));

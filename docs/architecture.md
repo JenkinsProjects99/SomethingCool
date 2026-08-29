@@ -6,7 +6,7 @@ v0 is a single Next.js App Router service with PostgreSQL. Primary surface is an
 
 | Route | Role |
 | --- | --- |
-| `/` | Tourist phone PWA (installable, photo cards, calendar tab, client filters) |
+| `/` | Tourist phone PWA (installable, photo cards, This Week default, calendar) |
 | `/dana.html` | Shareable Dana preview of this weekend’s official rows (static, no localhost) |
 | `/embed` | Secondary 360px iframe widget |
 | `/embed/{slug}` | Single published event embed |

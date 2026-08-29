@@ -22,16 +22,17 @@
     .st-primary, .st-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 8px; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 0; cursor: pointer; }
     .st-primary { background: var(--st-primary); color: var(--st-primary-label); border: 2px solid var(--st-primary); }
     .st-secondary { background: transparent; color: var(--st-primary); border: 2px solid var(--st-primary); }
-    .phone-thumbs, .phone-views { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 16px; }
-    .phone-views { margin-top: 0; }
-    .phone-thumbs .st-primary, .phone-thumbs .st-secondary { flex: 1 1 calc(50% - 8px); }
-    .phone-views .st-primary, .phone-views .st-secondary { flex: 1; }
+    .phone-times, .phone-cats { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 16px; }
+    .phone-cats { margin-top: 0; }
+    .phone-times .st-primary, .phone-times .st-secondary { flex: 1; }
+    .phone-cats .st-primary, .phone-cats .st-secondary { flex: 1 1 calc(33% - 8px); }
     .photo-stack { display: grid; gap: 14px; }
-    .photo-card { position: relative; display: block; overflow: hidden; min-height: 220px; text-decoration: none; color: #fff; }
+    .photo-card { position: relative; display: block; overflow: hidden; min-height: 220px; text-decoration: none; color: #fff; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
     .photo-card--featured { min-height: 320px; }
     .photo-card__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .photo-card__image--logo { object-fit: contain; padding: 36px 28px 72px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
     .photo-card__overlay { position: absolute; inset: auto 0 0; display: flex; flex-direction: column; gap: 6px; padding: 56px 16px 18px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.78)); }
+    .photo-card__image--logo + .photo-card__overlay { background: linear-gradient(180deg, rgba(50,109,205,0), rgba(50,40,90,.75)); }
     .photo-card__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: clamp(22px, 6vw, 28px); letter-spacing: 0.025em; text-transform: uppercase; line-height: 1.05; margin: 0; color: #fff; }
     .photo-card__when { margin: 0; color: #fff; letter-spacing: 0.04em; }
     .month-cal__nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -56,17 +57,19 @@
       <div class="brand"><img src="./brand/visit-aky-logo.png" alt="Visit AKY, Ashland, Kentucky"></div>
       <p class="phone-app__eyebrow">You are now viewing events</p>
       <h1 class="st-d-title">What's happening</h1>
-      <p class="st-d-paragraph" id="blurb">Upcoming first in Eastern Time. Confirm times before you go.</p>
+      <p class="st-d-paragraph" id="blurb">This week first in Eastern Time. Confirm times before you go.</p>
     </header>
-    <div class="phone-thumbs" role="tablist" aria-label="Quick filters">
-      <button type="button" class="st-primary" data-thumb="upcoming" aria-selected="true">Upcoming</button>
-      <button type="button" class="st-secondary" data-thumb="music" aria-selected="false">Music</button>
-      <button type="button" class="st-secondary" data-thumb="sports" aria-selected="false">Sports</button>
-      <button type="button" class="st-secondary" data-thumb="family" aria-selected="false">Family</button>
+    <div class="phone-times" role="tablist" aria-label="When">
+      <button type="button" class="st-secondary" data-time="upcoming" aria-selected="false">Upcoming</button>
+      <button type="button" class="st-primary" data-time="week" aria-selected="true">This Week</button>
+      <button type="button" class="st-secondary" data-time="calendar" aria-selected="false">Calendar</button>
     </div>
-    <div class="phone-views" role="group" aria-label="View">
-      <button type="button" id="btn-cards" class="st-primary" aria-pressed="true">Cards</button>
-      <button type="button" id="btn-cal" class="st-secondary" aria-pressed="false">Calendar</button>
+    <div class="phone-cats" role="tablist" aria-label="Category">
+      <button type="button" class="st-primary" data-cat="all" aria-selected="true">All</button>
+      <button type="button" class="st-secondary" data-cat="music" aria-selected="false">Music</button>
+      <button type="button" class="st-secondary" data-cat="sports" aria-selected="false">Sports</button>
+      <button type="button" class="st-secondary" data-cat="community" aria-selected="false">Community</button>
+      <button type="button" class="st-secondary" data-cat="family" aria-selected="false">Family</button>
     </div>
     <main id="cards" class="photo-stack"></main>
     <main id="calendar" class="hidden" aria-label="Calendar">
@@ -88,6 +91,7 @@
     const NOW = Date.parse("2026-08-29T15:00:00-04:00");
     const TODAY = Date.parse("2026-08-29T00:00:00-04:00");
     const LOOKBACK = Date.parse("2026-08-22T00:00:00-04:00");
+    const WEEK_END = Date.parse("2026-09-05T00:00:00-04:00");
     const RANK = { music: 10, family: 20, community: 30, arts: 40, food: 50, outdoor: 60, sports: 70 };
     const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
@@ -100,6 +104,9 @@
     function inWindow(event) {
       return event.startsMs >= LOOKBACK;
     }
+    function inThisWeek(event) {
+      return event.startsMs >= TODAY && event.startsMs < WEEK_END;
+    }
     function sortUpcomingFirst(events) {
       const upcoming = events.filter((event) => event.startsMs >= TODAY).sort(byTourist);
       const recent = events.filter((event) => event.startsMs < TODAY).sort(byTourist);
@@ -108,11 +115,15 @@
     function byTourist(left, right) {
       return (left.startsMs - right.startsMs) || (RANK[left.category] - RANK[right.category]);
     }
-    function eventsForThumb(thumb) {
+    function filterCategory(events, cat) {
+      if (cat === "all") return events;
+      if (cat === "sports") return filterSports(events);
+      return events.filter((event) => event.category === cat);
+    }
+    function eventsForView() {
       const windowed = EVENTS.filter(inWindow);
-      if (thumb === "upcoming") return sortUpcomingFirst(windowed);
-      if (thumb === "sports") return sortUpcomingFirst(filterSports(windowed));
-      return sortUpcomingFirst(windowed.filter((event) => event.category === thumb));
+      if (time === "week") return filterCategory(windowed.filter(inThisWeek), cat).sort(byTourist);
+      return filterCategory(sortUpcomingFirst(windowed), cat);
     }
     function cardHtml(event, featured) {
       const src = event.image || LOGO;
@@ -128,8 +139,8 @@
       </a>`;
     }
 
-    let thumb = "upcoming";
-    let view = "cards";
+    let time = "week";
+    let cat = "all";
     let cursor = { year: 2026, month: 8 };
     let selected = "2026-08-29";
 
@@ -140,7 +151,7 @@
       return `${read("year")}-${read("month")}-${read("day")}`;
     }
     function renderCards() {
-      const rows = eventsForThumb(thumb);
+      const rows = eventsForView();
       document.getElementById("cards").innerHTML = rows.length
         ? rows.map((event, index) => cardHtml(event, index === 0)).join("")
         : `<p class="st-d-paragraph">No published events in this view yet.</p>`;
@@ -148,7 +159,7 @@
     function daysInMonth(year, month) { return new Date(Date.UTC(year, month, 0)).getUTCDate(); }
     function firstWeekday(year, month) { return new Date(Date.UTC(year, month - 1, 1)).getUTCDay(); }
     function renderCalendar() {
-      const windowed = EVENTS.filter(inWindow);
+      const windowed = filterCategory(EVENTS.filter(inWindow), cat);
       document.getElementById("cal-title").textContent = `${MONTHS[cursor.month - 1]} ${cursor.year}`;
       const byDay = {};
       for (const event of windowed) {
@@ -168,7 +179,7 @@
         cells += `<button type="button" class="month-cal__cell${on}${has}" data-day="${key}"><span>${day}</span>${dot}</button>`;
       }
       document.getElementById("cal-grid").innerHTML = cells;
-      const selectedEvents = byDay[selected] || [];
+      const selectedEvents = (byDay[selected] || []).slice().sort((left, right) => left.startsMs - right.startsMs);
       document.getElementById("cal-list").innerHTML = selectedEvents.length
         ? selectedEvents.map((event) => `<li><a href="${event.url}" target="_blank" rel="noreferrer"><strong>${event.title}</strong><span>${event.when} · ${event.source}</span></a></li>`).join("")
         : `<li class="st-d-paragraph">No events on this date. Pick a dotted day.</li>`;
@@ -176,30 +187,41 @@
         cell.onclick = () => { selected = cell.getAttribute("data-day"); renderCalendar(); };
       });
     }
-    function show(next) {
-      view = next;
-      const isCal = view === "calendar";
+    function blurbs() {
+      if (time === "calendar") return "Pick a day. Confirm times before you go.";
+      if (time === "week") return "This week first in Eastern Time. Confirm times before you go.";
+      return "Upcoming first in Eastern Time. Confirm times before you go.";
+    }
+    function show() {
+      const isCal = time === "calendar";
       document.getElementById("calendar").classList.toggle("hidden", !isCal);
       document.getElementById("cards").classList.toggle("hidden", isCal);
-      document.getElementById("btn-cal").className = isCal ? "st-primary" : "st-secondary";
-      document.getElementById("btn-cards").className = isCal ? "st-secondary" : "st-primary";
-      document.getElementById("btn-cal").setAttribute("aria-pressed", String(isCal));
-      document.getElementById("btn-cards").setAttribute("aria-pressed", String(!isCal));
+      document.getElementById("blurb").textContent = blurbs();
+      document.querySelectorAll("[data-time]").forEach((el) => {
+        const on = el.getAttribute("data-time") === time;
+        el.className = on ? "st-primary" : "st-secondary";
+        el.setAttribute("aria-selected", String(on));
+      });
+      document.querySelectorAll("[data-cat]").forEach((el) => {
+        const on = el.getAttribute("data-cat") === cat;
+        el.className = on ? "st-primary" : "st-secondary";
+        el.setAttribute("aria-selected", String(on));
+      });
       if (isCal) renderCalendar();
+      else renderCards();
     }
-    document.querySelectorAll("[data-thumb]").forEach((button) => {
+    document.querySelectorAll("[data-time]").forEach((button) => {
       button.onclick = () => {
-        thumb = button.getAttribute("data-thumb");
-        document.querySelectorAll("[data-thumb]").forEach((el) => {
-          const on = el === button;
-          el.className = on ? "st-primary" : "st-secondary";
-          el.setAttribute("aria-selected", String(on));
-        });
-        renderCards();
+        time = button.getAttribute("data-time");
+        show();
       };
     });
-    document.getElementById("btn-cards").onclick = () => show("cards");
-    document.getElementById("btn-cal").onclick = () => show("calendar");
+    document.querySelectorAll("[data-cat]").forEach((button) => {
+      button.onclick = () => {
+        cat = button.getAttribute("data-cat");
+        show();
+      };
+    });
     document.getElementById("prev-month").onclick = () => {
       cursor.month -= 1;
       if (cursor.month === 0) { cursor.month = 12; cursor.year -= 1; }
@@ -210,13 +232,10 @@
       if (cursor.month === 13) { cursor.month = 1; cursor.year += 1; }
       renderCalendar();
     };
-    const startThumb = location.hash.replace("#", "");
-    if (["upcoming", "music", "sports", "family"].includes(startThumb)) {
-      document.querySelector(`[data-thumb="${startThumb}"]`)?.click();
-    } else {
-      renderCards();
-    }
-    if (location.hash === "#calendar") show("calendar");
+    const hash = location.hash.replace("#", "");
+    if (["upcoming", "week", "calendar"].includes(hash)) time = hash;
+    if (["music", "sports", "community", "family"].includes(hash)) cat = hash;
+    show();
   </script>
 </body>
 </html>

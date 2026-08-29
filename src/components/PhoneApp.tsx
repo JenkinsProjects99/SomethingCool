@@ -7,14 +7,27 @@ import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import type { CalendarEvent } from "@/lib/events";
 import { formatCardWhen } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
-import { eventsForThumb, touristWindowEvents, type TouristThumb } from "@/lib/tourist-feed";
+import {
+  eventsForTouristView,
+  filterTouristCategory,
+  touristWindowEvents,
+  type TouristCategory,
+  type TouristTime,
+} from "@/lib/tourist-feed";
 
-type View = "cards" | "calendar";
+type TimeTab = TouristTime | "calendar";
 
-const THUMBS: { id: TouristThumb; label: string }[] = [
+const TIMES: { id: TimeTab; label: string }[] = [
   { id: "upcoming", label: "Upcoming" },
+  { id: "week", label: "This Week" },
+  { id: "calendar", label: "Calendar" },
+];
+
+const CATEGORIES: { id: TouristCategory; label: string }[] = [
+  { id: "all", label: "All" },
   { id: "music", label: "Music" },
   { id: "sports", label: "Sports" },
+  { id: "community", label: "Community" },
   { id: "family", label: "Family" },
 ];
 
@@ -48,12 +61,18 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
 }
 
 export function PhoneApp({ events }: { events: CalendarEvent[] }) {
-  const [thumb, setThumb] = useState<TouristThumb>("upcoming");
-  const [view, setView] = useState<View>("cards");
+  const [time, setTime] = useState<TimeTab>("week");
+  const [category, setCategory] = useState<TouristCategory>("all");
   const now = useMemo(() => new Date(), []);
 
-  const visible = useMemo(() => eventsForThumb(events, thumb, now), [events, thumb, now]);
-  const calendarEvents = useMemo(() => touristWindowEvents(events, now), [events, now]);
+  const visible = useMemo(
+    () => eventsForTouristView(events, time === "calendar" ? "week" : time, category, now),
+    [events, time, category, now],
+  );
+  const calendarEvents = useMemo(
+    () => filterTouristCategory(touristWindowEvents(events, now), category),
+    [events, category, now],
+  );
 
   return (
     <div className="phone-app">
@@ -61,44 +80,46 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
         <VisitAkyLogo compact />
         <p className="phone-app__eyebrow">You are now viewing events</p>
         <h1 className="st-d-title">What&apos;s happening</h1>
-        <p className="st-d-paragraph">Upcoming first in Eastern Time. Confirm times before you go.</p>
+        <p className="st-d-paragraph">
+          {time === "calendar"
+            ? "Pick a day. Confirm times before you go."
+            : time === "week"
+              ? "This week first in Eastern Time. Confirm times before you go."
+              : "Upcoming first in Eastern Time. Confirm times before you go."}
+        </p>
       </header>
 
-      <div className="phone-thumbs" role="tablist" aria-label="Quick filters">
-        {THUMBS.map((item) => (
+      <div className="phone-times" role="tablist" aria-label="When">
+        {TIMES.map((item) => (
           <button
             key={item.id}
             type="button"
             role="tab"
-            className={thumb === item.id ? "st-primary" : "st-secondary"}
-            aria-selected={thumb === item.id}
-            onClick={() => setThumb(item.id)}
+            className={time === item.id ? "st-primary" : "st-secondary"}
+            aria-selected={time === item.id}
+            onClick={() => setTime(item.id)}
           >
             {item.label}
           </button>
         ))}
       </div>
 
-      <div className="phone-views" role="group" aria-label="View">
-        <button
-          type="button"
-          className={view === "cards" ? "st-primary" : "st-secondary"}
-          aria-pressed={view === "cards"}
-          onClick={() => setView("cards")}
-        >
-          Cards
-        </button>
-        <button
-          type="button"
-          className={view === "calendar" ? "st-primary" : "st-secondary"}
-          aria-pressed={view === "calendar"}
-          onClick={() => setView("calendar")}
-        >
-          Calendar
-        </button>
+      <div className="phone-cats" role="tablist" aria-label="Category">
+        {CATEGORIES.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            className={category === item.id ? "st-primary" : "st-secondary"}
+            aria-selected={category === item.id}
+            onClick={() => setCategory(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
-      {view === "calendar" ? (
+      {time === "calendar" ? (
         <main id="main">
           <MonthCalendar events={calendarEvents} now={now} />
         </main>

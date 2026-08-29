@@ -55,6 +55,7 @@ export function MonthCalendar({
       const key = keyFor(year, month, day);
       const list = map.get(key) ?? [];
       list.push(event);
+      list.sort((left, right) => left.startsAtDate.getTime() - right.startsAtDate.getTime());
       map.set(key, list);
     }
     return map;

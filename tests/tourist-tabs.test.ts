@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { startOfLookback } from "@/lib/filters";
 import { publishedEventsFromSeedFile } from "@/lib/seed/published-from-file";
-import { eventsForThumb } from "@/lib/tourist-feed";
+import { eventsForThumb, eventsForTouristView } from "@/lib/tourist-feed";
 
 const NOW = new Date("2026-08-29T15:00:00-04:00");
 
@@ -26,8 +26,24 @@ describe("tourist upcoming bar and calendar tab", () => {
     const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(phone).toContain("MonthCalendar");
-    expect(phone).toContain('setView("calendar")');
-    expect(phone).toContain('useState<TouristThumb>("upcoming")');
+    expect(phone).toContain('useState<TimeTab>("week")');
+    expect(phone).toContain("This Week");
+    expect(phone).toContain("Community");
+    expect(phone).toContain("Family");
+  });
+
+  it("defaults This Week to date-first weekend rows before later music", () => {
+    const week = eventsForTouristView(events, "week", "all", NOW);
+    expect(week[0]?.id).toBe("ashland-tomcats-volleyball-johnson-central-2026-08-29");
+    expect(week.some((event) => event.id === "deana-carter")).toBe(true);
+    expect(week.findIndex((event) => event.id === "deana-carter")).toBeGreaterThan(0);
+    expect(week.some((event) => event.id === "tomcats-football-2026-08-28")).toBe(false);
+    expect(week.slice(0, 4).map((event) => event.id)).toEqual([
+      "ashland-tomcats-volleyball-johnson-central-2026-08-29",
+      "fairview-eagles-volleyball-rose-hill-2026-08-29",
+      "ashland-tomcats-volleyball-wolfe-county-2026-08-29",
+      "sandys-exacta-giveaway-bronco-sport-2026-08-29",
+    ]);
   });
 
   it("sorts upcoming by date so this weekend beats later music", () => {
@@ -66,6 +82,9 @@ describe("tourist upcoming bar and calendar tab", () => {
     ).toBe(true);
     expect(sports.some((event) => event.id.includes("first-friday"))).toBe(false);
     expect(family.every((event) => event.category === "family")).toBe(true);
+    const community = eventsForTouristView(events, "week", "community", NOW);
+    expect(community.length).toBeGreaterThan(0);
+    expect(community.every((event) => event.category === "community")).toBe(true);
   });
 
   it("renders a month grid a tourist can read", () => {

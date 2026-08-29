@@ -5,6 +5,7 @@ import {
   filterEventsByRange,
   parseEmbedRange,
   parsePublicRange,
+  thisWeekFromToday,
   thisWeekendWindow,
 } from "@/lib/filters";
 
@@ -43,6 +44,14 @@ describe("calendar ranges", () => {
     const window = thisWeekendWindow(now, [deana]);
     expect(eventInWindow(deana.startsAt, window)).toBe(true);
     expect(eventInWindow(new Date("2026-08-29T12:00:00-04:00"), window)).toBe(false);
+  });
+
+  it("treats This Week as seven ET days from today so the weekend leads", () => {
+    const week = thisWeekFromToday(now);
+    expect(eventInWindow(new Date("2026-08-29T11:00:00-04:00"), week)).toBe(true);
+    expect(eventInWindow(new Date("2026-08-31T18:00:00-04:00"), week)).toBe(true);
+    expect(eventInWindow(new Date("2026-09-04T20:00:00-04:00"), week)).toBe(true);
+    expect(eventInWindow(new Date("2026-08-28T19:30:00-04:00"), week)).toBe(false);
   });
 
   it("keeps Friday night home games on Saturday of the same weekend", () => {

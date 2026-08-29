@@ -46,6 +46,10 @@ export function isMusicEvent(event: { category: EventCategory }): boolean {
   return event.category === "music";
 }
 
+export function isCommunityEvent(event: { category: EventCategory }): boolean {
+  return event.category === "community";
+}
+
 export function isFirstFridayEvent(event: { id?: string; title?: string }): boolean {
   return /first[\s-]?friday/i.test(`${event.id ?? ""} ${event.title ?? ""}`);
 }
