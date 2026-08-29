@@ -14,9 +14,9 @@ const seed = JSON.parse(
 ) as { events: Array<{ id: string; source: string; url: string; startsAt: string; title: string }> };
 
 describe("seed source rules", () => {
-  it("documents 203 as the target and does not invent boyd-library or extra sports", () => {
+  it("documents 215 as the target and does not invent boyd-library or extra sports", () => {
     expect(TARGET_SEED_ROWS).toBe(27 + TARGET_BOYD_LIBRARY_ROWS + TARGET_MAXPREPS_ROWS);
-    expect(TARGET_SEED_ROWS).toBe(203);
+    expect(TARGET_SEED_ROWS).toBe(215);
     const library = seed.events.filter((event) => event.source === "boyd-library");
     expect(library).toHaveLength(0);
     const pubNights = seed.events.filter((event) =>

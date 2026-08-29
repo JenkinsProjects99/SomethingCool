@@ -17,9 +17,9 @@ export const SEED_PATH = path.join(
 export const ORIGINAL_SEED_ROWS = 27;
 export const SPECIFIED_MAXPREPS_ROWS = 2;
 export const TARGET_BOYD_LIBRARY_ROWS = 161;
-export const TARGET_MAXPREPS_ROWS = 15;
-/** 27 original + 161 boyd-library (thebookplace.org) + 15 maxpreps home games. */
-export const TARGET_SEED_ROWS = 203;
+export const TARGET_MAXPREPS_ROWS = 27;
+/** 27 original + 161 boyd-library (thebookplace.org) + 27 maxpreps home games. */
+export const TARGET_SEED_ROWS = 215;
 
 export interface SeedFile {
   tenant: { slug: string; name: string };
