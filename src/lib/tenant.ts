@@ -43,7 +43,7 @@ export function eventBelongsToTenant(
 }
 
 export function isolatePublishedEvents<
-  T extends { tenantId: string; status: "draft" | "published" },
+  T extends { tenantId: string; status: "draft" | "pin" | "published" },
 >(events: T[], tenantId: string): T[] {
   return events.filter(
     (event) => event.tenantId === tenantId && event.status === "published",

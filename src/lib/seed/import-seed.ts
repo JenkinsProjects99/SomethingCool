@@ -7,7 +7,7 @@ import { parseInstant } from "../instants";
 import { log } from "../logger";
 import { resolveWriteStatus } from "../publish";
 import { assertAllowedEventUrl } from "../sources";
-import { ASHLAND_KY_SLUG } from "../tenant";
+import { tryGetTenantConfig } from "../tenant-config";
 
 export const SEED_PATH = path.join(
   process.cwd(),
@@ -36,8 +36,8 @@ export interface ImportOptions {
 
 export async function loadSeedFile(filePath = SEED_PATH): Promise<SeedFile> {
   const raw = JSON.parse(await readFile(filePath, "utf8")) as SeedFile;
-  if (raw.tenant.slug !== ASHLAND_KY_SLUG) {
-    throw new Error(`Seed tenant must be ${ASHLAND_KY_SLUG}`);
+  if (!tryGetTenantConfig(raw.tenant.slug)) {
+    throw new Error(`Seed tenant "${raw.tenant.slug}" has no tenant-config pack`);
   }
   if (raw.events.length < ORIGINAL_SEED_ROWS) {
     throw new Error(`Seed must keep the original ${ORIGINAL_SEED_ROWS} rows`);
@@ -77,9 +77,10 @@ export async function importSeed(
 ): Promise<{ inserted: number; updated: number; unchangedStatus: number }> {
   const seed = await loadSeedFile();
   const requestId = options.requestId ?? "seed";
-  const token = options.ashlandToken ?? process.env.ASHLAND_KY_API_TOKEN;
+  const pack = tryGetTenantConfig(seed.tenant.slug);
+  const token = options.ashlandToken ?? (pack ? process.env[pack.embedApiKeyRef] : undefined);
   if (!token) {
-    throw new Error("ASHLAND_KY_API_TOKEN is required to import seed");
+    throw new Error(`${pack?.embedApiKeyRef ?? "tenant embed API token"} is required to import seed`);
   }
 
   const tenant = await db.tenant.upsert({

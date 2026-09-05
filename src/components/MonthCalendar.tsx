@@ -117,14 +117,15 @@ export function MonthCalendar({
         ) : (
           selectedEvents.map((event) => (
             <li key={event.id}>
-              <a href={event.url} target="_blank" rel="noreferrer">
-                <strong>{event.title}</strong>
-                <span>
-                  {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
-                  {" · "}
-                  {event.venue}
-                </span>
-                <span className="st-d-subheading">{sourceLabel(event.source)}</span>
+              <strong>{event.title}</strong>
+              <span>
+                {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
+                {" · "}
+                {event.venue}
+              </span>
+              <span className="st-d-subheading">{sourceLabel(event.source)}</span>
+              <a className="st-primary" href={event.url} target="_blank" rel="noreferrer">
+                Event Details
               </a>
             </li>
           ))

@@ -9,6 +9,7 @@ import { formatCardWhen } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
 import {
   eventsForTouristView,
+  featuredForTouristView,
   filterTouristCategory,
   touristWindowEvents,
   type TouristCategory,
@@ -18,9 +19,10 @@ import {
 type TimeTab = TouristTime | "calendar";
 
 const TIMES: { id: TimeTab; label: string }[] = [
-  { id: "upcoming", label: "Upcoming" },
-  { id: "week", label: "This Week" },
-  { id: "calendar", label: "Calendar" },
+  { id: "today", label: "Today" },
+  { id: "weekend", label: "Weekend" },
+  { id: "week", label: "Week" },
+  { id: "calendar", label: "Cal" },
 ];
 
 const CATEGORIES: { id: TouristCategory; label: string }[] = [
@@ -29,6 +31,12 @@ const CATEGORIES: { id: TouristCategory; label: string }[] = [
   { id: "sports", label: "Sports" },
   { id: "community", label: "Community" },
 ];
+
+const TIME_SECTION: Record<TouristTime, string> = {
+  today: "Today",
+  weekend: "This Weekend",
+  week: "This Week",
+};
 
 function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolean }) {
   return (
@@ -63,13 +71,16 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
 }
 
 export function PhoneApp({ events }: { events: CalendarEvent[] }) {
-  const [time, setTime] = useState<TimeTab>("week");
+  const [time, setTime] = useState<TimeTab>("weekend");
   const [category, setCategory] = useState<TouristCategory>("all");
   const now = useMemo(() => new Date(), []);
 
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
-    if (hash === "upcoming" || hash === "week" || hash === "calendar") setTime(hash);
+    if (hash === "upcoming") setTime("weekend");
+    if (hash === "today" || hash === "weekend" || hash === "week" || hash === "calendar") {
+      setTime(hash);
+    }
     if (hash === "family") setCategory("community");
     if (hash === "music" || hash === "sports" || hash === "community") setCategory(hash);
   }, []);
@@ -77,6 +88,10 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
   const visible = useMemo(
     () => eventsForTouristView(events, time === "calendar" ? "week" : time, category, now),
     [events, time, category, now],
+  );
+  const featured = useMemo(
+    () => featuredForTouristView(events, category, now),
+    [events, category, now],
   );
   const calendarEvents = useMemo(
     () => filterTouristCategory(touristWindowEvents(events, now), category),
@@ -92,9 +107,11 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
         <p className="st-d-paragraph">
           {time === "calendar"
             ? "Pick a day. Confirm times before you go."
-            : time === "week"
-              ? "This week first in Eastern Time. Confirm times before you go."
-              : "Upcoming first in Eastern Time. Confirm times before you go."}
+            : time === "today"
+              ? "Today in Eastern Time. Confirm times before you go."
+              : time === "weekend"
+                ? "This weekend first in Eastern Time. Confirm times before you go."
+                : "This week first in Eastern Time. Confirm times before you go."}
         </p>
       </header>
 
@@ -119,7 +136,7 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
             key={item.id}
             type="button"
             role="tab"
-            className={category === item.id ? "st-primary" : "st-secondary"}
+            className={category === item.id ? "phone-cats__on" : "phone-cats__off"}
             aria-selected={category === item.id}
             onClick={() => setCategory(item.id)}
           >
@@ -133,14 +150,29 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
           <MonthCalendar events={calendarEvents} now={now} />
         </main>
       ) : (
-        <main id="main" className="photo-stack">
-          {visible.length === 0 ? (
-            <p className="st-d-paragraph empty-state">No published events in this view yet.</p>
-          ) : (
-            visible.map((event, index) => (
-              <PhotoCard key={event.id} event={event} featured={index === 0} />
-            ))
-          )}
+        <main id="main">
+          {featured.length > 0 ? (
+            <section className="featured-block" aria-label="Featured">
+              <h2 className="section-kicker">Featured</h2>
+              <div className="featured-grid">
+                {featured.map((event) => (
+                  <PhotoCard key={event.id} event={event} featured />
+                ))}
+              </div>
+            </section>
+          ) : null}
+          <section className="time-block" aria-label={TIME_SECTION[time]}>
+            <h2 className="section-kicker">{TIME_SECTION[time]}</h2>
+            <div className="photo-stack">
+              {visible.length === 0 ? (
+                <p className="st-d-paragraph empty-state">No published events in this view yet.</p>
+              ) : (
+                visible.map((event) => (
+                  <PhotoCard key={event.id} event={event} featured={false} />
+                ))
+              )}
+            </div>
+          </section>
         </main>
       )}
 

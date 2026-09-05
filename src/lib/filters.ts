@@ -94,6 +94,12 @@ export function thisWeekFromToday(now = new Date()): EventWindow {
   return { from, to: addZonedDays(from, 7) };
 }
 
+/** Midnight ET today through midnight ET tomorrow (exclusive). */
+export function todayWindow(now = new Date()): EventWindow {
+  const from = startOfToday(now);
+  return { from, to: addZonedDays(from, 1) };
+}
+
 function addZonedDays(start: Date, days: number): Date {
   const parts = zonedParts(start);
   const utc = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days));

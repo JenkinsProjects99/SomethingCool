@@ -5,25 +5,36 @@ import {
   sortForTourist,
 } from "./categories";
 import type { CalendarEvent } from "./events";
-import { eventInWindow, startOfLookback, startOfToday, thisWeekFromToday } from "./filters";
+import {
+  eventInWindow,
+  startOfLookback,
+  startOfToday,
+  thisWeekendWindow,
+  thisWeekFromToday,
+  todayWindow,
+} from "./filters";
+import { getTenantConfig } from "./tenant-config";
 
-export type TouristTime = "upcoming" | "week";
+export type TouristTime = "today" | "weekend" | "week";
 export type TouristCategory = "all" | "music" | "sports" | "community";
 export type TouristThumb = "upcoming" | "music" | "sports" | "community";
 
-/** Paramount + Visit AKY headliners pinned above the date-first This Week list. */
-export const THIS_WEEK_HEADLINERS = [
-  "deana-carter",
-  "facebook-first-friday-2026-09-04",
-  "makers-market",
-] as const;
+const DEFAULT_PACK_SLUG = "ashland-ky";
 
-/** Upcoming first, then the last seven ET days. Never the full history. */
+export function featuredRulesFor(slug = DEFAULT_PACK_SLUG) {
+  return getTenantConfig(slug).featuredRules;
+}
+
+/** Paramount + Visit AKY headliners from the tenant pack. Featured strip only. */
+export const THIS_WEEK_HEADLINERS = featuredRulesFor().pinEventIds;
+
+/** Upcoming first, then the last N ET days from the tenant pack. Never the full history. */
 export function touristWindowEvents(
   events: CalendarEvent[],
   now = new Date(),
+  slug = DEFAULT_PACK_SLUG,
 ): CalendarEvent[] {
-  const lookback = startOfLookback(now);
+  const lookback = startOfLookback(now, getTenantConfig(slug).lookbackDays);
   return events.filter((event) => event.startsAtDate >= lookback);
 }
 
@@ -37,11 +48,22 @@ export function sortUpcomingFirst(
   return [...upcoming, ...recent];
 }
 
+export function todayEvents(events: CalendarEvent[], now = new Date()): CalendarEvent[] {
+  const window = todayWindow(now);
+  return sortForTourist(events.filter((event) => eventInWindow(event.startsAtDate, window)));
+}
+
+export function thisWeekendEvents(events: CalendarEvent[], now = new Date()): CalendarEvent[] {
+  const window = thisWeekendWindow(
+    now,
+    events.map((event) => ({ startsAt: event.startsAtDate })),
+  );
+  return sortForTourist(events.filter((event) => eventInWindow(event.startsAtDate, window)));
+}
+
 export function thisWeekEvents(events: CalendarEvent[], now = new Date()): CalendarEvent[] {
   const week = thisWeekFromToday(now);
-  return sortForTourist(
-    events.filter((event) => eventInWindow(event.startsAtDate, week)),
-  );
+  return sortForTourist(events.filter((event) => eventInWindow(event.startsAtDate, week)));
 }
 
 export function filterTouristCategory(
@@ -58,12 +80,21 @@ export function pinThisWeekHeadliners(
   week: CalendarEvent[],
   pool: CalendarEvent[],
 ): CalendarEvent[] {
-  const pinned = THIS_WEEK_HEADLINERS.flatMap((id) => {
+  const pinned = featuredEvents(pool);
+  const pinnedIds = new Set(pinned.map((event) => event.id));
+  return [...pinned, ...week.filter((event) => !pinnedIds.has(event.id))];
+}
+
+export function featuredEvents(
+  pool: CalendarEvent[],
+  slug = DEFAULT_PACK_SLUG,
+): CalendarEvent[] {
+  const rules = featuredRulesFor(slug);
+  const pinned = rules.pinEventIds.flatMap((id) => {
     const hit = pool.find((event) => event.id === id);
     return hit ? [hit] : [];
   });
-  const pinnedIds = new Set(pinned.map((event) => event.id));
-  return [...pinned, ...week.filter((event) => !pinnedIds.has(event.id))];
+  return pinned.slice(0, rules.maxCards);
 }
 
 export function eventsForTouristView(
@@ -73,10 +104,18 @@ export function eventsForTouristView(
   now = new Date(),
 ): CalendarEvent[] {
   const windowed = touristWindowEvents(events, now);
-  const timed = time === "week" ? thisWeekEvents(windowed, now) : sortUpcomingFirst(windowed, now);
-  const filtered = filterTouristCategory(timed, category);
-  if (time !== "week") return filtered;
-  return pinThisWeekHeadliners(filtered, filterTouristCategory(windowed, category));
+  if (time === "today") return filterTouristCategory(todayEvents(windowed, now), category);
+  if (time === "weekend") return filterTouristCategory(thisWeekendEvents(windowed, now), category);
+  return filterTouristCategory(thisWeekEvents(windowed, now), category);
+}
+
+export function featuredForTouristView(
+  events: CalendarEvent[],
+  category: TouristCategory,
+  now = new Date(),
+): CalendarEvent[] {
+  const windowed = touristWindowEvents(events, now);
+  return featuredEvents(filterTouristCategory(windowed, category));
 }
 
 export function eventsForThumb(
@@ -84,6 +123,7 @@ export function eventsForThumb(
   thumb: TouristThumb,
   now = new Date(),
 ): CalendarEvent[] {
-  if (thumb === "upcoming") return eventsForTouristView(events, "upcoming", "all", now);
-  return eventsForTouristView(events, "upcoming", thumb, now);
+  const windowed = touristWindowEvents(events, now);
+  if (thumb === "upcoming") return sortUpcomingFirst(windowed, now);
+  return filterTouristCategory(sortUpcomingFirst(windowed, now), thumb);
 }

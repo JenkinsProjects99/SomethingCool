@@ -1,0 +1,75 @@
+{
+  "slug": "ashland-ky",
+  "name": "Visit AKY",
+  "timezone": "America/New_York",
+  "lookbackDays": 7,
+  "brand": {
+    "primary": "#326DCD",
+    "primaryLabel": "#F5F5F5",
+    "navHover": "#7B5BBB",
+    "themedOutline": "#7AD68D",
+    "paper": "#FFFFFF",
+    "ink": "#000000",
+    "titleFace": "Open Sans",
+    "titleWeight": 800,
+    "bodyFace": "Glacial Indifference",
+    "logoSrc": "/brand/visit-aky-logo.png"
+  },
+  "sourceAllowlist": [
+    "paramount",
+    "visit-aky",
+    "boyd-library",
+    "sandys",
+    "sandyridge",
+    "other-official",
+    "parks-rec",
+    "maxpreps",
+    "facebook",
+    "school"
+  ],
+  "geoFence": {
+    "kind": "bbox",
+    "west": -82.85,
+    "south": 38.28,
+    "east": -82.52,
+    "north": 38.58,
+    "namedVenueExceptions": [
+      {
+        "name": "Greenbo Lake State Resort Park",
+        "reason": "Visit AKY regional outdoor draw outside the Boyd city box"
+      },
+      {
+        "name": "Rush Off Road Park",
+        "reason": "named Visit AKY outdoor exception"
+      },
+      {
+        "name": "Grayson Lake State Park",
+        "reason": "named Visit AKY outdoor exception"
+      },
+      {
+        "name": "Carter Caves State Resort Park",
+        "reason": "named Visit AKY outdoor exception"
+      }
+    ]
+  },
+  "featuredRules": {
+    "pinEventIds": [
+      "deana-carter",
+      "facebook-first-friday-2026-09-04",
+      "makers-market"
+    ],
+    "maxCards": 2,
+    "placement": "above-time-views"
+  },
+  "embedApiKeyRef": "ASHLAND_KY_API_TOKEN",
+  "reviewerDesignate": {
+    "displayName": "Sean (Data Coordinator)"
+  },
+  "reviewerRole": "pilot-coordinator",
+  "publishQueue": {
+    "scope": "tenant",
+    "workflow": ["draft", "pin", "published"],
+    "autoPublish": false
+  },
+  "ingestAdapters": []
+}

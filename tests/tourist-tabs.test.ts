@@ -3,9 +3,21 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { startOfLookback } from "@/lib/filters";
 import { publishedEventsFromSeedFile } from "@/lib/seed/published-from-file";
-import { eventsForThumb, eventsForTouristView, THIS_WEEK_HEADLINERS } from "@/lib/tourist-feed";
+import {
+  eventsForThumb,
+  eventsForTouristView,
+  featuredForTouristView,
+  THIS_WEEK_HEADLINERS,
+} from "@/lib/tourist-feed";
 
 const NOW = new Date("2026-08-29T15:00:00-04:00");
+
+const WEEKEND_SAT = [
+  "ashland-tomcats-volleyball-johnson-central-2026-08-29",
+  "fairview-eagles-volleyball-rose-hill-2026-08-29",
+  "ashland-tomcats-volleyball-wolfe-county-2026-08-29",
+  "sandys-exacta-giveaway-bronco-sport-2026-08-29",
+] as const;
 
 describe("tourist upcoming bar and calendar tab", () => {
   const events = publishedEventsFromSeedFile();
@@ -26,37 +38,54 @@ describe("tourist upcoming bar and calendar tab", () => {
     const phone = readFileSync(path.join(process.cwd(), "src/components/PhoneApp.tsx"), "utf8");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(phone).toContain("MonthCalendar");
-    expect(phone).toContain('useState<TimeTab>("week")');
-    expect(phone).toContain("This Week");
+    expect(phone).toContain('useState<TimeTab>("weekend")');
+    expect(phone).toContain("Weekend");
     expect(phone).toContain("Community");
     expect(phone).not.toContain('label: "Family"');
     expect(phone).toContain("{event.venue}");
     expect(phone).toContain("Event Details");
   });
 
-  it("pins Paramount and Visit AKY headliners above the date-first This Week list", () => {
-    const week = eventsForTouristView(events, "week", "all", NOW);
+  it("pins Paramount and Visit AKY headliners in FEATURED above date-first time lists", () => {
     expect(THIS_WEEK_HEADLINERS).toEqual([
       "deana-carter",
       "facebook-first-friday-2026-09-04",
       "makers-market",
     ]);
-    expect(week.slice(0, 7).map((event) => event.id)).toEqual([
+    const featured = featuredForTouristView(events, "all", NOW);
+    expect(featured.map((event) => event.id)).toEqual([
       "deana-carter",
       "facebook-first-friday-2026-09-04",
-      "makers-market",
-      "ashland-tomcats-volleyball-johnson-central-2026-08-29",
-      "fairview-eagles-volleyball-rose-hill-2026-08-29",
-      "ashland-tomcats-volleyball-wolfe-county-2026-08-29",
-      "sandys-exacta-giveaway-bronco-sport-2026-08-29",
     ]);
+    const week = eventsForTouristView(events, "week", "all", NOW);
+    expect(week.slice(0, 4).map((event) => event.id)).toEqual([...WEEKEND_SAT]);
     expect(week.filter((event) => event.id === "deana-carter")).toHaveLength(1);
     expect(week.some((event) => event.id === "tomcats-football-2026-08-28")).toBe(false);
-    expect(week[5]?.title).toMatch(/Wolfe County/);
+    expect(week.find((event) => event.id === "ashland-tomcats-volleyball-wolfe-county-2026-08-29")?.title).toMatch(
+      /Wolfe County/,
+    );
+  });
+
+  it("keeps this weekend date-first: Johnson Central, Fairview, Wolfe, Exacta", () => {
+    const weekend = eventsForTouristView(events, "weekend", "all", NOW);
+    const sat = weekend.filter((event) => WEEKEND_SAT.includes(event.id as (typeof WEEKEND_SAT)[number]));
+    expect(sat.map((event) => event.id)).toEqual([...WEEKEND_SAT]);
+    for (let index = 1; index < weekend.length; index += 1) {
+      expect(weekend[index]!.startsAtDate.getTime()).toBeGreaterThanOrEqual(
+        weekend[index - 1]!.startsAtDate.getTime(),
+      );
+    }
+  });
+
+  it("lists today in startsAt order without mixing featured into the stack", () => {
+    const today = eventsForTouristView(events, "today", "all", NOW);
+    expect(today.map((event) => event.id)).toEqual([...WEEKEND_SAT]);
   });
 
   it("does not pin headliners onto Sports This Week", () => {
     const sports = eventsForTouristView(events, "week", "sports", NOW);
+    const featured = featuredForTouristView(events, "sports", NOW);
+    expect(featured).toEqual([]);
     expect(sports[0]?.id).toBe("ashland-tomcats-volleyball-johnson-central-2026-08-29");
     expect(sports.every((event) => !(THIS_WEEK_HEADLINERS as readonly string[]).includes(event.id))).toBe(
       true,
@@ -94,9 +123,7 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(music.every((event) => event.category === "music")).toBe(true);
     expect(sports.every((event) => event.category === "sports")).toBe(true);
     expect(
-      sports.every(
-        (event) => !/first[\s-]?friday/i.test(`${event.id} ${event.title}`),
-      ),
+      sports.every((event) => !/first[\s-]?friday/i.test(`${event.id} ${event.title}`)),
     ).toBe(true);
     expect(sports.some((event) => event.id.includes("first-friday"))).toBe(false);
     expect(
@@ -113,7 +140,7 @@ describe("tourist upcoming bar and calendar tab", () => {
       community.every((event) => event.category === "community" || event.category === "family"),
     ).toBe(true);
     expect(community.some((event) => event.category === "family")).toBe(true);
-    expect(community.slice(0, 2).map((event) => event.id)).toEqual([
+    expect(featuredForTouristView(events, "community", NOW).map((event) => event.id)).toEqual([
       "facebook-first-friday-2026-09-04",
       "makers-market",
     ]);
@@ -130,5 +157,6 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(calendar).toContain('role="grid"');
     expect(calendar).toContain("month-cal__list");
     expect(calendar).toContain("WEEKDAYS");
+    expect(calendar).toContain("Event Details");
   });
 });

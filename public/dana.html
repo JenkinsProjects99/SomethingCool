@@ -25,7 +25,12 @@
     .phone-times { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
     .phone-cats { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 6px; margin: 0 0 10px; }
     .phone-times .st-primary, .phone-times .st-secondary { flex: 1; }
-    .phone-cats .st-primary, .phone-cats .st-secondary { flex: 0 0 auto; width: auto; min-width: max-content; overflow: visible; white-space: nowrap; text-overflow: unset; padding: 8px 12px; font-size: 11px; }
+    .phone-cats .phone-cats__on, .phone-cats .phone-cats__off, .phone-cats .st-primary, .phone-cats .st-secondary { flex: 0 0 auto; width: auto; min-width: max-content; overflow: visible; white-space: nowrap; text-overflow: unset; padding: 8px 12px; font-size: 11px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--st-primary); }
+    .phone-cats .phone-cats__on, .phone-cats .st-primary { border-bottom-color: var(--st-primary); color: var(--st-ink); }
+    .section-kicker { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 16px 0 10px; }
+    .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .featured-grid .photo-card__image, .featured-grid .photo-card--featured .photo-card__image { height: 120px; }
+    .featured-grid .photo-card__media, .featured-grid .photo-card--featured .photo-card__media { min-height: 120px; }
     .photo-stack { display: grid; gap: 16px; }
     .photo-card { display: flex; flex-direction: column; overflow: visible; color: var(--st-ink); background: var(--st-paper); border-bottom: 1px solid var(--st-rule); padding-bottom: 4px; }
     .photo-card__media { min-height: 148px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
@@ -60,20 +65,21 @@
       <div class="brand"><img src="./brand/visit-aky-logo.png" alt="Visit AKY, Ashland, Kentucky"></div>
       <p class="phone-app__eyebrow">You are now viewing events</p>
       <h1 class="st-d-title">What's happening</h1>
-      <p class="st-d-paragraph" id="blurb">This week first in Eastern Time. Confirm times before you go.</p>
+      <p class="st-d-paragraph" id="blurb">This weekend first in Eastern Time. Confirm times before you go.</p>
     </header>
     <div class="phone-times" role="tablist" aria-label="When">
-      <button type="button" class="st-secondary" data-time="upcoming" aria-selected="false">Upcoming</button>
-      <button type="button" class="st-primary" data-time="week" aria-selected="true">This Week</button>
-      <button type="button" class="st-secondary" data-time="calendar" aria-selected="false">Calendar</button>
+      <button type="button" class="st-secondary" data-time="today" aria-selected="false">Today</button>
+      <button type="button" class="st-primary" data-time="weekend" aria-selected="true">Weekend</button>
+      <button type="button" class="st-secondary" data-time="week" aria-selected="false">Week</button>
+      <button type="button" class="st-secondary" data-time="calendar" aria-selected="false">Cal</button>
     </div>
     <div class="phone-cats" role="tablist" aria-label="Category">
-      <button type="button" class="st-primary" data-cat="all" aria-selected="true">All</button>
-      <button type="button" class="st-secondary" data-cat="music" aria-selected="false">Music</button>
-      <button type="button" class="st-secondary" data-cat="sports" aria-selected="false">Sports</button>
-      <button type="button" class="st-secondary" data-cat="community" aria-selected="false">Community</button>
+      <button type="button" class="phone-cats__on" data-cat="all" aria-selected="true">All</button>
+      <button type="button" class="phone-cats__off" data-cat="music" aria-selected="false">Music</button>
+      <button type="button" class="phone-cats__off" data-cat="sports" aria-selected="false">Sports</button>
+      <button type="button" class="phone-cats__off" data-cat="community" aria-selected="false">Community</button>
     </div>
-    <main id="cards" class="photo-stack"></main>
+    <main id="cards"></main>
     <main id="calendar" class="hidden" aria-label="Calendar">
       <section class="month-cal">
         <div class="month-cal__nav">
@@ -94,6 +100,9 @@
     const TODAY = Date.parse("2026-08-29T00:00:00-04:00");
     const LOOKBACK = Date.parse("2026-08-22T00:00:00-04:00");
     const WEEK_END = Date.parse("2026-09-05T00:00:00-04:00");
+    const WEEKEND_START = Date.parse("2026-08-28T00:00:00-04:00");
+    const WEEKEND_END = Date.parse("2026-08-31T00:00:00-04:00");
+    const DAY_END = Date.parse("2026-08-30T00:00:00-04:00");
     const RANK = { music: 10, family: 20, community: 30, arts: 40, food: 50, outdoor: 60, sports: 70 };
     const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
@@ -108,6 +117,12 @@
     }
     function inThisWeek(event) {
       return event.startsMs >= TODAY && event.startsMs < WEEK_END;
+    }
+    function inToday(event) {
+      return event.startsMs >= TODAY && event.startsMs < DAY_END;
+    }
+    function inThisWeekend(event) {
+      return event.startsMs >= WEEKEND_START && event.startsMs < WEEKEND_END;
     }
     function sortUpcomingFirst(events) {
       const upcoming = events.filter((event) => event.startsMs >= TODAY).sort(byTourist);
@@ -135,18 +150,23 @@
       }[ch]));
     }
     const THIS_WEEK_HEADLINERS = ["deana-carter", "facebook-first-friday-2026-09-04", "makers-market"];
+    function featuredEvents(pool) {
+      return THIS_WEEK_HEADLINERS.map((id) => pool.find((event) => event.id === id)).filter(Boolean).slice(0, 2);
+    }
     function pinThisWeekHeadliners(week, pool) {
-      const pinned = THIS_WEEK_HEADLINERS.map((id) => pool.find((event) => event.id === id)).filter(Boolean);
+      const pinned = featuredEvents(pool);
       const pinnedIds = new Set(pinned.map((event) => event.id));
       return pinned.concat(week.filter((event) => !pinnedIds.has(event.id)));
     }
     function eventsForView() {
       const windowed = EVENTS.filter(inWindow);
-      if (time === "week") {
-        const week = filterCategory(windowed.filter(inThisWeek), cat).sort(byTourist);
-        return pinThisWeekHeadliners(week, filterCategory(windowed, cat));
-      }
+      if (time === "today") return filterCategory(windowed.filter(inToday), cat).sort(byTourist);
+      if (time === "weekend") return filterCategory(windowed.filter(inThisWeekend), cat).sort(byTourist);
+      if (time === "week") return filterCategory(windowed.filter(inThisWeek), cat).sort(byTourist);
       return filterCategory(sortUpcomingFirst(windowed), cat);
+    }
+    function featuredForView() {
+      return featuredEvents(filterCategory(EVENTS.filter(inWindow), cat));
     }
     function cardHtml(event, featured) {
       const src = event.image || LOGO;
@@ -166,7 +186,7 @@
       </article>`;
     }
 
-    let time = "week";
+    let time = "weekend";
     let cat = "all";
     let cursor = { year: 2026, month: 8 };
     let selected = "2026-08-29";
@@ -178,10 +198,16 @@
       return `${read("year")}-${read("month")}-${read("day")}`;
     }
     function renderCards() {
+      const featured = featuredForView();
       const rows = eventsForView();
-      document.getElementById("cards").innerHTML = rows.length
-        ? rows.map((event, index) => cardHtml(event, index === 0)).join("")
+      const featuredHtml = featured.length
+        ? `<section class="featured-block" aria-label="Featured"><h2 class="section-kicker">Featured</h2><div class="featured-grid">${featured.map((event) => cardHtml(event, true)).join("")}</div></section>`
+        : "";
+      const label = time === "today" ? "Today" : time === "weekend" ? "This Weekend" : "This Week";
+      const listHtml = rows.length
+        ? rows.map((event) => cardHtml(event, false)).join("")
         : `<p class="st-d-paragraph">No published events in this view yet.</p>`;
+      document.getElementById("cards").innerHTML = `${featuredHtml}<section class="time-block" aria-label="${label}"><h2 class="section-kicker">${label}</h2><div class="photo-stack">${listHtml}</div></section>`;
     }
     function daysInMonth(year, month) { return new Date(Date.UTC(year, month, 0)).getUTCDate(); }
     function firstWeekday(year, month) { return new Date(Date.UTC(year, month - 1, 1)).getUTCDay(); }
@@ -208,7 +234,7 @@
       document.getElementById("cal-grid").innerHTML = cells;
       const selectedEvents = (byDay[selected] || []).slice().sort((left, right) => left.startsMs - right.startsMs);
       document.getElementById("cal-list").innerHTML = selectedEvents.length
-        ? selectedEvents.map((event) => `<li><a href="${event.url}" target="_blank" rel="noreferrer"><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(event.when)} · ${escapeHtml(event.venue)}</span></a></li>`).join("")
+        ? selectedEvents.map((event) => `<li><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(event.when)} · ${escapeHtml(event.venue)}</span><span class="st-d-subheading">${escapeHtml(event.source)}</span><a class="st-primary" href="${event.url}" target="_blank" rel="noreferrer">Event Details</a></li>`).join("")
         : `<li class="st-d-paragraph">No events on this date. Pick a dotted day.</li>`;
       document.querySelectorAll(".month-cal__cell[data-day]").forEach((cell) => {
         cell.onclick = () => { selected = cell.getAttribute("data-day"); renderCalendar(); };
@@ -216,8 +242,9 @@
     }
     function blurbs() {
       if (time === "calendar") return "Pick a day. Confirm times before you go.";
-      if (time === "week") return "This week first in Eastern Time. Confirm times before you go.";
-      return "Upcoming first in Eastern Time. Confirm times before you go.";
+      if (time === "today") return "Today in Eastern Time. Confirm times before you go.";
+      if (time === "weekend") return "This weekend first in Eastern Time. Confirm times before you go.";
+      return "This week first in Eastern Time. Confirm times before you go.";
     }
     function show() {
       const isCal = time === "calendar";
@@ -231,7 +258,7 @@
       });
       document.querySelectorAll("[data-cat]").forEach((el) => {
         const on = el.getAttribute("data-cat") === cat;
-        el.className = on ? "st-primary" : "st-secondary";
+        el.className = on ? "phone-cats__on" : "phone-cats__off";
         el.setAttribute("aria-selected", String(on));
       });
       if (isCal) renderCalendar();
@@ -260,7 +287,8 @@
       renderCalendar();
     };
     const hash = location.hash.replace("#", "");
-    if (["upcoming", "week", "calendar"].includes(hash)) time = hash;
+    if (hash === "upcoming") time = "weekend";
+    if (["today", "weekend", "week", "calendar"].includes(hash)) time = hash;
     if (hash === "family") cat = "community";
     if (["music", "sports", "community"].includes(hash)) cat = hash;
     show();

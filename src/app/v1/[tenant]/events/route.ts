@@ -14,12 +14,8 @@ import {
 } from "@/lib/filters";
 import { log, readRequestId } from "@/lib/logger";
 import { publishedEventsFromSeedQuery } from "@/lib/published-feed";
-import {
-  ASHLAND_KY_SLUG,
-  InvalidQueryError,
-  TenantScopeError,
-  UnauthorizedError,
-} from "@/lib/tenant";
+import { embedApiToken, tryGetTenantConfig } from "@/lib/tenant-config";
+import { InvalidQueryError, TenantScopeError, UnauthorizedError } from "@/lib/tenant";
 
 function parseRange(raw: string | null): EventRange {
   if (raw === "upcoming") return parseEmbedRange(raw);
@@ -75,12 +71,13 @@ export async function GET(
       ) {
         throw error;
       }
-      const expected = process.env.ASHLAND_KY_API_TOKEN;
+      const pack = tryGetTenantConfig(tenantSlug);
+      const expected = pack ? embedApiToken(pack) : undefined;
       const token = parseBearer(request.headers.get("authorization"));
-      if (!expected || !tokensEqual(token, expected) || tenantSlug !== ASHLAND_KY_SLUG) {
+      if (!pack || !expected || !tokensEqual(token, expected)) {
         throw new UnauthorizedError();
       }
-      tenantOut = ASHLAND_KY_SLUG;
+      tenantOut = pack.slug;
     }
 
     const bounds = range ? rangeBounds(range) : {};

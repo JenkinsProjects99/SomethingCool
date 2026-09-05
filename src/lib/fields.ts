@@ -18,7 +18,7 @@ export const ADDITIVE_PUBLIC_FIELDS = ["image", "category"] as const;
 
 export type FrozenField = (typeof FROZEN_NINE_FIELDS)[number];
 
-export const EventStatusSchema = z.enum(["draft", "published"]);
+export const EventStatusSchema = z.enum(["draft", "pin", "published"]);
 export type EventStatus = z.infer<typeof EventStatusSchema>;
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;

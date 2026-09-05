@@ -6,7 +6,7 @@ v0 is a single Next.js App Router service with PostgreSQL. Primary surface is an
 
 | Route | Role |
 | --- | --- |
-| `/` | Tourist phone PWA (installable, photo cards, This Week default, calendar) |
+| `/` | Tourist phone PWA (installable, photo cards, Weekend default, calendar) |
 | `/dana.html` | Shareable Dana preview of this weekend’s official rows (static, no localhost) |
 | `/embed` | Secondary 360px iframe widget |
 | `/embed/{slug}` | Single published event embed |
@@ -17,7 +17,7 @@ There is no React Native app and no second repo. Playlist script stays with the 
 
 The PWA loads published events on the server with the same tenant-scoped query as the partner feed. If Postgres is not provisioned, `/` falls back to published rows in the seed file so the phone preview still renders. The Bearer token never goes to the browser.
 
-`GET /v1/ashland-ky/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive). Date-only `to` includes that calendar day in America/New_York (exclusive the next midnight ET). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
+`GET /v1/{slug}/events` always accepts frozen `from` and `to` query params (`YYYY-MM-DD` or offset datetime; `from` inclusive). Date-only `to` includes that calendar day in America/New_York (exclusive the next midnight ET). The JSON body echoes `from` and `to`. Additive `range` (`month` | `week` | `upcoming` | `all`) may be used when a named window is enough.
 
 ## Public event contract
 
@@ -49,11 +49,11 @@ Library rows come from published [thebookplace.org](https://www.thebookplace.org
 
 ## PWA
 
-`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title, time, venue, and an Event Details control; official image or Visit AKY logo fallback), a centered logo, Design 96 tokens, and a Calendar tab. Default view is **This Week**. Category row is All / Music / Sports / Community. The Community tab filters to stored `community` or `family` and does not rewrite those categories on the seed. Public UI is upcoming first, then a **7-day ET lookback** — not the full seed history. Times are America/New_York.
+`public/manifest.webmanifest` + `public/sw.js`. Phone UI uses Visit AKY full-bleed photo cards (title, time, venue, and an Event Details control; official image or Visit AKY logo fallback), a centered logo, Design 96 tokens, and a Calendar tab. Default view is **Weekend**. Time row is Today / Weekend / Week / Cal. Category row is All / Music / Sports / Community (underlines). Featured pins sit above the date-first list. The Community tab filters to stored `community` or `family` and does not rewrite those categories on the seed. Public UI is upcoming first, then a **7-day ET lookback** — not the full seed history. Times are America/New_York.
 
 ## Tenancy
 
-Bearer token tenant must match the URL slug. Queries always include `tenantId` from the authenticated token.
+Bearer token tenant must match the URL slug. Queries always include `tenantId` from the authenticated token. Per-tenant packs live in `data/tenants/{slug}.v0.json` (see [tenant-config](tenant-config.md)). Publish workflow is draft → pin → published. Pin is editorial only. The reviewer designate can swap without changing the queue.
 
 ## Logs
 

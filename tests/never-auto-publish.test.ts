@@ -56,4 +56,17 @@ describe("never auto-publish", () => {
       }).reason,
     ).toBe("editorial-status-from-seed-file");
   });
+
+  it("only pins through an explicit pin intent", () => {
+    expect(resolveWriteStatus({ intent: "pin" })).toEqual({
+      status: "pin",
+      reason: "explicit-pin-action",
+    });
+    expect(
+      resolveWriteStatus({
+        intent: "create",
+        explicitStatus: "pin",
+      }).status,
+    ).toBe("draft");
+  });
 });

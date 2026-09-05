@@ -432,6 +432,8 @@ img {
   gap: 6px;
 }
 
+.phone-cats .phone-cats__on,
+.phone-cats .phone-cats__off,
 .phone-cats .st-primary,
 .phone-cats .st-secondary {
   flex: 0 0 auto;
@@ -442,6 +444,53 @@ img {
   text-overflow: unset;
   padding: 8px 12px;
   font-size: 11px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--st-primary);
+}
+
+.phone-cats .phone-cats__on,
+.phone-cats .st-primary {
+  border-bottom-color: var(--st-primary);
+  color: var(--st-ink);
+}
+
+.phone-cats .phone-cats__on:hover,
+.phone-cats .phone-cats__off:hover,
+.phone-cats .st-primary:hover,
+.phone-cats .st-secondary:hover {
+  background: transparent;
+  color: var(--st-nav-hover);
+  border-color: transparent;
+  border-bottom-color: var(--st-nav-hover);
+}
+
+.section-kicker {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 16px 0 10px;
+  color: var(--st-ink);
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.featured-grid .photo-card__image,
+.featured-grid .photo-card--featured .photo-card__image {
+  height: 120px;
+}
+
+.featured-grid .photo-card__media,
+.featured-grid .photo-card--featured .photo-card__media {
+  min-height: 120px;
 }
 
 .month-cal {
@@ -527,8 +576,17 @@ img {
 }
 
 .month-cal__list li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   border-top: 1px solid var(--st-rule);
   padding: 12px 0;
+}
+
+.month-cal__list .st-primary {
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 8px 12px;
 }
 
 .month-cal__list a {

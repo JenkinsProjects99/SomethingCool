@@ -1,6 +1,6 @@
 import type { EventStatus } from "./fields";
 
-export type WriteIntent = "create" | "import" | "reload" | "publish";
+export type WriteIntent = "create" | "import" | "reload" | "pin" | "publish";
 
 export interface StatusDecision {
   status: EventStatus;
@@ -9,7 +9,8 @@ export interface StatusDecision {
 
 /**
  * Publishing is always an explicit editorial act.
- * Completeness, future dates, source, or reload never promote a row to published.
+ * Completeness, future dates, source, or reload never promote a row.
+ * Workflow is draft → pin → published. Nothing auto-advances.
  */
 export function resolveWriteStatus(input: {
   intent: WriteIntent;
@@ -21,6 +22,10 @@ export function resolveWriteStatus(input: {
 
   if (intent === "publish") {
     return { status: "published", reason: "explicit-publish-action" };
+  }
+
+  if (intent === "pin") {
+    return { status: "pin", reason: "explicit-pin-action" };
   }
 
   if (intent === "reload" && existingStatus && !updateStatus) {
@@ -45,6 +50,21 @@ export function resolveWriteStatus(input: {
     }
   }
 
+  if (explicitStatus === "pin") {
+    if (intent === "create") {
+      return {
+        status: "draft",
+        reason: "create-ignores-pin-without-pin-intent",
+      };
+    }
+    if (intent === "import" || (intent === "reload" && updateStatus)) {
+      return {
+        status: "pin",
+        reason: "editorial-status-from-seed-file",
+      };
+    }
+  }
+
   if (explicitStatus === "draft") {
     return { status: "draft", reason: "explicit-draft" };
   }
@@ -56,7 +76,12 @@ export function isAutoPublishAttempt(
   event: { status: EventStatus },
   intent: WriteIntent,
 ) {
-  return event.status === "published" && intent !== "publish" && intent !== "import" && intent !== "reload";
+  return (
+    event.status === "published" &&
+    intent !== "publish" &&
+    intent !== "import" &&
+    intent !== "reload"
+  );
 }
 
 export function defaultCreateStatus(): EventStatus {
