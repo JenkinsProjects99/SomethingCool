@@ -582,6 +582,7 @@ img {
 }
 
 .month-cal__list {
+  position: relative;
   margin: 16px 0 0;
   padding: 0;
   list-style: none;
@@ -629,6 +630,14 @@ img {
   font-family: var(--font-glacial);
   font-size: 14px;
   color: color-mix(in srgb, var(--st-ink) 70%, var(--st-paper));
+}
+
+.month-cal__list .st-d-subheading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
 }
 
 .month-cal__agenda-kicker {
