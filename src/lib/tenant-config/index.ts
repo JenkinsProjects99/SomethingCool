@@ -1,10 +1,10 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import path from "node:path";
+import ashlandKyPack from "../../../data/tenants/ashland-ky.v0.json";
 import { TenantConfigSchema, type TenantConfig } from "./schema";
 
 export * from "./schema";
 
-export const TENANT_PACK_DIR = path.join(process.cwd(), "data/tenants");
+/** Pack files live here. The loader is a static slug map so the client bundle stays filesystem-free. */
+export const TENANT_PACK_DIR = "data/tenants";
 
 export class UnknownTenantConfigError extends Error {
   readonly status = 404;
@@ -14,23 +14,16 @@ export class UnknownTenantConfigError extends Error {
   }
 }
 
-function packPath(slug: string): string {
-  return path.join(TENANT_PACK_DIR, `${slug}.v0.json`);
-}
+const PACKS: TenantConfig[] = [TenantConfigSchema.parse(ashlandKyPack)];
+const BY_SLUG = new Map(PACKS.map((pack) => [pack.slug, pack]));
 
 /** Slug-keyed loader. Callers pass the URL/seed slug — no per-city branches. */
 export function listTenantConfigSlugs(): string[] {
-  if (!existsSync(TENANT_PACK_DIR)) return [];
-  return readdirSync(TENANT_PACK_DIR)
-    .filter((file) => file.endsWith(".v0.json"))
-    .map((file) => file.slice(0, -".v0.json".length))
-    .sort();
+  return [...BY_SLUG.keys()].sort();
 }
 
 export function tryGetTenantConfig(slug: string): TenantConfig | null {
-  const file = packPath(slug);
-  if (!existsSync(file)) return null;
-  return TenantConfigSchema.parse(JSON.parse(readFileSync(file, "utf8")));
+  return BY_SLUG.get(slug) ?? null;
 }
 
 export function getTenantConfig(slug: string): TenantConfig {

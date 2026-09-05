@@ -53,6 +53,7 @@ describe("tenant-config schema", () => {
       "utf8",
     );
     expect(loader).not.toMatch(/if\s*\(.*ashland/i);
+    expect(loader).not.toMatch(/node:fs|node:path/);
   });
 
   it("keeps the publish queue per-tenant when the designate swaps", () => {

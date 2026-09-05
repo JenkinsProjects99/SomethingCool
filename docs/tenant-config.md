@@ -1,6 +1,6 @@
 # Tenant config (schema only)
 
-Packs live in `data/tenants/{slug}.v0.json`. Loaders look up by slug. There are no city `if` branches in adapters or UI chrome.
+Packs live in `data/tenants/{slug}.v0.json`. The loader statically imports those JSON files and looks up by slug, so PhoneApp can read featured rules without a filesystem read. There are no city `if` branches in adapters or UI chrome.
 
 ## Required fields
 

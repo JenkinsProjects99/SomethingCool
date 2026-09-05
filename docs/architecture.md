@@ -53,7 +53,7 @@ Library rows come from published [thebookplace.org](https://www.thebookplace.org
 
 ## Tenancy
 
-Bearer token tenant must match the URL slug. Queries always include `tenantId` from the authenticated token. Per-tenant packs live in `data/tenants/{slug}.v0.json` (see [tenant-config](tenant-config.md)). Publish workflow is draft → pin → published. Pin is editorial only. The reviewer designate can swap without changing the queue.
+Bearer token tenant must match the URL slug. Queries always include `tenantId` from the authenticated token. Per-tenant packs live in `data/tenants/{slug}.v0.json` and load by slug from a static registry (see [tenant-config](tenant-config.md)). Publish workflow is draft → pin → published. Pin is editorial only. The reviewer designate can swap without changing the queue.
 
 ## Logs
 
