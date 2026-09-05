@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { VisitAkyLogo } from "@/components/VisitAkyLogo";
 import type { CalendarEvent } from "@/lib/events";
-import { formatCardWhen } from "@/lib/format";
+import { thisWeekFromToday } from "@/lib/filters";
+import { formatCardWhen, formatKickerDay, formatWeekSpan, type CardWhenStyle } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
 import {
   eventsForTouristView,
@@ -32,13 +32,29 @@ const CATEGORIES: { id: TouristCategory; label: string }[] = [
   { id: "community", label: "Community" },
 ];
 
-const TIME_SECTION: Record<TouristTime, string> = {
-  today: "Today",
-  weekend: "This Weekend",
-  week: "This Week",
-};
+function whenStyle(time: TouristTime, featured: boolean): CardWhenStyle {
+  if (featured) return "full";
+  if (time === "today") return "time";
+  if (time === "weekend") return "weekday-time";
+  return "full";
+}
 
-function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolean }) {
+function timeKicker(time: TouristTime, now: Date): string {
+  if (time === "today") return `Today • ${formatKickerDay(now)}`;
+  if (time === "weekend") return "This Weekend";
+  const week = thisWeekFromToday(now);
+  return `This Week • ${formatWeekSpan(week.from!, week.to!)}`;
+}
+
+function PhotoCard({
+  event,
+  featured,
+  style,
+}: {
+  event: CalendarEvent;
+  featured: boolean;
+  style: CardWhenStyle;
+}) {
   return (
     <article
       className={`photo-card photo-card--${event.category} ${featured ? "photo-card--featured" : ""}`}
@@ -54,12 +70,12 @@ function PhotoCard({ event, featured }: { event: CalendarEvent; featured: boolea
         />
       </div>
       <div className="photo-card__body">
-        <h2 className="photo-card__title">{event.title}</h2>
         <p className="photo-card__when">
           <time dateTime={event.startsAt}>
-            {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
+            {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate, style)}
           </time>
         </p>
+        <h2 className="photo-card__title">{event.title}</h2>
         <p className="st-d-paragraph photo-card__venue">{event.venue}</p>
         <p className="st-d-subheading">{sourceLabel(event.source)}</p>
         <a className="st-primary" href={event.url} target="_blank" rel="noreferrer">
@@ -97,22 +113,14 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
     () => filterTouristCategory(touristWindowEvents(events, now), category),
     [events, category, now],
   );
+  const listTime: TouristTime = time === "calendar" ? "week" : time;
+  const kicker = timeKicker(listTime, now);
 
   return (
     <div className="phone-app">
       <header className="phone-app__top">
         <VisitAkyLogo compact />
-        <p className="phone-app__eyebrow">You are now viewing events</p>
-        <h1 className="st-d-title">What&apos;s happening</h1>
-        <p className="st-d-paragraph">
-          {time === "calendar"
-            ? "Pick a day. Confirm times before you go."
-            : time === "today"
-              ? "Today in Eastern Time. Confirm times before you go."
-              : time === "weekend"
-                ? "This weekend first in Eastern Time. Confirm times before you go."
-                : "This week first in Eastern Time. Confirm times before you go."}
-        </p>
+        <h1 className="visually-hidden">What&apos;s happening</h1>
       </header>
 
       <div className="phone-times" role="tablist" aria-label="When">
@@ -156,31 +164,30 @@ export function PhoneApp({ events }: { events: CalendarEvent[] }) {
               <h2 className="section-kicker">Featured</h2>
               <div className="featured-grid">
                 {featured.map((event) => (
-                  <PhotoCard key={event.id} event={event} featured />
+                  <PhotoCard key={event.id} event={event} featured style="full" />
                 ))}
               </div>
             </section>
           ) : null}
-          <section className="time-block" aria-label={TIME_SECTION[time]}>
-            <h2 className="section-kicker">{TIME_SECTION[time]}</h2>
+          <section className="time-block" aria-label={kicker}>
+            <h2 className="section-kicker">{kicker}</h2>
             <div className="photo-stack">
               {visible.length === 0 ? (
                 <p className="st-d-paragraph empty-state">No published events in this view yet.</p>
               ) : (
                 visible.map((event) => (
-                  <PhotoCard key={event.id} event={event} featured={false} />
+                  <PhotoCard
+                    key={event.id}
+                    event={event}
+                    featured={false}
+                    style={whenStyle(listTime, false)}
+                  />
                 ))
               )}
             </div>
           </section>
         </main>
       )}
-
-      <footer className="footer-note">
-        <p className="st-d-paragraph">
-          Partner iframe still lives at <Link className="st-text-link" href="/embed">/embed</Link>.
-        </p>
-      </footer>
     </div>
   );
 }

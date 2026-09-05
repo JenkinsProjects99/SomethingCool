@@ -375,7 +375,7 @@ img {
 }
 
 .phone-app {
-  width: min(430px, 100%);
+  width: min(390px, 100%);
   margin: 0 auto;
   padding: 12px 16px 48px;
   min-height: 100vh;
@@ -411,6 +411,10 @@ img {
   margin: 12px 0 10px;
 }
 
+.phone-times {
+  flex-wrap: nowrap;
+}
+
 .phone-cats,
 .phone-views {
   margin-top: 0;
@@ -422,7 +426,8 @@ img {
 .phone-views .st-secondary {
   flex: 1;
   min-width: 0;
-  padding: 10px 8px;
+  padding: 10px 4px;
+  font-size: 11px;
 }
 
 .phone-cats {
@@ -446,15 +451,15 @@ img {
   font-size: 11px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   border-radius: 0;
-  color: var(--st-primary);
+  color: color-mix(in srgb, var(--st-ink) 55%, var(--st-paper));
 }
 
 .phone-cats .phone-cats__on,
 .phone-cats .st-primary {
   border-bottom-color: var(--st-primary);
-  color: var(--st-ink);
+  color: var(--st-primary);
 }
 
 .phone-cats .phone-cats__on:hover,
@@ -474,23 +479,26 @@ img {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin: 16px 0 10px;
-  color: var(--st-ink);
+  color: var(--st-primary);
 }
 
-.featured-grid {
+.featured-grid,
+.photo-stack {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
 .featured-grid .photo-card__image,
-.featured-grid .photo-card--featured .photo-card__image {
-  height: 120px;
+.featured-grid .photo-card--featured .photo-card__image,
+.photo-stack .photo-card__image {
+  height: 110px;
 }
 
 .featured-grid .photo-card__media,
-.featured-grid .photo-card--featured .photo-card__media {
-  min-height: 120px;
+.featured-grid .photo-card--featured .photo-card__media,
+.photo-stack .photo-card__media {
+  min-height: 110px;
 }
 
 .month-cal {
@@ -513,6 +521,7 @@ img {
   text-transform: uppercase;
   margin: 0;
   text-align: center;
+  color: var(--st-primary);
 }
 
 .month-cal__grid {
@@ -533,7 +542,7 @@ img {
 
 .month-cal__cell {
   min-height: 44px;
-  border: 1px solid var(--st-rule);
+  border: none;
   background: var(--st-paper);
   color: var(--st-ink);
   font-family: var(--font-open-sans);
@@ -551,22 +560,25 @@ img {
   border-color: transparent;
 }
 
-.month-cal__cell--has {
-  border-color: var(--st-primary);
+.month-cal__cell--other {
+  color: color-mix(in srgb, var(--st-ink) 40%, var(--st-paper));
 }
 
 .month-cal__cell--on {
   background: var(--st-primary);
   color: var(--st-primary-label);
-  border-color: var(--st-primary);
 }
 
 .month-cal__dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--st-primary);
   display: block;
+}
+
+.month-cal__cell--on .month-cal__dot {
+  background: var(--st-primary-label);
 }
 
 .month-cal__list {
@@ -584,9 +596,10 @@ img {
 }
 
 .month-cal__list .st-primary {
-  align-self: flex-start;
+  width: 100%;
   min-height: 36px;
   padding: 8px 12px;
+  margin-top: 4px;
 }
 
 .month-cal__list a {
@@ -600,47 +613,61 @@ img {
   font-family: var(--font-open-sans);
   font-weight: 800;
   letter-spacing: 0.025em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
-.photo-stack {
-  display: grid;
-  gap: 16px;
+.month-cal__when {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.month-cal__venue {
+  font-family: var(--font-glacial);
+  font-size: 14px;
+  color: color-mix(in srgb, var(--st-ink) 70%, var(--st-paper));
+}
+
+.month-cal__agenda-kicker {
+  margin-top: 20px;
 }
 
 .photo-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden;
   color: var(--st-ink);
   background: var(--st-paper);
-  border-bottom: 1px solid var(--st-rule);
-  padding-bottom: 4px;
+  border: 1px solid var(--st-rule);
 }
 
 .photo-card__media {
-  min-height: 148px;
+  min-height: 110px;
   background: linear-gradient(160deg, #326dcd, #7b5bbb);
 }
 
 .photo-card--featured .photo-card__media {
-  min-height: 168px;
+  min-height: 110px;
 }
 
 .photo-card__image {
   display: block;
   width: 100%;
-  height: 148px;
+  height: 110px;
   object-fit: cover;
 }
 
 .photo-card--featured .photo-card__image {
-  height: 168px;
+  height: 110px;
 }
 
 .photo-card__image--logo {
   object-fit: contain;
-  padding: 16px 20px;
+  padding: 12px 14px;
   background: linear-gradient(160deg, #326dcd, #7b5bbb);
 }
 
@@ -648,16 +675,16 @@ img {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 12px 0 8px;
+  padding: 10px 10px 12px;
 }
 
 .photo-card__title {
   font-family: var(--font-open-sans);
   font-weight: 800;
-  font-size: clamp(16px, 4.4vw, 20px);
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
-  line-height: 1.15;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  line-height: 1.2;
   margin: 0;
   color: var(--st-ink);
   overflow: visible;
@@ -665,13 +692,12 @@ img {
   overflow-wrap: anywhere;
 }
 
-.photo-card__when,
-.photo-card__venue,
-.photo-card .st-d-paragraph {
-  font-family: var(--font-glacial);
-  font-weight: 400;
-  font-size: 16px;
-  letter-spacing: 0.04em;
+.photo-card__when {
+  font-family: var(--font-open-sans);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   margin: 0;
   color: var(--st-ink);
   overflow: visible;
@@ -680,15 +706,37 @@ img {
   overflow-wrap: anywhere;
 }
 
-.photo-card .st-d-subheading {
-  color: var(--st-ink);
+.photo-card__venue,
+.photo-card .st-d-paragraph {
+  font-family: var(--font-glacial);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: color-mix(in srgb, var(--st-ink) 70%, var(--st-paper));
   overflow: visible;
+  text-overflow: unset;
   white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.photo-card .st-d-subheading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  color: var(--st-ink);
+}
+
+.photo-stack .empty-state {
+  grid-column: 1 / -1;
 }
 
 .photo-card .st-primary {
-  align-self: flex-start;
+  width: 100%;
   min-height: 36px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   margin-top: 4px;
+  font-size: 11px;
 }

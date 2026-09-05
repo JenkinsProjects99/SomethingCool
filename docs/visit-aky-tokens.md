@@ -54,6 +54,6 @@ Focus uses a 3px `#326DCD` ring. Controls are at least 24×24 CSS pixels (2.5.8)
 
 ## Layouts
 
-- Phone PWA (`/`): centered logo, “What's happening”, thumb filters for date / category / upcoming vs all, full-bleed photo cards with title overlay (official image, or the Visit AKY logo when `image` is null). Source is a subheading, not a chip.
+- Phone PWA (`/`): centered logo, TODAY / WEEKEND / WEEK / CAL tabs, ALL / MUSIC / SPORTS / COMMUNITY underlines (full COMMUNITY at 390px). FEATURED is a 2-up photo grid above date-first 2-up time lists. Cards are photo, then time, title, venue, and a full-width Event Details button (official image, or the Visit AKY logo when `image` is null). Source stays a `.st-d-subheading` in the markup, not a visible fill. Calendar days use a blue dot; the selected-day agenda repeats Event Details.
 - Embed (360px, secondary): centered logo, Upcoming / All, stacked cards (first solid, second outline), compact rows with Go.
 - Embed event: `/embed/{slug}` repeats the card for a partner iframe.

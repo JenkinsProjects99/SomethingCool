@@ -158,5 +158,8 @@ describe("tourist upcoming bar and calendar tab", () => {
     expect(calendar).toContain("month-cal__list");
     expect(calendar).toContain("WEEKDAYS");
     expect(calendar).toContain("Event Details");
+    expect(calendar).toContain("month-cal__cell--other");
+    expect(calendar).toContain("month-cal__dot");
+    expect(calendar).toContain("formatKickerDay");
   });
 });

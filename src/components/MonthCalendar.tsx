@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { CalendarEvent } from "@/lib/events";
-import { formatCardWhen } from "@/lib/format";
+import { formatKickerDay, formatTime } from "@/lib/format";
 import { sourceLabel } from "@/lib/sources";
 
 const TIME_ZONE = "America/New_York";
@@ -37,6 +37,34 @@ function firstWeekday(year: number, month: number) {
   return new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
 }
 
+function calendarCells(year: number, month: number) {
+  const lead = firstWeekday(year, month);
+  const count = daysInMonth(year, month);
+  const prevMonth = month === 1 ? 12 : month - 1;
+  const prevYear = month === 1 ? year - 1 : year;
+  const prevCount = daysInMonth(prevYear, prevMonth);
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const cells: { year: number; month: number; day: number; inMonth: boolean }[] = [];
+  for (let offset = lead - 1; offset >= 0; offset -= 1) {
+    cells.push({ year: prevYear, month: prevMonth, day: prevCount - offset, inMonth: false });
+  }
+  for (let day = 1; day <= count; day += 1) {
+    cells.push({ year, month, day, inMonth: true });
+  }
+  let nextDay = 1;
+  while (cells.length % 7 !== 0) {
+    cells.push({ year: nextYear, month: nextMonth, day: nextDay, inMonth: false });
+    nextDay += 1;
+  }
+  return cells;
+}
+
+function selectedDate(key: string): Date {
+  const [year, month, day] = key.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day, 16));
+}
+
 export function MonthCalendar({
   events,
   now = new Date(),
@@ -61,15 +89,7 @@ export function MonthCalendar({
     return map;
   }, [events]);
 
-  const cells = useMemo(() => {
-    const blanks = firstWeekday(cursor.year, cursor.month);
-    const count = daysInMonth(cursor.year, cursor.month);
-    return [
-      ...Array.from({ length: blanks }, () => null),
-      ...Array.from({ length: count }, (_, index) => index + 1),
-    ];
-  }, [cursor]);
-
+  const cells = useMemo(() => calendarCells(cursor.year, cursor.month), [cursor]);
   const selectedEvents = byDay.get(selected) ?? [];
 
   function shiftMonth(delta: number) {
@@ -94,36 +114,37 @@ export function MonthCalendar({
             {day}
           </p>
         ))}
-        {cells.map((day, index) => {
-          if (!day) return <div key={`b-${index}`} className="month-cal__cell month-cal__cell--empty" />;
-          const key = keyFor(cursor.year, cursor.month, day);
+        {cells.map((cell) => {
+          const key = keyFor(cell.year, cell.month, cell.day);
           const count = byDay.get(key)?.length ?? 0;
+          const other = cell.inMonth ? "" : " month-cal__cell--other";
+          const on = selected === key ? " month-cal__cell--on" : "";
           return (
             <button
               key={key}
               type="button"
-              className={`month-cal__cell ${selected === key ? "month-cal__cell--on" : ""} ${count ? "month-cal__cell--has" : ""}`}
+              className={`month-cal__cell${on}${other}`}
               onClick={() => setSelected(key)}
             >
-              <span>{day}</span>
+              <span>{cell.day}</span>
               {count > 0 ? <i className="month-cal__dot" aria-hidden="true" /> : null}
             </button>
           );
         })}
       </div>
+      <h3 className="section-kicker month-cal__agenda-kicker">{formatKickerDay(selectedDate(selected))}</h3>
       <ol className="month-cal__list">
         {selectedEvents.length === 0 ? (
           <li className="st-d-paragraph">No events on this date. Pick a dotted day.</li>
         ) : (
           selectedEvents.map((event) => (
             <li key={event.id}>
+              <p className="month-cal__when">
+                {event.dateOnly ? formatKickerDay(event.startsAtDate) : formatTime(event.startsAtDate)}
+              </p>
               <strong>{event.title}</strong>
-              <span>
-                {formatCardWhen(event.startsAtDate, event.dateOnly, event.endsAtDate)}
-                {" · "}
-                {event.venue}
-              </span>
-              <span className="st-d-subheading">{sourceLabel(event.source)}</span>
+              <span className="month-cal__venue">{event.venue}</span>
+              <span className="st-d-subheading photo-card__source">{sourceLabel(event.source)}</span>
               <a className="st-primary" href={event.url} target="_blank" rel="noreferrer">
                 Event Details
               </a>

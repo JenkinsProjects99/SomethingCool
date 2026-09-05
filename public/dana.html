@@ -12,50 +12,53 @@
     :root { --st-primary:#326dcd; --st-primary-label:#f5f5f5; --st-nav-hover:#7b5bbb; --st-paper:#fff; --st-ink:#000; --st-rule:#e6e6e6; }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--st-paper); color: var(--st-ink); font-family: "Glacial Indifference", ui-sans-serif, sans-serif; }
-    .phone-app { width: min(430px, 100%); margin: 0 auto; padding: 12px 16px 48px; }
+    .phone-app { width: min(390px, 100%); margin: 0 auto; padding: 12px 16px 48px; }
     .brand { display: flex; justify-content: center; margin-bottom: 10px; }
     .brand img { width: 140px; height: auto; }
-    .phone-app__eyebrow { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; margin: 0 0 4px; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
     .st-d-title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: clamp(26px, 8vw, 34px); letter-spacing: 0.025em; text-transform: uppercase; margin: 4px 0 0; }
     .st-d-paragraph { letter-spacing: 0.05em; line-height: 1.5; margin: 8px 0 0; }
     .st-d-subheading { font-weight: 700; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; margin: 0; color: var(--st-ink); }
-    .st-primary, .st-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 6px; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 0; cursor: pointer; }
+    .st-primary, .st-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 4px; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 0; cursor: pointer; }
     .st-primary { background: var(--st-primary); color: var(--st-primary-label); border: 2px solid var(--st-primary); }
     .st-secondary { background: transparent; color: var(--st-primary); border: 2px solid var(--st-primary); }
-    .phone-times { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
+    .phone-times { display: flex; flex-wrap: nowrap; gap: 6px; margin: 12px 0 10px; }
     .phone-cats { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 6px; margin: 0 0 10px; }
-    .phone-times .st-primary, .phone-times .st-secondary { flex: 1; }
-    .phone-cats .phone-cats__on, .phone-cats .phone-cats__off, .phone-cats .st-primary, .phone-cats .st-secondary { flex: 0 0 auto; width: auto; min-width: max-content; overflow: visible; white-space: nowrap; text-overflow: unset; padding: 8px 12px; font-size: 11px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--st-primary); }
-    .phone-cats .phone-cats__on, .phone-cats .st-primary { border-bottom-color: var(--st-primary); color: var(--st-ink); }
-    .section-kicker { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 16px 0 10px; }
-    .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .featured-grid .photo-card__image, .featured-grid .photo-card--featured .photo-card__image { height: 120px; }
-    .featured-grid .photo-card__media, .featured-grid .photo-card--featured .photo-card__media { min-height: 120px; }
-    .photo-stack { display: grid; gap: 16px; }
-    .photo-card { display: flex; flex-direction: column; overflow: visible; color: var(--st-ink); background: var(--st-paper); border-bottom: 1px solid var(--st-rule); padding-bottom: 4px; }
-    .photo-card__media { min-height: 148px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
-    .photo-card--featured .photo-card__media { min-height: 168px; }
-    .photo-card__image { display: block; width: 100%; height: 148px; object-fit: cover; }
-    .photo-card--featured .photo-card__image { height: 168px; }
-    .photo-card__image--logo { object-fit: contain; padding: 16px 20px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
-    .photo-card__body { display: flex; flex-direction: column; gap: 6px; padding: 12px 0 8px; }
-    .photo-card__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: clamp(16px, 4.4vw, 20px); letter-spacing: 0.025em; text-transform: uppercase; line-height: 1.15; margin: 0; color: var(--st-ink); overflow: visible; white-space: normal; overflow-wrap: anywhere; }
-    .photo-card__when, .photo-card__venue, .photo-card .st-d-paragraph { margin: 0; color: var(--st-ink); letter-spacing: 0.04em; font-size: 16px; overflow: visible; text-overflow: unset; white-space: normal; overflow-wrap: anywhere; }
-    .photo-card .st-d-subheading { color: var(--st-ink); overflow: visible; white-space: normal; }
-    .photo-card .st-primary { align-self: flex-start; min-height: 36px; padding: 8px 12px; font-size: 13px; margin-top: 4px; }
+    .phone-times .st-primary, .phone-times .st-secondary { flex: 1; min-width: 0; }
+    .phone-cats .phone-cats__on, .phone-cats .phone-cats__off, .phone-cats .st-primary, .phone-cats .st-secondary { flex: 0 0 auto; width: auto; min-width: max-content; overflow: visible; white-space: nowrap; text-overflow: unset; padding: 8px 12px; font-size: 11px; background: transparent; border: none; border-bottom: 3px solid transparent; color: color-mix(in srgb, var(--st-ink) 55%, var(--st-paper)); }
+    .phone-cats .phone-cats__on, .phone-cats .st-primary { border-bottom-color: var(--st-primary); color: var(--st-primary); }
+    .section-kicker { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 16px 0 10px; color: var(--st-primary); }
+    .featured-grid, .photo-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .featured-grid .photo-card__image, .featured-grid .photo-card--featured .photo-card__image, .photo-stack .photo-card__image { height: 110px; }
+    .featured-grid .photo-card__media, .featured-grid .photo-card--featured .photo-card__media, .photo-stack .photo-card__media { min-height: 110px; }
+    .photo-card { position: relative; display: flex; flex-direction: column; overflow: hidden; color: var(--st-ink); background: var(--st-paper); border: 1px solid var(--st-rule); }
+    .photo-card__media { min-height: 110px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
+    .photo-card--featured .photo-card__media { min-height: 110px; }
+    .photo-card__image { display: block; width: 100%; height: 110px; object-fit: cover; }
+    .photo-card--featured .photo-card__image { height: 110px; }
+    .photo-card__image--logo { object-fit: contain; padding: 12px 14px; background: linear-gradient(160deg, #326dcd, #7b5bbb); }
+    .photo-card__body { display: flex; flex-direction: column; gap: 6px; padding: 10px 10px 12px; }
+    .photo-card__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.01em; text-transform: none; line-height: 1.2; margin: 0; color: var(--st-ink); overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+    .photo-card__when { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; color: var(--st-ink); overflow: visible; text-overflow: unset; white-space: normal; overflow-wrap: anywhere; }
+    .photo-card__venue, .photo-card .st-d-paragraph { margin: 0; color: color-mix(in srgb, var(--st-ink) 70%, var(--st-paper)); letter-spacing: 0.02em; font-size: 13px; overflow: visible; text-overflow: unset; white-space: normal; overflow-wrap: anywhere; }
+    .photo-card .st-d-subheading { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); color: var(--st-ink); }
+    .photo-card .st-primary { width: 100%; min-height: 36px; padding: 8px 10px; font-size: 11px; margin-top: 4px; }
     .month-cal__nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .month-cal__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; }
+    .month-cal__title { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; color: var(--st-primary); }
     .month-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
     .month-cal__dow { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; margin: 0 0 4px; }
-    .month-cal__cell { min-height: 44px; border: 1px solid var(--st-rule); background: #fff; color: #000; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 700; font-size: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
-    .month-cal__cell--empty { border-color: transparent; }
-    .month-cal__cell--has { border-color: var(--st-primary); }
-    .month-cal__cell--on { background: var(--st-primary); color: #f5f5f5; border-color: var(--st-primary); }
-    .month-cal__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: block; }
+    .month-cal__cell { min-height: 44px; border: none; background: #fff; color: #000; font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 700; font-size: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+    .month-cal__cell--other { color: color-mix(in srgb, var(--st-ink) 40%, var(--st-paper)); }
+    .month-cal__cell--on { background: var(--st-primary); color: #f5f5f5; }
+    .month-cal__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--st-primary); display: block; }
+    .month-cal__cell--on .month-cal__dot { background: #f5f5f5; }
     .month-cal__list { margin: 16px 0 0; padding: 0; list-style: none; }
-    .month-cal__list li { border-top: 1px solid var(--st-rule); padding: 12px 0; }
+    .month-cal__list li { border-top: 1px solid var(--st-rule); padding: 12px 0; display: flex; flex-direction: column; gap: 6px; }
     .month-cal__list a { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
-    .month-cal__list strong { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; letter-spacing: 0.025em; text-transform: uppercase; }
+    .month-cal__list strong { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; letter-spacing: 0.025em; }
+    .month-cal__when { font-family: "Open Sans", ui-sans-serif, sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; }
+    .month-cal__venue { font-size: 14px; color: color-mix(in srgb, var(--st-ink) 70%, var(--st-paper)); }
+    .month-cal__list .st-primary { width: 100%; }
     .hidden { display: none; }
   </style>
 </head>
@@ -63,9 +66,7 @@
   <div class="phone-app">
     <header>
       <div class="brand"><img src="./brand/visit-aky-logo.png" alt="Visit AKY, Ashland, Kentucky"></div>
-      <p class="phone-app__eyebrow">You are now viewing events</p>
-      <h1 class="st-d-title">What's happening</h1>
-      <p class="st-d-paragraph" id="blurb">This weekend first in Eastern Time. Confirm times before you go.</p>
+      <h1 class="visually-hidden">What's happening</h1>
     </header>
     <div class="phone-times" role="tablist" aria-label="When">
       <button type="button" class="st-secondary" data-time="today" aria-selected="false">Today</button>
@@ -88,6 +89,7 @@
           <button type="button" class="st-secondary" id="next-month">Next</button>
         </div>
         <div class="month-cal__grid" id="cal-grid" role="grid" aria-label="August 2026"></div>
+        <h3 class="section-kicker" id="cal-agenda">SAT AUG 29</h3>
         <ol class="month-cal__list" id="cal-list"></ol>
       </section>
     </main>
@@ -168,7 +170,14 @@
     function featuredForView() {
       return featuredEvents(filterCategory(EVENTS.filter(inWindow), cat));
     }
-    function cardHtml(event, featured) {
+    function boardWhen(event, style) {
+      const raw = String(event.when || "").replace(/ · /g, " • ");
+      const bits = raw.split(" • ");
+      if (style === "time") return bits[bits.length - 1] || raw;
+      if (style === "weekday-time") return bits.length >= 3 ? `${bits[0]} • ${bits[2]}` : raw;
+      return raw;
+    }
+    function cardHtml(event, featured, style) {
       const src = event.image || LOGO;
       const imgClass = event.image ? "photo-card__image" : "photo-card__image photo-card__image--logo";
       const feat = featured ? " photo-card--featured" : "";
@@ -177,8 +186,8 @@
           <img class="${imgClass}" src="${src}" alt="">
         </div>
         <div class="photo-card__body">
+          <p class="photo-card__when"><time datetime="${event.startsAt}">${escapeHtml(boardWhen(event, style))}</time></p>
           <h2 class="photo-card__title">${escapeHtml(event.title)}</h2>
-          <p class="photo-card__when"><time datetime="${event.startsAt}">${escapeHtml(event.when)}</time></p>
           <p class="st-d-paragraph photo-card__venue">${escapeHtml(event.venue)}</p>
           <p class="st-d-subheading">${escapeHtml(event.source)}</p>
           <a class="st-primary" href="${event.url}" target="_blank" rel="noreferrer">Event Details</a>
@@ -201,12 +210,13 @@
       const featured = featuredForView();
       const rows = eventsForView();
       const featuredHtml = featured.length
-        ? `<section class="featured-block" aria-label="Featured"><h2 class="section-kicker">Featured</h2><div class="featured-grid">${featured.map((event) => cardHtml(event, true)).join("")}</div></section>`
+        ? `<section class="featured-block" aria-label="Featured"><h2 class="section-kicker">Featured</h2><div class="featured-grid">${featured.map((event) => cardHtml(event, true, "full")).join("")}</div></section>`
         : "";
-      const label = time === "today" ? "Today" : time === "weekend" ? "This Weekend" : "This Week";
+      const label = time === "today" ? "Today • SAT AUG 29" : time === "weekend" ? "This Weekend" : "This Week • SAT 29–FRI 4";
+      const style = time === "today" ? "time" : time === "weekend" ? "weekday-time" : "full";
       const listHtml = rows.length
-        ? rows.map((event) => cardHtml(event, false)).join("")
-        : `<p class="st-d-paragraph">No published events in this view yet.</p>`;
+        ? rows.map((event) => cardHtml(event, false, style)).join("")
+        : `<p class="st-d-paragraph empty-state">No published events in this view yet.</p>`;
       document.getElementById("cards").innerHTML = `${featuredHtml}<section class="time-block" aria-label="${label}"><h2 class="section-kicker">${label}</h2><div class="photo-stack">${listHtml}</div></section>`;
     }
     function daysInMonth(year, month) { return new Date(Date.UTC(year, month, 0)).getUTCDate(); }
@@ -221,36 +231,53 @@
       }
       const blanks = firstWeekday(cursor.year, cursor.month);
       const count = daysInMonth(cursor.year, cursor.month);
+      const prevMonth = cursor.month === 1 ? 12 : cursor.month - 1;
+      const prevYear = cursor.month === 1 ? cursor.year - 1 : cursor.year;
+      const prevCount = daysInMonth(prevYear, prevMonth);
+      const nextMonth = cursor.month === 12 ? 1 : cursor.month + 1;
+      const nextYear = cursor.month === 12 ? cursor.year + 1 : cursor.year;
       let cells = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d) => `<p class="month-cal__dow">${d}</p>`).join("");
-      for (let i = 0; i < blanks; i += 1) cells += `<div class="month-cal__cell month-cal__cell--empty"></div>`;
+      for (let i = blanks - 1; i >= 0; i -= 1) {
+        const day = prevCount - i;
+        const key = `${prevYear}-${String(prevMonth).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+        const hits = byDay[key] || [];
+        const on = selected === key ? " month-cal__cell--on" : "";
+        const dot = hits.length ? `<i class="month-cal__dot" aria-hidden="true"></i>` : "";
+        cells += `<button type="button" class="month-cal__cell month-cal__cell--other${on}" data-day="${key}"><span>${day}</span>${dot}</button>`;
+      }
       for (let day = 1; day <= count; day += 1) {
         const key = `${cursor.year}-${String(cursor.month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
         const hits = byDay[key] || [];
         const on = selected === key ? " month-cal__cell--on" : "";
-        const has = hits.length ? " month-cal__cell--has" : "";
         const dot = hits.length ? `<i class="month-cal__dot" aria-hidden="true"></i>` : "";
-        cells += `<button type="button" class="month-cal__cell${on}${has}" data-day="${key}"><span>${day}</span>${dot}</button>`;
+        cells += `<button type="button" class="month-cal__cell${on}" data-day="${key}"><span>${day}</span>${dot}</button>`;
+      }
+      const filled = blanks + count;
+      const trail = (7 - (filled % 7)) % 7;
+      for (let day = 1; day <= trail; day += 1) {
+        const key = `${nextYear}-${String(nextMonth).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+        const hits = byDay[key] || [];
+        const on = selected === key ? " month-cal__cell--on" : "";
+        const dot = hits.length ? `<i class="month-cal__dot" aria-hidden="true"></i>` : "";
+        cells += `<button type="button" class="month-cal__cell month-cal__cell--other${on}" data-day="${key}"><span>${day}</span>${dot}</button>`;
       }
       document.getElementById("cal-grid").innerHTML = cells;
       const selectedEvents = (byDay[selected] || []).slice().sort((left, right) => left.startsMs - right.startsMs);
+      const agendaBits = selected.split("-");
+      const agendaDate = new Date(Date.UTC(Number(agendaBits[0]), Number(agendaBits[1]) - 1, Number(agendaBits[2]), 16));
+      const agendaLabel = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short", month: "short", day: "numeric" }).format(agendaDate).toUpperCase().replace(",", "");
+      document.getElementById("cal-agenda").textContent = agendaLabel;
       document.getElementById("cal-list").innerHTML = selectedEvents.length
-        ? selectedEvents.map((event) => `<li><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(event.when)} · ${escapeHtml(event.venue)}</span><span class="st-d-subheading">${escapeHtml(event.source)}</span><a class="st-primary" href="${event.url}" target="_blank" rel="noreferrer">Event Details</a></li>`).join("")
+        ? selectedEvents.map((event) => `<li><p class="month-cal__when">${escapeHtml(boardWhen(event, "time"))}</p><strong>${escapeHtml(event.title)}</strong><span class="month-cal__venue">${escapeHtml(event.venue)}</span><span class="st-d-subheading">${escapeHtml(event.source)}</span><a class="st-primary" href="${event.url}" target="_blank" rel="noreferrer">Event Details</a></li>`).join("")
         : `<li class="st-d-paragraph">No events on this date. Pick a dotted day.</li>`;
       document.querySelectorAll(".month-cal__cell[data-day]").forEach((cell) => {
         cell.onclick = () => { selected = cell.getAttribute("data-day"); renderCalendar(); };
       });
     }
-    function blurbs() {
-      if (time === "calendar") return "Pick a day. Confirm times before you go.";
-      if (time === "today") return "Today in Eastern Time. Confirm times before you go.";
-      if (time === "weekend") return "This weekend first in Eastern Time. Confirm times before you go.";
-      return "This week first in Eastern Time. Confirm times before you go.";
-    }
     function show() {
       const isCal = time === "calendar";
       document.getElementById("calendar").classList.toggle("hidden", !isCal);
       document.getElementById("cards").classList.toggle("hidden", isCal);
-      document.getElementById("blurb").textContent = blurbs();
       document.querySelectorAll("[data-time]").forEach((el) => {
         const on = el.getAttribute("data-time") === time;
         el.className = on ? "st-primary" : "st-secondary";

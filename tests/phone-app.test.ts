@@ -16,10 +16,15 @@ describe("tourist phone preview", () => {
     expect(phone).toContain("Community");
     expect(phone).toContain("Featured");
     expect(phone).toContain("featured-grid");
+    expect(phone).toContain("photo-stack");
+    expect(phone).toContain("visually-hidden");
+    expect(phone).toContain("This Weekend");
+    expect(phone).toContain("Today •");
     expect(phone).not.toContain('label: "Family"');
     expect(phone).toContain("{event.venue}");
     expect(phone).toContain("st-d-paragraph");
     expect(phone).toContain("Event Details");
+    expect(phone.indexOf("photo-card__when")).toBeLessThan(phone.indexOf("photo-card__title"));
     expect(phone).toContain("photo-card__media");
     expect(phone).toContain("photo-card__body");
     expect(phone).not.toContain("photo-card__overlay");
@@ -30,7 +35,9 @@ describe("tourist phone preview", () => {
     expect(css).toContain("min-width: max-content");
     expect(css).toContain("flex: 0 0 auto");
     expect(css).toContain("featured-grid");
+    expect(css).toContain("grid-template-columns: 1fr 1fr");
     expect(css).toContain("phone-cats__on");
+    expect(css).toContain("min(390px, 100%)");
     expect(phone).toContain("MonthCalendar");
     expect(phone).toContain('event.image ?? "/brand/visit-aky-logo.png"');
     expect(phone).not.toMatch(/chip|pill|badge/i);
@@ -81,8 +88,11 @@ describe("Dana weekend preview", () => {
     expect(dana).toContain("Featured");
     expect(dana).toContain("linear-gradient(160deg, #326dcd, #7b5bbb)");
     expect(dana).not.toMatch(/background:\s*#000/);
-    expect(dana).toContain("min-height: 148px");
+    expect(dana).toContain("min-height: 110px");
     expect(dana).not.toContain("min-height: 320px");
+    expect(dana).toContain("grid-template-columns: 1fr 1fr");
+    expect(dana).toContain("This Week • SAT 29–FRI 4");
+    expect(dana).toContain("Today • SAT AUG 29");
     expect(dana).toContain("ashland-tomcats-volleyball-wolfe-county-2026-08-29");
     expect(dana).toMatch(/first\[\\s-\]\?friday/i);
     expect(dana).toContain("facebook-first-friday-2026-09-04");
